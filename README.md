@@ -26,10 +26,11 @@ A GUI tool for managing and packing The Dark Mod missions. It can create the `pk
 
 The first thing you need to do when launching TDM Packer for the first time, is to set the paths to TDM and DarkRadiant. You can set all the paths in the settings panel, which you can find in the top-left menu -> `Settings` -> `Paths`.
 
-The only path that is mandatory is the TDM path, as it will allow TDM Packer to find your missions folder. The DarkRadiant path is only required if you wish to launch DarkRadiant for the selected mission (by pressing the `Edit` button in the `Missions` panel), and the `TDM Test Version` path is only required if you wish to launch a separate copy of your TDM instalation to test-run your newly packed pk4 files (by pressing the `Test` button in the `Missions` panel).
+The only path that is mandatory is the TDM path, as it will allow TDM Packer to find your missions folder. The DarkRadiant path is only required if you wish to launch DarkRadiant for the selected mission (by pressing the `Edit` button in the `Missions` panel), and the *"TDM Test Version"* path is only required if you wish to launch a separate copy of your TDM instalation to test-run your newly packed pk4 files (by pressing the `Test` button in the `Missions` panel).
 
 Once you have that set up, you can press the `Add` button in the `Missions` panel to add missions to your list. You can then edit the .pkignore file, and a few others, as you please, as well as add/remove maps from the map sequence list.
 
+Once you have your mission done and ready to pack, you can press the `Pack` button in the `Missions` panel.
 
 ### The `.pkignore` file
 
