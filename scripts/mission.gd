@@ -4,6 +4,8 @@ extends RefCounted
 
 var file_tree:FMTreeNode
 var filepaths: Array[String]
+var full_filelist: Array[String]  # used to check for external changes
+var file_hashes:Dictionary
 var file_count:int
 var dir_count:int
 
@@ -96,13 +98,23 @@ func add_map(name:String, silent:=false) -> bool:
 	map_names.append(name)
 	#set_dirty_flag(true, DirtyFlags.MAPS, silent)
 	#fm_manager.reload_mission(self)
+
 	return true
 
 func remove_map(name:String, silent:=false) -> bool:
-	logs.print("removing map")
 	assert(name in map_names)
 	#if not name in map_names: return false
 	map_names.erase(name)
+
 	#set_dirty_flag(true, DirtyFlags.MAPS, silent)
 	#fm_manager.reload_mission(self)
 	return true
+
+
+func store_hash(filepath:String) -> void:
+	file_hashes[filepath] = Path.get_sha256(filepath)
+
+
+func remove_hash(filepath:String) -> void:
+	if filepath in file_hashes:
+		file_hashes.erase(filepath)

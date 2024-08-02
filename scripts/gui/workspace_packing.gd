@@ -91,10 +91,15 @@ func init(mission:Mission) -> void:
 	remove_map_btn.disabled = true
 
 	_build_trees()
+	_build_map_list()
 
+
+func _build_map_list() -> void:
+	map_list.clear()
 	for map in _mission.map_names:
 		map_list.add_item(map)
-
+	#map_list.deselect_all()
+	#remove_map_btn.disabled = true
 
 
 func _init_signals() -> void:
@@ -227,10 +232,17 @@ func _create_node(tree:Tree, text:String, root:TreeItem, icon:Texture2D, color:V
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 func _on_mission_reloaded() -> void:
 	if _mission != fm_manager.curr_mission:return
+
+	pkignore_editor.text = _mission.pkignore
+	modfile_text_edit.text = _mission.modfile
+	readme_text_edit.text = _mission.readme
+
 	pkignore_editor.tag_saved_version()
 	modfile_text_edit.tag_saved_version()
 	readme_text_edit.tag_saved_version()
+
 	_build_trees()
+	_build_map_list()
 
 
 func _on_pk4_files_tree_item_activated() -> void:
@@ -319,8 +331,11 @@ func _on_add_map_btn_pressed() -> void:
 
 
 func _on_remove_map_btn_pressed() -> void:
-	var idx := map_list.get_selected_items()[0]
+	var items := map_list.get_selected_items()
+	if not items.size(): return
+	var idx := items[0]
 	var map_name := map_list.get_item_text(idx)
+
 	if _mission.remove_map(map_name):
 		map_list.remove_item(idx)
 		fm_manager.save_maps_file(_mission)

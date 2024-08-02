@@ -16,6 +16,7 @@ signal mission_reloaded
 
 signal mission_dirty_state_changed
 
+signal filesystem_changed
 
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
@@ -42,6 +43,42 @@ func initialize() -> void:
 
 	if missions.size():
 		select_mission(0)
+
+
+func _notification(what: int) -> void:
+
+	if what == NOTIFICATION_WM_WINDOW_FOCUS_IN:
+		if not missions.size(): return
+
+		_check_mission_filesystem()
+
+
+func _check_file_hash(m:Mission, path:String) -> bool:
+	var hash := Path.get_sha256(path)
+	return hash == m.file_hashes[path]
+
+
+func _check_mission_filesystem() -> void:
+	var old_list:Array[String] = curr_mission.full_filelist.duplicate()
+	var new_list := Path.get_filepaths_recursive(curr_mission.path_root)
+
+	if old_list == new_list:
+		var map_file_path:String
+		if curr_mission.map_names.size() <= 1:
+			map_file_path = Path.join(curr_mission.path_root, data.STARTINGMAP_FILENAME)
+		else:
+			map_file_path = Path.join(curr_mission.path_root, data.MAPSEQUENCE_FILENAME)
+
+		if  _check_file_hash(curr_mission, Path.join(curr_mission.path_root, data.IGNORES_FILENAME)) \
+		and _check_file_hash(curr_mission, Path.join(curr_mission.path_root, data.MODFILE_FILENAME))  \
+		and _check_file_hash(curr_mission, Path.join(curr_mission.path_root, data.README_FILENAME))   \
+		and _check_file_hash(curr_mission, map_file_path):
+			return
+
+	curr_mission.full_filelist = new_list
+	_reload_mission(curr_mission)
+
+
 
 
 func save_missions_list() -> void:
@@ -189,11 +226,15 @@ func load_mission(id:String) -> Mission:
 	mission.path_xdata     = Path.join(fm_path, "xdata")
 	mission.path_scripts   = Path.join(fm_path, "script")
 
+	mission.full_filelist = Path.get_filepaths_recursive(mission.path_root)
+
 	_load_pkignore(mission, fm_path)
 	_load_mission_files(mission, fm_path)
 	FMUtils.build_file_tree(mission)
 
+
 	return mission
+
 
 
 
@@ -204,31 +245,38 @@ func _load_pkignore(mission:Mission, fm_path:String) -> void:
 		Path.write_file(pkignore_path, "")
 
 	mission.pkignore = Path.read_file_string(pkignore_path)
+	mission.store_hash(pkignore_path)
 
 
 func _load_mission_files(mission:Mission, fm_path:String) -> void:
 	var modfile_path := Path.join(fm_path, data.MODFILE_FILENAME)
 	mission.modfile = Path.read_file_string(modfile_path)
+	mission.store_hash(modfile_path)
 
 	var readme_path := Path.join(fm_path, data.README_FILENAME)
 	if not Path.file_exists(readme_path):
 		Path.write_file(readme_path, "")
 	mission.readme = Path.read_file_string(readme_path)
+	mission.store_hash(readme_path)
 
+	mission.map_names.clear()
 	var startingmap_path := Path.join(fm_path, data.STARTINGMAP_FILENAME)
+	var tdm_mapsequence_path := Path.join(fm_path, data.MAPSEQUENCE_FILENAME)
 	if Path.file_exists(startingmap_path):
 		var str := Path.read_file_string(startingmap_path)
 		mission.map_names = [str.strip_edges()]
-	else:
-		var tdm_mapsequence_path := Path.join(fm_path, data.MAPSEQUENCE_FILENAME)
-		if Path.file_exists(tdm_mapsequence_path):
-			var str := Path.read_file_string(tdm_mapsequence_path)
-			var lines := str.strip_edges().split('\n', false)
+		mission.remove_hash(tdm_mapsequence_path)
+		mission.store_hash(startingmap_path)
+	elif Path.file_exists(tdm_mapsequence_path):
+		var str := Path.read_file_string(tdm_mapsequence_path)
+		var lines := str.strip_edges().split('\n', false)
 
-			for line:String in lines:
-				line = line.substr( line.find(':')+1 )
-				line = line.strip_edges()
-				mission.map_names.append(line)
+		for line:String in lines:
+			line = line.substr( line.find(':')+1 )
+			line = line.strip_edges()
+			mission.map_names.append(line)
+		mission.remove_hash(startingmap_path)
+		mission.store_hash(tdm_mapsequence_path)
 
 
 func _reload_mission(mis:Mission) -> void:
@@ -274,12 +322,15 @@ func save_mission(mission:Mission) -> void:
 func save_pkignore(mission:Mission) -> void:
 	_save_essential_mission_file(mission, mission.pkignore, data.IGNORES_FILENAME, Mission.DirtyFlags.PKIGNORE)
 	_soft_reload_mission(mission)
+	mission.store_hash(Path.join(mission.path_root, data.IGNORES_FILENAME))
 
 func save_modfile(mission:Mission) -> void:
 	_save_essential_mission_file(mission, mission.modfile, data.MODFILE_FILENAME, Mission.DirtyFlags.MODFILE)
+	mission.store_hash(Path.join(mission.path_root, data.MODFILE_FILENAME))
 
 func save_readme(mission:Mission) -> void:
 	_save_essential_mission_file(mission, mission.readme, data.README_FILENAME, Mission.DirtyFlags.README)
+	mission.store_hash(Path.join(mission.path_root, data.README_FILENAME))
 
 
 
@@ -289,24 +340,33 @@ func _save_essential_mission_file(mis:Mission, content:String, filename:String, 
 	Path.write_file(path, content)
 	console.print("Saved '%s'" % filename)
 	mis.set_dirty_flag(false, flag)
+
+
 	return true
 
 
 func save_maps_file(mis:Mission) -> bool:
-	# TODO: there's no save state in the map files
-
 	var map_names := mis.map_names
+
 	var startingmap := Path.join(mis.path_root, data.STARTINGMAP_FILENAME)
 	var mapsequence := Path.join(mis.path_root, data.MAPSEQUENCE_FILENAME)
 
+	logs.print("map_names:  ", map_names)
 	if map_names.size() <= 1:
+		#logs.print("map_names.size() <= 1")
 		if Path.file_exists(mapsequence):
 			DirAccess.remove_absolute(mapsequence)
+			#logs.print("deleting mapsequence - exists", Path.file_exists(mapsequence))
 
 		var map:String
-		if map_names.size(): map = map_names[0]
+		if map_names.size():
+			map = map_names[0]
+
 		_save_essential_mission_file(mis, map, data.STARTINGMAP_FILENAME, Mission.DirtyFlags.MAPS, true)
+		mis.remove_hash(mapsequence)
+		mis.store_hash(startingmap)
 	else:
+		logs.print("map_names.size() > 1")
 		if Path.file_exists(startingmap):
 			DirAccess.remove_absolute(startingmap)
 
@@ -314,6 +374,8 @@ func save_maps_file(mis:Mission) -> bool:
 		for i in map_names.size():
 			str += "Mission %s: %s\n" % [i+1, map_names[i]]
 		_save_essential_mission_file(mis, str, data.MAPSEQUENCE_FILENAME, Mission.DirtyFlags.MAPS, true)
+		mis.remove_hash(startingmap)
+		mis.store_hash(mapsequence)
 
 	_soft_reload_mission(mis)
 	return true
