@@ -22,6 +22,50 @@ A GUI tool for managing and packing The Dark Mod missions. It can create the `pk
 - supports multiple missions
 
 
+# Usage
+
+The first thing you need to do when launching TDM Packer for the first time, is to set the paths to TDM and DarkRadiant. You can set all the paths in the settings panel, which you can find in the top-left menu -> `Settings` -> `Paths`.
+
+The only path that is mandatory is the TDM path, as it will allow TDM Packer to find your missions folder. The DarkRadiant path is only required if you wish to launch DarkRadiant for the selected mission (by pressing the `Edit` button in the `Missions` panel), and the `TDM Test Version` path is only required if you wish to launch a separate copy of your TDM instalation to test-run your newly packed pk4 files (by pressing the `Test` button in the `Missions` panel).
+
+Once you have that set up, you can press the `Add` button in the `Missions` panel to add missions to your list. You can then edit the .pkignore file (in the `Files` tab), and a few others, as you please, as well as add/remove maps from the map sequence list.
+
+
+### The `.pkignore` file
+
+By default TDM Packer will pack everything in your FM folder, but you can edit the `.pkignore` file to specify what should be excluded. This file works similarly to a `.gitignore` file, but very limited.
+
+```py
+# suports comments
+
+/sources     # folders must start or end with a '/'
+/savegames
+prefabs/
+
+# anything else is interpreted as a file filter
+
+.blend
+todo
+some_file.txt
+```
+
+Don't use `*`, as it's not supported. These filters are merely substrings that every directory/file name is tested against: if it has any of these substrings in it, then it's excluded. It's better to include dots for file extensions, though.
+
+Some files and folders are automatically excluded:
+- any file with `bak` in it (backup files)
+- file extensions `.log`, `.dat`, `.py`, `.pyc`, `.pk4`, `.zip`, `.7z`, `.rar`, `.gitignore`, `.gitattributes`
+- the `.git` and `savegames` directories.
+
+
+The filtering system is case-sensitive.
+
+
+
+
+
+
+
+
 
 # Roadmap (hopefully, but no guarantees)
 - add tool buttons for word-wrapping, undo/redo, find/replace, and also clear console, etc
