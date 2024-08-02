@@ -28,12 +28,14 @@ The first thing you need to do when launching TDM Packer for the first time, is 
 
 The only path that is mandatory is the TDM path, as it will allow TDM Packer to find your missions folder. The DarkRadiant path is only required if you wish to launch DarkRadiant for the selected mission (by pressing the `Edit` button in the `Missions` panel), and the `TDM Test Version` path is only required if you wish to launch a separate copy of your TDM instalation to test-run your newly packed pk4 files (by pressing the `Test` button in the `Missions` panel).
 
-Once you have that set up, you can press the `Add` button in the `Missions` panel to add missions to your list. You can then edit the .pkignore file (in the `Files` tab), and a few others, as you please, as well as add/remove maps from the map sequence list.
+Once you have that set up, you can press the `Add` button in the `Missions` panel to add missions to your list. You can then edit the .pkignore file, and a few others, as you please, as well as add/remove maps from the map sequence list.
 
 
 ### The `.pkignore` file
 
-By default TDM Packer will pack everything in your FM folder, but you can edit the `.pkignore` file to specify what should be excluded. This file works similarly to a `.gitignore` file, but very limited.
+In the `Files` tab of your missions, you'll find an editable text box for the .pkignore file. This is where you can specify what should be excluded from the `pk4` file (by default TDM Packer will pack everything in your FM folder).
+
+This file works similarly to a `.gitignore` file, but very limited.
 
 ```py
 # suports comments
