@@ -8,6 +8,7 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
 	get_tree().set_auto_accept_quit(false)
+	get_window().title = data.app_title
 
 	# don't init this in 'enter_tree', it must be after everything else is ready
 	fm_manager.initialize()

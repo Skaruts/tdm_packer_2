@@ -6,8 +6,8 @@ extends Node
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 #		Program stuff
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-const VERSION  = "0.1"
-var app_title := "TDM Packer 2 (v%s)" % [VERSION]
+const VERSION  = "alpha 0.1"
+var app_title := "TDM Packer 2 - %s" % [VERSION]
 
 
 
