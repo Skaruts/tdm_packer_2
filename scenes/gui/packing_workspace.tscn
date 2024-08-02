@@ -1,0 +1,294 @@
+[gd_scene load_steps=10 format=3 uid="uid://rb3ee3nthhob"]
+
+[ext_resource type="Script" path="res://scripts/gui/workspace_packing.gd" id="1_4ovcp"]
+[ext_resource type="PackedScene" uid="uid://bkr1dac4bgebr" path="res://scenes/gui/custom_gui/custom_line_edit.tscn" id="2_xdh2a"]
+[ext_resource type="CodeHighlighter" uid="uid://baolxejcyhdtf" path="res://resources/ignore_list_syntax.tres" id="3_emc4y"]
+[ext_resource type="PackedScene" uid="uid://b1s62wvt8ay5v" path="res://scenes/gui/custom_gui/custom_file_dialog.tscn" id="4_11fct"]
+
+[sub_resource type="CodeHighlighter" id="CodeHighlighter_1vdi1"]
+number_color = Color(0.4732, 0.91, 0.6188, 1)
+symbol_color = Color(0.470588, 0.741176, 0.909804, 1)
+function_color = Color(0.470588, 0.741176, 0.909804, 1)
+member_variable_color = Color(0.470588, 0.741176, 0.909804, 1)
+color_regions = {
+":": Color(0.77084, 0.770839, 0.770839, 1)
+}
+
+[sub_resource type="CodeHighlighter" id="CodeHighlighter_bmsnb"]
+number_color = Color(0.4732, 0.91, 0.6188, 1)
+symbol_color = Color(0.470588, 0.741176, 0.909804, 1)
+function_color = Color(0.470588, 0.741176, 0.909804, 1)
+member_variable_color = Color(0.470588, 0.741176, 0.909804, 1)
+color_regions = {
+":": Color(0.77084, 0.770839, 0.770839, 1)
+}
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7c0wb"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_odxho"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mja71"]
+
+[node name="packing_workspace" type="HSplitContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+split_offset = 235
+script = ExtResource("1_4ovcp")
+metadata/_tab_index = 0
+
+[node name="tabs" type="TabContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Info" type="HSplitContainer" parent="tabs"]
+layout_mode = 2
+split_offset = 300
+metadata/_tab_index = 1
+
+[node name="VSplitContainer" type="VSplitContainer" parent="tabs/Info"]
+custom_minimum_size = Vector2(225, 0)
+layout_mode = 2
+split_offset = -150
+
+[node name="modfile" type="VBoxContainer" parent="tabs/Info/VSplitContainer"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="modfile_text_label" type="Label" parent="tabs/Info/VSplitContainer/modfile"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "darkmod.txt"
+
+[node name="modfile_text_edit" type="CodeEdit" parent="tabs/Info/VSplitContainer/modfile"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+text = "Title: Gorgeous Title
+Description: Beautiful Description
+Author: Amazing Author
+Version: 99
+Required TDM Version: 99.1
+"
+wrap_mode = 1
+caret_blink = true
+syntax_highlighter = SubResource("CodeHighlighter_1vdi1")
+highlight_all_occurrences = true
+auto_brace_completion_enabled = true
+
+[node name="modfile (UNUSED)" type="VBoxContainer" parent="tabs/Info/VSplitContainer"]
+visible = false
+custom_minimum_size = Vector2(100, 200)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="modfile_text_label" type="Label" parent="tabs/Info/VSplitContainer/modfile (UNUSED)"]
+layout_mode = 2
+text = "darkmod.txt"
+
+[node name="title" type="HBoxContainer" parent="tabs/Info/VSplitContainer/modfile (UNUSED)"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="tabs/Info/VSplitContainer/modfile (UNUSED)/title"]
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+text = "Title"
+
+[node name="title_line_edit" parent="tabs/Info/VSplitContainer/modfile (UNUSED)/title" instance=ExtResource("2_xdh2a")]
+layout_mode = 2
+
+[node name="author" type="HBoxContainer" parent="tabs/Info/VSplitContainer/modfile (UNUSED)"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="tabs/Info/VSplitContainer/modfile (UNUSED)/author"]
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+text = "Author"
+
+[node name="author_line_edit" parent="tabs/Info/VSplitContainer/modfile (UNUSED)/author" instance=ExtResource("2_xdh2a")]
+layout_mode = 2
+
+[node name="version" type="HBoxContainer" parent="tabs/Info/VSplitContainer/modfile (UNUSED)"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="tabs/Info/VSplitContainer/modfile (UNUSED)/version"]
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+text = "Version"
+
+[node name="version_line_edit" parent="tabs/Info/VSplitContainer/modfile (UNUSED)/version" instance=ExtResource("2_xdh2a")]
+layout_mode = 2
+
+[node name="tdm_version" type="HBoxContainer" parent="tabs/Info/VSplitContainer/modfile (UNUSED)"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="tabs/Info/VSplitContainer/modfile (UNUSED)/tdm_version"]
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+text = "TDM Version"
+
+[node name="tdm_version_line_edit" parent="tabs/Info/VSplitContainer/modfile (UNUSED)/tdm_version" instance=ExtResource("2_xdh2a")]
+layout_mode = 2
+
+[node name="descrition" type="VBoxContainer" parent="tabs/Info/VSplitContainer/modfile (UNUSED)"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="tabs/Info/VSplitContainer/modfile (UNUSED)/descrition"]
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+text = "Description"
+
+[node name="description_text_edit" type="CodeEdit" parent="tabs/Info/VSplitContainer/modfile (UNUSED)/descrition"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Steal an awful cook's recipe book to save your friend's business."
+wrap_mode = 1
+caret_blink = true
+syntax_highlighter = SubResource("CodeHighlighter_bmsnb")
+highlight_all_occurrences = true
+auto_brace_completion_enabled = true
+
+[node name="maps" type="VBoxContainer" parent="tabs/Info/VSplitContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="tabs/Info/VSplitContainer/maps"]
+layout_mode = 2
+
+[node name="maps_label" type="Label" parent="tabs/Info/VSplitContainer/maps/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Map Sequence"
+
+[node name="add_map_btn" type="Button" parent="tabs/Info/VSplitContainer/maps/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+text = "Add"
+
+[node name="remove_map_btn" type="Button" parent="tabs/Info/VSplitContainer/maps/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+text = "Remove"
+
+[node name="map_list" type="ItemList" parent="tabs/Info/VSplitContainer/maps"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7c0wb")
+
+[node name="Readme" type="VBoxContainer" parent="tabs/Info"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="readme_text_label" type="Label" parent="tabs/Info/Readme"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "readme.txt"
+
+[node name="readme_text_edit" type="CodeEdit" parent="tabs/Info/Readme"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+wrap_mode = 1
+caret_blink = true
+highlight_all_occurrences = true
+line_length_guidelines = Array[int]([80])
+gutters_draw_line_numbers = true
+auto_brace_completion_enabled = true
+
+[node name="Files" type="HSplitContainer" parent="tabs"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="pkignore_editor" type="VBoxContainer" parent="tabs/Files"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+
+[node name="pkignore_label" type="Label" parent="tabs/Files/pkignore_editor"]
+unique_name_in_owner = true
+layout_mode = 2
+text = ".pkignore"
+
+[node name="pkignore_editor" type="CodeEdit" parent="tabs/Files/pkignore_editor"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.470588, 0.741176, 0.909804, 1)
+wrap_mode = 1
+caret_blink = true
+syntax_highlighter = ExtResource("3_emc4y")
+highlight_all_occurrences = true
+auto_brace_completion_enabled = true
+
+[node name="HSplitContainer" type="HSplitContainer" parent="tabs/Files"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="tabs/Files/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="pk4_label" type="Label" parent="tabs/Files/HSplitContainer/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "foo.pk4"
+
+[node name="pk4_files_tree" type="Tree" parent="tabs/Files/HSplitContainer/VBoxContainer2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/focus = SubResource("StyleBoxEmpty_odxho")
+allow_rmb_select = true
+hide_root = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="tabs/Files/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="tabs/Files/HSplitContainer/VBoxContainer"]
+layout_mode = 2
+text = "Excluded Files"
+
+[node name="excluded_files_tree" type="Tree" parent="tabs/Files/HSplitContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/focus = SubResource("StyleBoxEmpty_mja71")
+allow_rmb_select = true
+hide_root = true
+
+[node name="file_dialog" parent="." instance=ExtResource("4_11fct")]
+
+[connection signal="tab_changed" from="tabs" to="." method="_on_tabs_tab_changed"]
+[connection signal="focus_entered" from="tabs/Info/VSplitContainer/modfile/modfile_text_edit" to="." method="_on_modfile_text_edit_focus_entered"]
+[connection signal="focus_exited" from="tabs/Info/VSplitContainer/modfile/modfile_text_edit" to="." method="_on_modfile_text_edit_focus_exited"]
+[connection signal="text_changed" from="tabs/Info/VSplitContainer/modfile/modfile_text_edit" to="." method="_on_modfile_text_edit_text_changed"]
+[connection signal="focus_entered" from="tabs/Info/VSplitContainer/modfile (UNUSED)/descrition/description_text_edit" to="." method="_on_tdm_text_edit_focus_entered"]
+[connection signal="focus_exited" from="tabs/Info/VSplitContainer/modfile (UNUSED)/descrition/description_text_edit" to="." method="_on_tdm_text_edit_focus_exited"]
+[connection signal="text_changed" from="tabs/Info/VSplitContainer/modfile (UNUSED)/descrition/description_text_edit" to="." method="_on_tdm_text_edit_text_changed"]
+[connection signal="pressed" from="tabs/Info/VSplitContainer/maps/HBoxContainer/add_map_btn" to="." method="_on_add_map_btn_pressed"]
+[connection signal="pressed" from="tabs/Info/VSplitContainer/maps/HBoxContainer/remove_map_btn" to="." method="_on_remove_map_btn_pressed"]
+[connection signal="empty_clicked" from="tabs/Info/VSplitContainer/maps/map_list" to="." method="_on_map_list_empty_clicked"]
+[connection signal="item_selected" from="tabs/Info/VSplitContainer/maps/map_list" to="." method="_on_map_list_item_selected"]
+[connection signal="focus_entered" from="tabs/Info/Readme/readme_text_edit" to="." method="_on_readme_text_edit_focus_entered"]
+[connection signal="focus_exited" from="tabs/Info/Readme/readme_text_edit" to="." method="_on_readme_text_edit_focus_exited"]
+[connection signal="text_changed" from="tabs/Info/Readme/readme_text_edit" to="." method="_on_readme_text_edit_text_changed"]
+[connection signal="focus_entered" from="tabs/Files/pkignore_editor/pkignore_editor" to="." method="_on_pkignore_editor_focus_entered"]
+[connection signal="focus_exited" from="tabs/Files/pkignore_editor/pkignore_editor" to="." method="_on_pkignore_editor_focus_exited"]
+[connection signal="text_changed" from="tabs/Files/pkignore_editor/pkignore_editor" to="." method="_on_pkignore_editor_text_changed"]
+[connection signal="item_activated" from="tabs/Files/HSplitContainer/VBoxContainer2/pk4_files_tree" to="." method="_on_pk4_files_tree_item_activated"]

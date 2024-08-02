@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3 uid="uid://dr3xqscv22xow"]
+
+[ext_resource type="Texture2D" uid="uid://c34njovdduvef" path="res://assets/icons8-menu (3).svg" id="1_fu5qp"]
+[ext_resource type="Script" path="res://scripts/gui/main_menu.gd" id="1_mg0j1"]
+
+[node name="main_menu" type="HBoxContainer"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 32.0
+grow_horizontal = 2
+script = ExtResource("1_mg0j1")
+
+[node name="btn_menu" type="MenuButton" parent="."]
+unique_name_in_owner = true
+modulate = Color(0.75, 0.75, 0.75, 1)
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+icon = ExtResource("1_fu5qp")
+expand_icon = true
+
+[node name="settings_btn" type="Button" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+focus_mode = 0
+text = "Settings"
+flat = true
+
+[node name="--spacer--" type="Control" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3

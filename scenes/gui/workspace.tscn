@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://blbpdt4r4emrq"]
+
+[ext_resource type="Script" path="res://scripts/gui/workspace.gd" id="1_2eoro"]
+[ext_resource type="PackedScene" uid="uid://rb3ee3nthhob" path="res://scenes/gui/packing_workspace.tscn" id="2_et762"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xkiki"]
+
+[node name="workspace" type="TabContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_xkiki")
+tabs_visible = false
+script = ExtResource("1_2eoro")
+
+[node name="packing" parent="." instance=ExtResource("2_et762")]
+unique_name_in_owner = true
+layout_mode = 2

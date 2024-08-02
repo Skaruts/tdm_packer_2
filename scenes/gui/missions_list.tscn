@@ -1,0 +1,62 @@
+[gd_scene load_steps=4 format=3 uid="uid://bc3qwgxm6r7t4"]
+
+[ext_resource type="Script" path="res://scripts/gui/missions_list.gd" id="1_n1pfp"]
+[ext_resource type="PackedScene" uid="uid://b6ea856dp1jnl" path="res://scenes/gui/action_bar.tscn" id="2_d3wah"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ekqh6"]
+
+[node name="missions_list" type="TabContainer"]
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 161.0
+grow_vertical = 2
+tabs_visible = false
+script = ExtResource("1_n1pfp")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Missions"
+
+[node name="--spacer--" type="Control" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="btn_add_mission" type="Button" parent="VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Load a new mission."
+focus_mode = 0
+text = "Add"
+
+[node name="btn_delete_mission" type="Button" parent="VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Delete the selected mission."
+focus_mode = 0
+disabled = true
+text = "Remove"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="action_bar" parent="VBoxContainer" instance=ExtResource("2_d3wah")]
+layout_mode = 2
+
+[node name="ItemList" type="ItemList" parent="VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/focus = SubResource("StyleBoxEmpty_ekqh6")
+allow_rmb_select = true
+
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/btn_add_mission" to="." method="_on_btn_add_mission_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/btn_delete_mission" to="." method="_on_btn_delete_mission_pressed"]
+[connection signal="item_selected" from="VBoxContainer/ItemList" to="." method="_on_item_list_item_selected"]

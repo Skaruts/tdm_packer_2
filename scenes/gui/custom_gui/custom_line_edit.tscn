@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://bkr1dac4bgebr"]
+
+[ext_resource type="Script" path="res://scripts/gui/custom_gui/custom_line_edit.gd" id="1_2qsgn"]
+
+[node name="custom_line_edit" type="LineEdit"]
+size_flags_horizontal = 3
+theme_override_colors/font_placeholder_color = Color(0.501961, 0.501961, 0.501961, 1)
+theme_override_colors/clear_button_color = Color(1, 0.270588, 0.270588, 1)
+theme_override_colors/clear_button_color_pressed = Color(1, 0.8, 0.8, 1)
+clear_button_enabled = true
+caret_blink = true
+script = ExtResource("1_2qsgn")

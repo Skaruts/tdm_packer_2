@@ -1,0 +1,147 @@
+[gd_scene load_steps=15 format=3 uid="uid://crsocybgchs2p"]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="2_tshml"]
+[ext_resource type="Script" path="res://scripts/gui/popups/popups_mgr.gd" id="3_m0oxb"]
+[ext_resource type="PackedScene" uid="uid://dr3xqscv22xow" path="res://scenes/gui/main_menu.tscn" id="3_reyqo"]
+[ext_resource type="PackedScene" uid="uid://bc3qwgxm6r7t4" path="res://scenes/gui/missions_list.tscn" id="4_2bmuc"]
+[ext_resource type="Script" path="res://scripts/gui/popups/pu_warning_report.gd" id="4_v7r42"]
+[ext_resource type="Script" path="res://scripts/gui/popups/pu_confirmation.gd" id="5_5xpnk"]
+[ext_resource type="Script" path="res://scripts/gui/workspaces_root.gd" id="5_gtkpn"]
+[ext_resource type="PackedScene" uid="uid://blbpdt4r4emrq" path="res://scenes/gui/workspace.tscn" id="6_6ii5f"]
+[ext_resource type="PackedScene" uid="uid://74osis712prp" path="res://scenes/console.tscn" id="6_ie2pv"]
+[ext_resource type="PackedScene" uid="uid://coqnotnw53qos" path="res://scenes/gui/popups/pu_add_mission.tscn" id="8_h42o8"]
+[ext_resource type="PackedScene" uid="uid://cmkj44hgf3vks" path="res://scenes/gui/progress_bar.tscn" id="13_e1hmj"]
+[ext_resource type="PackedScene" uid="uid://33aic0pf5plh" path="res://scenes/gui/custom_gui/pu_quit_save_confirmation.tscn" id="13_vs166"]
+[ext_resource type="PackedScene" uid="uid://2k6h2vhyhuuh" path="res://scenes/gui/popups/pu_settings.tscn" id="14_fkf17"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_quv8h"]
+
+[node name="main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("2_tshml")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="ColorRect" type="ColorRect" parent="."]
+editor_description = "This is just to darken the panel color, whatever it may be, so that it's still compatible with themes."
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0, 0, 0, 0.254902)
+
+[node name="gui_base" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="gui_base"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="main_menu" parent="gui_base/VBoxContainer" instance=ExtResource("3_reyqo")]
+layout_mode = 2
+
+[node name="con_split" type="VSplitContainer" parent="gui_base/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HSplitContainer" type="HSplitContainer" parent="gui_base/VBoxContainer/con_split"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="missions_list" parent="gui_base/VBoxContainer/con_split/HSplitContainer" instance=ExtResource("4_2bmuc")]
+layout_mode = 2
+
+[node name="workspaces_root" type="TabContainer" parent="gui_base/VBoxContainer/con_split/HSplitContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_quv8h")
+tabs_visible = false
+script = ExtResource("5_gtkpn")
+
+[node name="__test_workspace_to_be_removed_at_start__" parent="gui_base/VBoxContainer/con_split/HSplitContainer/workspaces_root" instance=ExtResource("6_6ii5f")]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="console" parent="gui_base/VBoxContainer/con_split" instance=ExtResource("6_ie2pv")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MarginContainer" parent="gui_base/VBoxContainer/con_split/console/VBoxContainer" index="1"]
+size_flags_vertical = 8
+
+[node name="popups" type="Control" parent="gui_base"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3_m0oxb")
+
+[node name="ColorRect" type="ColorRect" parent="gui_base/popups"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.35)
+
+[node name="warning_report" type="AcceptDialog" parent="gui_base/popups"]
+initial_position = 2
+script = ExtResource("4_v7r42")
+
+[node name="confirmation" type="ConfirmationDialog" parent="gui_base/popups"]
+initial_position = 2
+script = ExtResource("5_5xpnk")
+
+[node name="add_mission" parent="gui_base/popups" instance=ExtResource("8_h42o8")]
+initial_position = 2
+visible = false
+
+[node name="progress_bar" parent="gui_base/popups" instance=ExtResource("13_e1hmj")]
+visible = false
+
+[node name="settings" parent="gui_base/popups" instance=ExtResource("14_fkf17")]
+visible = false
+
+[node name="quit_save_confirmation" parent="gui_base/popups" instance=ExtResource("13_vs166")]
+visible = false
+
+[connection signal="pressed" from="gui_base/VBoxContainer/con_split/console/VBoxContainer/MarginContainer/HBoxContainer/console_btn" to="." method="_on_console_btn_pressed"]
+[connection signal="canceled" from="gui_base/popups/confirmation" to="gui_base/popups/confirmation" method="_on_canceled"]
+[connection signal="confirmed" from="gui_base/popups/confirmation" to="gui_base/popups/confirmation" method="_on_confirmed"]
+
+[editable path="gui_base/VBoxContainer/con_split/HSplitContainer/workspaces_root/__test_workspace_to_be_removed_at_start__"]
+[editable path="gui_base/VBoxContainer/con_split/console"]

@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://b1s62wvt8ay5v"]
+
+[ext_resource type="Script" path="res://scripts/gui/popups/pu_file_dialog.gd" id="1_qpe3r"]
+
+[node name="file_dialog" type="FileDialog"]
+title = "Open a Directory"
+initial_position = 2
+size = Vector2i(600, 400)
+ok_button_text = "Select Current Folder"
+mode_overrides_title = false
+file_mode = 2
+access = 2
+script = ExtResource("1_qpe3r")
