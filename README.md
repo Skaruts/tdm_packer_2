@@ -4,6 +4,8 @@ A GUI tool for managing and packing The Dark Mod missions. It can create the `pk
 
 ###### Note: This project was made in Godot 4.2.2-stable. It may not work in older versions of Godot. It also uses GDSCript exclusively, which doesn't require the Mono version of Godot, but should be compatible with it.
 
+###### Note: As this is still a very early version with very little testing, you should back-up any missions you use this app with.
+
 ![2024-08-02 18_18_58-TDM Packer 2](https://github.com/user-attachments/assets/1e03cefc-35ba-41c7-8ab1-805893c2a86c)
 
 ![2024-08-02 18_29_08-TDM Packer 2](https://github.com/user-attachments/assets/df567658-90fd-4a26-a83e-8b84d00bcdae)
