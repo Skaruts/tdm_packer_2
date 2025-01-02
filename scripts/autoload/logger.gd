@@ -137,8 +137,10 @@ func task(msg:Variant) -> void:
 
 
 func varargs_to_str(array:Array) -> String:
-	var args: Array[Variant] = array.filter(func(value:Variant) -> bool:
-		return typeof(value) != TYPE_STRING or value != __NULL)
+	var args: Array[Variant] = array.filter(
+		func(value:Variant) -> bool:
+			return typeof(value) != TYPE_STRING or value != __NULL
+	)
 	return "%s ".repeat(args.size()).strip_edges() % args
 
 
