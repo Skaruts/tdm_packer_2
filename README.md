@@ -19,7 +19,7 @@ A GUI tool for managing and packing The Dark Mod missions. It can create the `pk
 - provides editors for `darkmod.txt` and `readme.txt`
 - automatically creates a `startingmap.txt` or `tdm_mapsequence.txt`, according to how many maps you specify in the map sequence
 - packs your mission into the pk4 at the press of a button, excluding all files and folders you specify in the .pkignore
-- can run DarkRadiant sepcifically for the selected mission
+- can run DarkRadiant specifically for the selected mission
 - can launch a copy of TDM for testing your newly packed pk4 files in isolation
 - supports multiple missions
 
