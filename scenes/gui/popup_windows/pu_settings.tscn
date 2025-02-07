@@ -1,0 +1,199 @@
+[gd_scene load_steps=4 format=3 uid="uid://bdcwd3fh8e61y"]
+
+[ext_resource type="Script" path="res://scenes/gui/popup_windows/pu_settings.gd" id="1_kyeu5"]
+[ext_resource type="Texture2D" uid="uid://dtc2xhj88w4lo" path="res://assets/icons/icons8-folder.svg" id="2_86vlf"]
+[ext_resource type="Script" path="res://scenes/gui/custom/gui_custom_line_edit.gd" id="2_furee"]
+
+[node name="settings_dialog" type="Window"]
+auto_translate_mode = 1
+position = Vector2i(0, 24)
+size = Vector2i(500, 260)
+script = ExtResource("1_kyeu5")
+
+[node name="Panel" type="Panel" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="category_tree" type="Tree" parent="Panel/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(125, 0)
+layout_mode = 2
+
+[node name="tabs" type="TabContainer" parent="Panel/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+current_tab = 0
+tabs_visible = false
+
+[node name="general_settings" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "GUI Font Size"
+
+[node name="sbox_gui_font_size" type="SpinBox" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Code Font Size"
+
+[node name="sbox_code_font_size" type="SpinBox" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings"]
+layout_mode = 2
+
+[node name="ckbtn_show_roots" type="CheckButton" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Show Tree Roots"
+
+[node name="paths" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="tdm_path" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_path"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "TDM Executable"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_path"]
+layout_mode = 2
+
+[node name="ledit_tdm" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_path/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_furee")
+
+[node name="btn_browse_tdm" type="Button" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_path/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+icon = ExtResource("2_86vlf")
+flat = true
+expand_icon = true
+
+[node name="dr_path" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/dr_path"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "DarkRadiant Executable (Optional)"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/dr_path"]
+layout_mode = 2
+
+[node name="ledit_dr" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/dr_path/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_furee")
+
+[node name="btn_browse_dr" type="Button" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/dr_path/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+icon = ExtResource("2_86vlf")
+flat = true
+expand_icon = true
+
+[node name="tdm_copy_path" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_copy_path"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "TDM Copy Executable (Optional)"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_copy_path"]
+layout_mode = 2
+
+[node name="ledit_tdm_copy" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_copy_path/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_furee")
+
+[node name="btn_browse_tdm_copy" type="Button" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_copy_path/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+icon = ExtResource("2_86vlf")
+flat = true
+expand_icon = true
+
+[node name="button_bar" type="HBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/button_bar"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="btn_apply" type="Button" parent="Panel/VBoxContainer/button_bar/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "Apply"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/button_bar"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="btn_ok" type="Button" parent="Panel/VBoxContainer/button_bar/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "OK"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer/button_bar"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="btn_cancel" type="Button" parent="Panel/VBoxContainer/button_bar/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Cancel"
+
+[connection signal="about_to_popup" from="." to="." method="_on_about_to_popup"]
+[connection signal="close_requested" from="." to="." method="_on_close_requested"]
+[connection signal="toggled" from="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer3/ckbtn_show_roots" to="." method="_on_ckbtn_show_roots_toggled"]

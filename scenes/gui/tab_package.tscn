@@ -1,0 +1,187 @@
+[gd_scene load_steps=5 format=3 uid="uid://bjyqwe3hqlqwx"]
+
+[ext_resource type="Script" path="res://scenes/gui/gui_tab_package.gd" id="1_0pq56"]
+[ext_resource type="CodeHighlighter" uid="uid://baolxejcyhdtf" path="res://resources/syntax_pkignore.tres" id="2_2grlp"]
+[ext_resource type="CodeHighlighter" uid="uid://cinkuelpqifd7" path="res://resources/syntax_modfile.tres" id="2_ngnom"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_77p0q"]
+
+[node name="tab_package" type="TabContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+current_tab = 1
+tab_focus_mode = 0
+script = ExtResource("1_0pq56")
+
+[node name="Info" type="HSplitContainer" parent="."]
+visible = false
+layout_mode = 2
+split_offset = -450
+metadata/_tab_index = 0
+
+[node name="VSplitContainer" type="VSplitContainer" parent="Info"]
+layout_mode = 2
+size_flags_horizontal = 3
+split_offset = 105
+
+[node name="modfile" type="VBoxContainer" parent="Info/VSplitContainer"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="label_modfile" type="Label" parent="Info/VSplitContainer/modfile"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "darkmod.txt"
+
+[node name="cedit_modfile" type="CodeEdit" parent="Info/VSplitContainer/modfile"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.45098, 1, 0.388235, 1)
+theme_override_styles/focus = SubResource("StyleBoxEmpty_77p0q")
+text = "Title: Gorgeous Title
+Description: Beautiful Description
+Author: Amazing Author
+Version: 99
+Required TDM Version: 99.1
+"
+drag_and_drop_selection_enabled = false
+wrap_mode = 1
+caret_blink = true
+syntax_highlighter = ExtResource("2_ngnom")
+highlight_all_occurrences = true
+auto_brace_completion_enabled = true
+
+[node name="maps" type="VBoxContainer" parent="Info/VSplitContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Info/VSplitContainer/maps"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Info/VSplitContainer/maps/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Map Sequence"
+
+[node name="btn_add_map" type="Button" parent="Info/VSplitContainer/maps/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Add a map to the map sequence. "
+text = "Add"
+
+[node name="btn_remove_map" type="Button" parent="Info/VSplitContainer/maps/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Remove a map from the map sequence. "
+disabled = true
+text = "Remove"
+
+[node name="map_list" type="ItemList" parent="Info/VSplitContainer/maps"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Info"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="label_readme" type="Label" parent="Info/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "readme.txt"
+
+[node name="cedit_readme" type="CodeEdit" parent="Info/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/focus = SubResource("StyleBoxEmpty_77p0q")
+text = "Lorem ipsum dolor something something Lorem ipsum dolor something something Lorem ipsum dolor something something Lorem ipsum dolor something something Lorem ipsum dolor something something Lorem ipsum dolor something something Lorem ipsum dolor something something Lorem ipsum dolor something something Lorem ipsum dolor something something Lorem ipsum dolor something something 
+
+Lorem ipsum dolor something something 
+Lorem ipsum dolor something something 
+Lorem ipsum dolor something something 
+Lorem ipsum dolor something something 
+Lorem ipsum dolor something something 
+Lorem ipsum dolor something something 
+Lorem ipsum dolor something something 
+Lorem ipsum dolor something something 
+Lorem ipsum dolor something something 
+Lorem ipsum dolor something something 
+"
+drag_and_drop_selection_enabled = false
+wrap_mode = 1
+caret_blink = true
+highlight_all_occurrences = true
+line_length_guidelines = Array[int]([80])
+gutters_draw_line_numbers = true
+auto_brace_completion_enabled = true
+
+[node name="Pack" type="HSplitContainer" parent="."]
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Pack"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+
+[node name="label_pkignore" type="Label" parent="Pack/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = ".pkignore"
+
+[node name="cedit_pkignore" type="CodeEdit" parent="Pack/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.470588, 0.741176, 0.909804, 1)
+theme_override_styles/focus = SubResource("StyleBoxEmpty_77p0q")
+text = "/foo
+
+.jpg"
+drag_and_drop_selection_enabled = false
+wrap_mode = 1
+caret_blink = true
+syntax_highlighter = ExtResource("2_2grlp")
+highlight_all_occurrences = true
+auto_brace_completion_enabled = true
+
+[node name="HSplitContainer" type="HSplitContainer" parent="Pack"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Pack/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="label_included_files" type="Label" parent="Pack/HSplitContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "pack.pk4"
+
+[node name="tree_included_files" type="Tree" parent="Pack/HSplitContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Pack/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="label_excluded_files" type="Label" parent="Pack/HSplitContainer/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Excluded Files"
+
+[node name="tree_excluded_files" type="Tree" parent="Pack/HSplitContainer/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3

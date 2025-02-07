@@ -1,61 +1,29 @@
-[gd_scene load_steps=15 format=3 uid="uid://crsocybgchs2p"]
+[gd_scene load_steps=10 format=3 uid="uid://bxhl1rene8xie"]
 
-[ext_resource type="Script" path="res://scripts/main.gd" id="2_tshml"]
-[ext_resource type="Script" path="res://scripts/gui/popups/popups_mgr.gd" id="3_m0oxb"]
-[ext_resource type="PackedScene" uid="uid://dr3xqscv22xow" path="res://scenes/gui/main_menu.tscn" id="3_reyqo"]
-[ext_resource type="PackedScene" uid="uid://bc3qwgxm6r7t4" path="res://scenes/gui/missions_list.tscn" id="4_2bmuc"]
-[ext_resource type="Script" path="res://scripts/gui/popups/pu_warning_report.gd" id="4_v7r42"]
-[ext_resource type="Script" path="res://scripts/gui/popups/pu_confirmation.gd" id="5_5xpnk"]
-[ext_resource type="Script" path="res://scripts/gui/workspaces_root.gd" id="5_gtkpn"]
-[ext_resource type="PackedScene" uid="uid://blbpdt4r4emrq" path="res://scenes/gui/workspace.tscn" id="6_6ii5f"]
-[ext_resource type="PackedScene" uid="uid://74osis712prp" path="res://scenes/console.tscn" id="6_ie2pv"]
-[ext_resource type="PackedScene" uid="uid://coqnotnw53qos" path="res://scenes/gui/popups/pu_add_mission.tscn" id="8_h42o8"]
-[ext_resource type="PackedScene" uid="uid://cmkj44hgf3vks" path="res://scenes/gui/progress_bar.tscn" id="13_e1hmj"]
-[ext_resource type="PackedScene" uid="uid://33aic0pf5plh" path="res://scenes/gui/custom_gui/pu_quit_save_confirmation.tscn" id="13_vs166"]
-[ext_resource type="PackedScene" uid="uid://2k6h2vhyhuuh" path="res://scenes/gui/popups/pu_settings.tscn" id="14_fkf17"]
+[ext_resource type="Script" path="res://scenes/main.gd" id="1_soa3g"]
+[ext_resource type="PackedScene" uid="uid://wnofs5lvgk2j" path="res://scenes/gui/menu_bar.tscn" id="2_js7kq"]
+[ext_resource type="PackedScene" uid="uid://davxn03cmf2qn" path="res://scenes/gui/missions_list.tscn" id="3_ipwni"]
+[ext_resource type="Script" path="res://scenes/gui/gui_workspace_mgr.gd" id="4_vywpp"]
+[ext_resource type="PackedScene" uid="uid://cmbv0kqxobxm" path="res://scenes/gui/console.tscn" id="5_fktis"]
+[ext_resource type="PackedScene" uid="uid://bdcwd3fh8e61y" path="res://scenes/gui/popup_windows/pu_settings.tscn" id="7_ao82v"]
+[ext_resource type="PackedScene" uid="uid://c5f55dvs1omb5" path="res://scenes/gui/popup_windows/pu_quit_save_confirmation.tscn" id="7_rmgbx"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_quv8h"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mydow"]
+bg_color = Color(0.0705882, 0.0666667, 0.0627451, 1)
 
-[node name="main" type="Control"]
-layout_mode = 3
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_psa6e"]
+
+[node name="main" type="Panel"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
-script = ExtResource("2_tshml")
+theme_override_styles/panel = SubResource("StyleBoxFlat_mydow")
+script = ExtResource("1_soa3g")
 
-[node name="Panel" type="Panel" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 1
-
-[node name="ColorRect" type="ColorRect" parent="."]
-editor_description = "This is just to darken the panel color, whatever it may be, so that it's still compatible with themes."
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 1
-color = Color(0, 0, 0, 0.254902)
-
-[node name="gui_base" type="Control" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 1
-
-[node name="VBoxContainer" type="VBoxContainer" parent="gui_base"]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -63,51 +31,62 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="main_menu" parent="gui_base/VBoxContainer" instance=ExtResource("3_reyqo")]
-layout_mode = 2
-
-[node name="con_split" type="VSplitContainer" parent="gui_base/VBoxContainer"]
+[node name="menu_bar" parent="VBoxContainer" instance=ExtResource("2_js7kq")]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
 
-[node name="HSplitContainer" type="HSplitContainer" parent="gui_base/VBoxContainer/con_split"]
+[node name="console_split" type="VSplitContainer" parent="VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="missions_list" parent="gui_base/VBoxContainer/con_split/HSplitContainer" instance=ExtResource("4_2bmuc")]
-layout_mode = 2
-
-[node name="workspaces_root" type="TabContainer" parent="gui_base/VBoxContainer/con_split/HSplitContainer"]
+[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer/console_split"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxEmpty_quv8h")
+
+[node name="missions_list" parent="VBoxContainer/console_split/HSplitContainer" instance=ExtResource("3_ipwni")]
+layout_mode = 2
+
+[node name="Control" type="Control" parent="VBoxContainer/console_split/HSplitContainer"]
+layout_mode = 2
+
+[node name="no_mission_background" type="TabContainer" parent="VBoxContainer/console_split/HSplitContainer/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+current_tab = 0
 tabs_visible = false
-script = ExtResource("5_gtkpn")
+metadata/_tab_index = 0
 
-[node name="__test_workspace_to_be_removed_at_start__" parent="gui_base/VBoxContainer/con_split/HSplitContainer/workspaces_root" instance=ExtResource("6_6ii5f")]
+[node name="CenterContainer" type="CenterContainer" parent="VBoxContainer/console_split/HSplitContainer/Control/no_mission_background"]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="console" parent="gui_base/VBoxContainer/con_split" instance=ExtResource("6_ie2pv")]
+[node name="Label" type="Label" parent="VBoxContainer/console_split/HSplitContainer/Control/no_mission_background/CenterContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "No mission"
+
+[node name="workspace_mgr" type="TabContainer" parent="VBoxContainer/console_split/HSplitContainer/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_psa6e")
+tabs_visible = false
+script = ExtResource("4_vywpp")
+
+[node name="console" parent="VBoxContainer/console_split" instance=ExtResource("5_fktis")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="MarginContainer" parent="gui_base/VBoxContainer/con_split/console/VBoxContainer" index="1"]
-size_flags_vertical = 8
-
-[node name="popups" type="Control" parent="gui_base"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-script = ExtResource("3_m0oxb")
-
-[node name="ColorRect" type="ColorRect" parent="gui_base/popups"]
+[node name="popup_background" type="ColorRect" parent="."]
+unique_name_in_owner = true
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -115,32 +94,33 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
-color = Color(0, 0, 0, 0.35)
+color = Color(0, 0, 0, 0)
 
-[node name="warning_report" type="AcceptDialog" parent="gui_base/popups"]
+[node name="AcceptDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
 initial_position = 2
-script = ExtResource("4_v7r42")
+size = Vector2i(131, 100)
 
-[node name="confirmation" type="ConfirmationDialog" parent="gui_base/popups"]
+[node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
 initial_position = 2
-script = ExtResource("5_5xpnk")
+size = Vector2i(350, 100)
 
-[node name="add_mission" parent="gui_base/popups" instance=ExtResource("8_h42o8")]
+[node name="FileDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
+initial_position = 2
+size = Vector2i(600, 400)
+max_size = Vector2i(1024, 768)
+dialog_hide_on_ok = true
+access = 2
+
+[node name="settings_dialog" parent="." instance=ExtResource("7_ao82v")]
+unique_name_in_owner = true
+title = "Settings"
 initial_position = 2
 visible = false
 
-[node name="progress_bar" parent="gui_base/popups" instance=ExtResource("13_e1hmj")]
-visible = false
+[node name="quit_save_confirmation" parent="." instance=ExtResource("7_rmgbx")]
+unique_name_in_owner = true
 
-[node name="settings" parent="gui_base/popups" instance=ExtResource("14_fkf17")]
-visible = false
-
-[node name="quit_save_confirmation" parent="gui_base/popups" instance=ExtResource("13_vs166")]
-
-[connection signal="pressed" from="gui_base/VBoxContainer/con_split/console/VBoxContainer/MarginContainer/HBoxContainer/console_btn" to="." method="_on_console_btn_pressed"]
-[connection signal="canceled" from="gui_base/popups/confirmation" to="gui_base/popups/confirmation" method="_on_canceled"]
-[connection signal="confirmed" from="gui_base/popups/confirmation" to="gui_base/popups/confirmation" method="_on_confirmed"]
-
-[editable path="gui_base/VBoxContainer/con_split/HSplitContainer/workspaces_root/__test_workspace_to_be_removed_at_start__"]
-[editable path="gui_base/VBoxContainer/con_split/console"]
+[connection signal="toggled" from="VBoxContainer/console_split/console" to="." method="_on_console_toggled"]

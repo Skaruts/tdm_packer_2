@@ -1,0 +1,52 @@
+[gd_scene load_steps=2 format=3 uid="uid://cmbv0kqxobxm"]
+
+[ext_resource type="Script" path="res://scenes/gui/gui_console.gd" id="1_odksq"]
+
+[node name="console" type="TabContainer"]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -31.0
+grow_horizontal = 2
+grow_vertical = 0
+current_tab = 0
+tabs_visible = false
+script = ExtResource("1_odksq")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="label_container" type="HBoxContainer" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="rtlabel_console" type="RichTextLabel" parent="VBoxContainer/label_container"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 98)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 2
+scroll_following = true
+context_menu_enabled = true
+selection_enabled = true
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = -8
+theme_override_constants/margin_bottom = -6
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="btn_toggle_console" type="Button" parent="VBoxContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+text = "Console"
+flat = true
+
+[connection signal="pressed" from="VBoxContainer/MarginContainer/HBoxContainer/btn_toggle_console" to="." method="_on_btn_toggle_console_pressed"]

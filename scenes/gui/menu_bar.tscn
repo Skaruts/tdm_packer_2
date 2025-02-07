@@ -1,0 +1,56 @@
+[gd_scene load_steps=4 format=3 uid="uid://wnofs5lvgk2j"]
+
+[ext_resource type="Texture2D" uid="uid://b32gvaqbwjgag" path="res://assets/icons/icons8-menu (3).svg" id="1_5wile"]
+[ext_resource type="Script" path="res://scenes/gui/gui_menu_bar.gd" id="1_vjn1j"]
+[ext_resource type="ButtonGroup" uid="uid://d2npeuvcy0c3h" path="res://resources/main_tabs_button_group.tres" id="2_5upro"]
+
+[node name="menu_bar" type="HBoxContainer"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 33.0
+grow_horizontal = 2
+script = ExtResource("1_vjn1j")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="btn_menu" type="MenuButton" parent="HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+icon = ExtResource("1_5wile")
+expand_icon = true
+
+[node name="main_tabs" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="btn_pack_tab" type="Button" parent="main_tabs"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+button_group = ExtResource("2_5upro")
+text = "Package"
+flat = true
+
+[node name="VSeparator" type="VSeparator" parent="main_tabs"]
+layout_mode = 2
+
+[node name="btn_files_tab" type="Button" parent="main_tabs"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+button_group = ExtResource("2_5upro")
+text = "Files"
+flat = true
+
+[node name="--spacer--" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 2
+
+[connection signal="pressed" from="main_tabs/btn_pack_tab" to="." method="_on_main_tab_button_pressed" binds= [0]]
+[connection signal="pressed" from="main_tabs/btn_files_tab" to="." method="_on_main_tab_button_pressed" binds= [1]]

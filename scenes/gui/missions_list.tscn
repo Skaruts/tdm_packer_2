@@ -1,17 +1,17 @@
-[gd_scene load_steps=4 format=3 uid="uid://bc3qwgxm6r7t4"]
+[gd_scene load_steps=2 format=3 uid="uid://davxn03cmf2qn"]
 
-[ext_resource type="Script" path="res://scripts/gui/missions_list.gd" id="1_n1pfp"]
-[ext_resource type="PackedScene" uid="uid://b6ea856dp1jnl" path="res://scenes/gui/action_bar.tscn" id="2_d3wah"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ekqh6"]
+[ext_resource type="Script" path="res://scenes/gui/gui_missions_list.gd" id="1_ob3rl"]
 
 [node name="missions_list" type="TabContainer"]
-anchors_preset = 9
+anchors_preset = 15
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = 161.0
+offset_right = -566.0
+grow_horizontal = 2
 grow_vertical = 2
+current_tab = 0
 tabs_visible = false
-script = ExtResource("1_n1pfp")
+script = ExtResource("1_ob3rl")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -28,35 +28,81 @@ text = "Missions"
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="btn_add_mission" type="Button" parent="VBoxContainer/HBoxContainer"]
+[node name="btn_open_mission" type="Button" parent="VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-tooltip_text = "Load a new mission."
-focus_mode = 0
-text = "Add"
+tooltip_text = "Open a mission for editing. 
 
-[node name="btn_delete_mission" type="Button" parent="VBoxContainer/HBoxContainer"]
+(The path to the Dark Mod executable must be set in the settings.)"
+disabled = true
+text = "Open"
+
+[node name="btn_close_mission" type="Button" parent="VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-tooltip_text = "Delete the selected mission."
-focus_mode = 0
+tooltip_text = "Close the selected mission."
 disabled = true
-text = "Remove"
+text = "Close"
 
 [node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
 layout_mode = 2
 
-[node name="action_bar" parent="VBoxContainer" instance=ExtResource("2_d3wah")]
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 
-[node name="ItemList" type="ItemList" parent="VBoxContainer"]
+[node name="btn_play_mission" type="Button" parent="VBoxContainer/HBoxContainer2"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Launch Darkradiant for this mission. 
+
+The path to the Dark Mod executable must be set in Settings->Paths."
+disabled = true
+text = "Play"
+
+[node name="btn_run_dr" type="Button" parent="VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Launch Darkradiant for this mission. 
+
+The path to the DarkRadiant executable must be set in Settings->Paths."
+disabled = true
+text = "Edit"
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer"]
+visible = false
+layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="btn_pack_mission" type="Button" parent="VBoxContainer/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Create the pk4 file for the selected mission.  
+
+The path to the Dark Mod executable must be set in Settings->Paths."
+disabled = true
+text = "Pack"
+
+[node name="btn_test_pack" type="Button" parent="VBoxContainer/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Copy the pk4 into the test TDM fms folder, and launch TDM to test the pk4.
+
+The mission must be packed first, and the path to the test version of Dark Mod must be set in Settings->Paths."
+disabled = true
+text = "Test"
+
+[node name="ilist_missions" type="ItemList" parent="VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_styles/focus = SubResource("StyleBoxEmpty_ekqh6")
-allow_rmb_select = true
 
-[connection signal="pressed" from="VBoxContainer/HBoxContainer/btn_add_mission" to="." method="_on_btn_add_mission_pressed"]
-[connection signal="pressed" from="VBoxContainer/HBoxContainer/btn_delete_mission" to="." method="_on_btn_delete_mission_pressed"]
-[connection signal="item_selected" from="VBoxContainer/ItemList" to="." method="_on_item_list_item_selected"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer2/btn_play_mission" to="." method="_on_btn_play_mission_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer2/btn_run_dr" to="." method="_on_btn_run_dr_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer3/btn_pack_mission" to="." method="_on_btn_pack_mission_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer3/btn_test_pack" to="." method="_on_btn_test_pack_pressed"]
