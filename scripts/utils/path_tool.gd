@@ -1,6 +1,6 @@
 class_name Path extends Object
 
-# version 8
+# version 10
 
 # just trying to unify the default API because it's a bit confusing
 # and inconsistent, imo.
@@ -92,7 +92,7 @@ static func read_file_string(path:String) -> String:
 	return FileAccess.get_file_as_string(path)
 
 
-static func get_lines(path:String) -> Array:
+static func get_lines(path:String) -> Array[String]:
 	var file := FileAccess.open(path, FileAccess.READ)
 	var lines := []
 	var len := file.get_length()
@@ -130,7 +130,10 @@ static func move_file(src:String, dest:String) -> void:
 	DirAccess.copy_absolute(src, dest)
 	DirAccess.remove_absolute(src)
 
-
+static func delete(path:String) -> void:
+	var error := DirAccess.remove_absolute(path)
+	if error:
+		logs.error("Couldn't delete path: not empty. (%s)" % [path])
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 
@@ -209,7 +212,7 @@ static func get_filenames_filtered(path:String, filter:Callable) -> Array[String
 	return files.filter(filter)
 
 
-static func get_filenames_recursive(path:String) -> Array:
+static func get_filenames_recursive(path:String) -> Array[String]:
 	var dirs:Array[String] = get_dirnames(path)
 	var files:Array[String] = get_filenames(path)
 
@@ -219,7 +222,7 @@ static func get_filenames_recursive(path:String) -> Array:
 	return files
 
 
-static func get_filenames_recursive_filtered(path:String, filter:Callable) -> Array:
+static func get_filenames_recursive_filtered(path:String, filter:Callable) -> Array[String]:
 	var dirs:Array[String] = get_dirnames(path)
 	var files:Array[String] = get_filenames_filtered(path, filter)
 
@@ -308,10 +311,10 @@ static func json_parse(path:String) -> Variant: # don't specify return type
 	return null
 
 
-static func parse_json_string(str:String) -> Variant: # String
+static func parse_json_string(string:String) -> Variant: # String
 	var json := JSON.new()
 
-	if json.parse(str) == OK:
+	if json.parse(string) == OK:
 		return json.data
 
 	logs.error("JSON Parse Error at line %s: %s" % [json.get_error_line(), json.get_error_message()])
@@ -319,7 +322,7 @@ static func parse_json_string(str:String) -> Variant: # String
 	return null
 
 
-static func load_json_lines(path:String) -> Array:
+static func load_json_lines(path:String) -> Array[String]:
 	var file := FileAccess.open(path, FileAccess.READ)
 	var lines := []
 	var len := file.get_length()
@@ -333,7 +336,7 @@ static func load_json_lines(path:String) -> Array:
 	return lines
 
 
-static func load_csv_file(path:String) -> Array:
+static func load_csv_file(path:String) -> Array[String]:
 	var file := FileAccess.open(path, FileAccess.READ)
 	var lines := []
 	var len := file.get_length()
