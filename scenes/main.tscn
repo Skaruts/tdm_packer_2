@@ -137,7 +137,6 @@ visible = false
 visible = false
 
 [node name="quit_save_confirmation" parent="gui_base/popups" instance=ExtResource("13_vs166")]
-visible = false
 
 [connection signal="pressed" from="gui_base/VBoxContainer/con_split/console/VBoxContainer/MarginContainer/HBoxContainer/console_btn" to="." method="_on_console_btn_pressed"]
 [connection signal="canceled" from="gui_base/popups/confirmation" to="gui_base/popups/confirmation" method="_on_canceled"]
