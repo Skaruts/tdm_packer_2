@@ -289,12 +289,12 @@ func remove_current_mission() -> void:
 		curr_mission = missions[ curr_idx ]
 		sort_missions()
 		save_missions_list()
-		gui.missions_list.update_list()
-		gui.workspace_mgr.remove_workspace(last_idx)
-		gui.menu_bar.update_menu()
 	else:
 		curr_mission = null
 		save_missions_list()
+	gui.missions_list.update_list()
+	gui.workspace_mgr.remove_workspace(last_idx)
+	gui.menu_bar.update_menu()
 
 
 func _check_file_hash(mis:Mission, path:String) -> bool:
