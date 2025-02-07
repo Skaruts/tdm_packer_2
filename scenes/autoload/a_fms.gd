@@ -73,7 +73,7 @@ func _soft_reload_mission(mis:Mission) -> void:
 
 
 func load_mission(id: String, create_modfile := false) -> Mission:
-	logs.print("Loading '%s'" % [id])
+	console.print("Loading '%s'" % [id])
 
 	var mission := Mission.new()
 	var fm_path := Path.join(fms_folder, id)
