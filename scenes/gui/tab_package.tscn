@@ -14,14 +14,13 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-current_tab = 1
+current_tab = 0
 tab_focus_mode = 0
 script = ExtResource("1_0pq56")
 
 [node name="Info" type="HSplitContainer" parent="."]
-visible = false
 layout_mode = 2
-split_offset = -450
+split_offset = -210
 metadata/_tab_index = 0
 
 [node name="VSplitContainer" type="VSplitContainer" parent="Info"]
@@ -125,6 +124,7 @@ gutters_draw_line_numbers = true
 auto_brace_completion_enabled = true
 
 [node name="Pack" type="HSplitContainer" parent="."]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
