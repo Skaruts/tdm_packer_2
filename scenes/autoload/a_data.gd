@@ -1,8 +1,6 @@
 extends Node
 # autoloaded script
 
-# boot plash size for release:
-#	576 x 432
 
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=

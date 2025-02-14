@@ -1,5 +1,7 @@
 extends Control
 
+# boot plash size for release:
+#	576 x 432
 
 
 func _enter_tree() -> void:
