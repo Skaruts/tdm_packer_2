@@ -7,7 +7,7 @@
 [node name="settings_dialog" type="Window"]
 auto_translate_mode = 1
 position = Vector2i(0, 24)
-size = Vector2i(500, 260)
+size = Vector2i(700, 400)
 script = ExtResource("1_kyeu5")
 
 [node name="Panel" type="Panel" parent="."]
