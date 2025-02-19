@@ -83,8 +83,8 @@ func set_dirty_flag(file_dirty:bool, flag:DirtyFlags, silent:=false) -> void:
 	if file_dirty: dirty |= flag
 	else:          dirty &= ~flag
 
-	if old_dirty != dirty and not silent:
-		gui.missions_list.update_current_mission_title()
+	#if old_dirty != dirty and not silent:
+		#gui.missions_list.update_current_mission_id()
 
 
 

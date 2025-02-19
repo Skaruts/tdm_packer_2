@@ -10,6 +10,10 @@ var fms_folder : String  # TODO:
 var missions : Array[Mission]
 var curr_mission : Mission
 
+var _save_timer := 0.0
+var _save_delay := 1.0
+var _mission_to_save : Mission
+
 
 
 func initialize() -> void:
@@ -24,6 +28,31 @@ func initialize() -> void:
 	if missions.size():
 		#select_mission(0) # don't call this here, it's not needed, and it will 'check_mission_filesystem'
 		curr_mission = missions[0]
+
+
+func _ready() -> void:
+	set_process(false)
+
+
+func _process(delta: float) -> void:
+	_save_timer -= delta
+	if _save_timer > 0: return
+	stop_timer_and_save()
+
+
+func start_save_timer() -> void:
+	_save_timer = _save_delay
+	_mission_to_save = curr_mission
+	set_process(true)
+
+
+func is_save_timer_counting() -> bool:
+	return _save_timer > 0
+
+
+func stop_timer_and_save() -> void:
+	set_process(false)
+	save_mission(_mission_to_save)
 
 
 
@@ -69,7 +98,6 @@ func _soft_reload_mission(mis:Mission) -> void:
 	FMUtils.build_file_tree(mis)
 	gui.workspace_mgr.on_mission_reloaded()
 	gui.menu_bar.update_menu()
-
 
 
 func load_mission(id: String, create_modfile := false) -> Mission:

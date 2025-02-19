@@ -34,7 +34,6 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="label_modfile" type="Label" parent="Info/VSplitContainer/modfile"]
-unique_name_in_owner = true
 layout_mode = 2
 text = "darkmod.txt"
 
@@ -93,7 +92,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="label_readme" type="Label" parent="Info/VBoxContainer"]
-unique_name_in_owner = true
 layout_mode = 2
 text = "readme.txt"
 
@@ -133,7 +131,6 @@ custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 
 [node name="label_pkignore" type="Label" parent="Pack/VBoxContainer"]
-unique_name_in_owner = true
 layout_mode = 2
 text = ".pkignore"
 

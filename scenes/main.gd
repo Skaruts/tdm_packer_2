@@ -44,28 +44,30 @@ func _on_console_toggled() -> void:
 func _notification(what: int) -> void:
 	match what:
 		NOTIFICATION_WM_CLOSE_REQUEST:
-			if await _check_for_unsaved_missions():
-				get_tree().quit()
+			if fms.is_save_timer_counting():
+			#if await _check_for_unsaved_missions():
+				fms.stop_timer_and_save()
+			get_tree().quit()
 		NOTIFICATION_WM_WINDOW_FOCUS_IN:
 			fms.check_mission_filesystem()
 			gui.menu_bar.update_menu()
 
 
 
-func _check_for_unsaved_missions() -> bool:
-	for mission in fms.missions:
-		if not mission.dirty: continue
-
-		popups.show_save_quit_confirmation(
-			mission.id,
-			"Save before quitting?",
-			fms.save_mission.bind(mission)
-		)
-
-		if await popups.quit_save_confirmation.popup_closed:
-			return false
-
-		# add a delay between multiple save confirmation popups
-		await get_tree().create_timer(0.1).timeout
-
-	return true
+#func _check_for_unsaved_missions() -> bool:
+	#for mission in fms.missions:
+		#if not mission.dirty: continue
+#
+		#popups.show_save_quit_confirmation(
+			#mission.id,
+			#"Save before quitting?",
+			#fms.save_mission.bind(mission)
+		#)
+#
+		#if await popups.quit_save_confirmation.popup_closed:
+			#return false
+#
+		## add a delay between multiple save confirmation popups
+		#await get_tree().create_timer(0.1).timeout
+#
+	#return true

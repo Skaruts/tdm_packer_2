@@ -51,31 +51,10 @@ func _on_btn_open_mission_pressed() -> void:
 	)
 
 
-var _save_and_close := func() -> void:
-	fms.save_mission(fms.curr_mission)
-	fms.remove_current_mission()
-
-var _close_no_save := func(__:String) -> void:
-	fms.remove_current_mission()
-
-var _ask_save := func() -> void:
-	if not fms.curr_mission.dirty:
-		fms.remove_current_mission()
-	else:
-		await get_tree().create_timer(0.05).timeout
-		popups.show_save_quit_confirmation(
-			fms.curr_mission.id,
-			"Save before closing?",
-			_save_and_close,
-			_close_no_save
-		)
-
 func _on_btn_close_mission_pressed() -> void:
-	popups.show_confirmation({
-			text = "Close the mission '%s'?" % [fms.curr_mission.id],
-		},
-		_ask_save
-	)
+	if fms.is_save_timer_counting():
+		fms.stop_timer_and_save()
+		fms.remove_current_mission()
 
 
 func update_buttons() -> void:
@@ -99,10 +78,6 @@ func update_list() -> void:
 	itemlist_missions.clear()
 	for m:Mission in fms.missions:
 		var id := m.id
-
-		if m.dirty:
-			id += " (*)"
-
 		var idx := itemlist_missions.add_item(id)
 
 		#if m.file_tree == null:
@@ -120,12 +95,12 @@ func _on_item_selected(idx:int) -> void:
 	fms.select_mission(idx)
 
 
-func update_current_mission_title() -> void:
-	var idx := fms.get_current_mission_index()
-	var id := fms.curr_mission.id
-	if fms.curr_mission.dirty:
-		id += " (*)"
-	itemlist_missions.set_item_text(idx, id)
+#func update_current_mission_id() -> void:
+	#var idx := fms.get_current_mission_index()
+	#var id := fms.curr_mission.id
+	#if fms.curr_mission.dirty:
+		#id += " (*)"
+	#itemlist_missions.set_item_text(idx, id)
 
 
 func _on_btn_play_mission_pressed() -> void:

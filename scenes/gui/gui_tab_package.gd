@@ -54,9 +54,9 @@ const FOLDER_ICON = preload(nodepaths.FOLDER_ICON_PATH)
 @onready var cedit_readme: CodeEdit = %cedit_readme
 @onready var cedit_pkignore: CodeEdit = %cedit_pkignore
 
-@onready var label_modfile: Label = %label_modfile
-@onready var label_readme: Label = %label_readme
-@onready var label_pkignore: Label = %label_pkignore
+#@onready var label_modfile: Label = %label_modfile
+#@onready var label_readme: Label = %label_readme
+#@onready var label_pkignore: Label = %label_pkignore
 
 @onready var btn_add_map: Button = %btn_add_map
 @onready var btn_remove_map: Button = %btn_remove_map
@@ -108,9 +108,9 @@ func _ready() -> void:
 	)
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("save"):
-		save_current_file()
+#func _unhandled_input(event: InputEvent) -> void:
+	#if event.is_action_pressed("save"):
+		#save_current_file()
 
 
 func set_mission(mission: Mission) -> void:
@@ -155,9 +155,9 @@ func on_mission_reloaded() -> void:
 	cedit_readme.tag_saved_version()
 	cedit_pkignore.tag_saved_version()
 
-	_update_label(label_modfile,  data.MODFILE_FILENAME, false)
-	_update_label(label_readme,   data.README_FILENAME,  false)
-	_update_label(label_pkignore, data.IGNORES_FILENAME, false)
+	#_update_label(label_modfile,  data.MODFILE_FILENAME, false)
+	#_update_label(label_readme,   data.README_FILENAME,  false)
+	#_update_label(label_pkignore, data.IGNORES_FILENAME, false)
 
 	_build_trees()
 	_build_map_list()
@@ -183,13 +183,13 @@ func save_current_file() -> void:
 
 	if curr_editor == cedit_modfile:
 		fms.save_modfile(_mission)
-		_update_label(label_modfile, data.MODFILE_FILENAME, false)
+		#_update_label(label_modfile, data.MODFILE_FILENAME, false)
 	elif curr_editor == cedit_readme:
 		fms.save_readme(_mission)
-		_update_label(label_readme, data.README_FILENAME, false)
+		#_update_label(label_readme, data.README_FILENAME, false)
 	elif curr_editor == cedit_pkignore:
 		fms.save_pkignore(_mission)
-		_update_label(label_pkignore, data.IGNORES_FILENAME, false)
+		#_update_label(label_pkignore, data.IGNORES_FILENAME, false)
 
 	curr_editor.tag_saved_version()
 
@@ -200,16 +200,16 @@ func reload_file(filename:String) -> void:
 		"modfile":
 			cedit_modfile.text = _mission.files.modfile
 			cedit_modfile.tag_saved_version()
-			_update_label(label_modfile, data.MODFILE_FILENAME, false)
+			#_update_label(label_modfile, data.MODFILE_FILENAME, false)
 		"readme":
 			logs.print("updating readme")
 			cedit_readme.text = _mission.files.readme
 			cedit_readme.tag_saved_version()
-			_update_label(label_readme, data.README_FILENAME, false)
+			#_update_label(label_readme, data.README_FILENAME, false)
 		"pkignore":
 			cedit_pkignore.text = _mission.files.pkignore
 			cedit_pkignore.tag_saved_version()
-			_update_label(label_pkignore, data.IGNORES_FILENAME, false)
+			#_update_label(label_pkignore, data.IGNORES_FILENAME, false)
 		"map_sequence":
 			logs.print(_mission.map_sequence)
 			_build_map_list()
@@ -248,25 +248,27 @@ func _on_code_editor_text_changed(idx:int) -> void:
 	match idx:
 		EditorIndex.Modfile:
 			var dirty:bool = cedit_modfile.get_version() != cedit_modfile.get_saved_version()
-			_update_label(label_modfile, data.MODFILE_FILENAME, dirty)
+			#_update_label(label_modfile, data.MODFILE_FILENAME, dirty)
 			_mission.update_modfile(cedit_modfile.text, dirty)
 		EditorIndex.Readme:
 			var dirty:bool = cedit_readme.get_version() != cedit_readme.get_saved_version()
-			_update_label(label_readme, data.README_FILENAME, dirty)
+			#_update_label(label_readme, data.README_FILENAME, dirty)
 			_mission.update_readme(cedit_readme.text, dirty)
 		EditorIndex.PkIgnore:
 			var dirty:bool = cedit_pkignore.get_version() != cedit_pkignore.get_saved_version()
-			_update_label(label_pkignore, data.IGNORES_FILENAME, dirty)
+			#_update_label(label_pkignore, data.IGNORES_FILENAME, dirty)
 			_mission.update_pkignore(cedit_pkignore.text, dirty)
 
+	gui.start_save_timer()
 
-func _update_label(label:Label, text:String, dirty:bool) -> void:
-	if dirty:
-		label.text = text + " (*)"
-		label.set("theme_override_colors/font_color", data.EDITED_FILE_COLOR)
-	else:
-		label.text = text
-		label.set("theme_override_colors/font_color", data.TEXT_COLOR)
+
+#func _update_label(label:Label, text:String, dirty:bool) -> void:
+	#if dirty:
+		#label.text = text + " (*)"
+		#label.set("theme_override_colors/font_color", data.EDITED_FILE_COLOR)
+	#else:
+		#label.text = text
+		#label.set("theme_override_colors/font_color", data.TEXT_COLOR)
 
 
 
