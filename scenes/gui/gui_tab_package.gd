@@ -259,7 +259,7 @@ func _on_code_editor_text_changed(idx:int) -> void:
 			#_update_label(label_pkignore, data.IGNORES_FILENAME, dirty)
 			_mission.update_pkignore(cedit_pkignore.text, dirty)
 
-	gui.start_save_timer()
+	fms.start_save_timer()
 
 
 #func _update_label(label:Label, text:String, dirty:bool) -> void:

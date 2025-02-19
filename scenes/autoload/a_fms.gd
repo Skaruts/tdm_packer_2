@@ -276,7 +276,7 @@ func select_mission(idx:int) -> void:
 	curr_mission = missions[idx]
 	check_mission_filesystem()
 	gui.missions_list.update_buttons()
-	gui.workspace_mgr.select_workspace(fms.get_current_mission_index())
+	gui.workspace_mgr.select_workspace(get_current_mission_index())
 	gui.menu_bar.update_menu()
 	logs.print("select_mission", idx, curr_mission.id)
 
@@ -382,46 +382,26 @@ func is_mission_packed(mis:Mission) -> bool:
 	return Path.file_exists(pak_filepath)
 
 
-func _check_save_and_run(question:String, callback:Callable) -> void:
-	if not curr_mission.dirty:
-		callback.call()
-	else:
-		popups.show_confirmation({
-				title = "Save Mission?",
-				text = question % curr_mission.id,
-				ok_text = "Save",
-			},
-			func() -> void:
-				save_mission(curr_mission, true)
-				callback.call()
-		)
-
-
 func pack_mission() -> void:
-	_check_save_and_run(
-		"There are unsaved changes in '%s'.\nSave before packing?",
-		func() -> void:
-			FMUtils.pack_mission(curr_mission, get_tree())
-			check_mission_filesystem()
-	)
+	if is_save_timer_counting():
+		save_mission(curr_mission, true)
+	FMUtils.pack_mission(curr_mission, get_tree())
+	check_mission_filesystem()
 
 
 func play_mission() -> void:
-	_check_save_and_run(
-		"There are unsaved changes in '%s'.\nSave before launching TDM?",
-		launcher.run_tdm
-	)
+	if is_save_timer_counting():
+		save_mission(curr_mission, true)
+	launcher.run_tdm()
 
 
 func edit_mission() -> void:
-	_check_save_and_run(
-		"There are unsaved changes in '%s'.\nSave before launching DarkRadiant?",
-		launcher.run_darkradiant
-	)
+	if is_save_timer_counting():
+		save_mission(curr_mission, true)
+	launcher.run_darkradiant()
 
 
 func test_pack()    -> void:
-	_check_save_and_run(
-		"There are unsaved changes in '%s'.\nSave before testing?",
-		launcher.run_tdm_copy
-	)
+	if is_save_timer_counting():
+		save_mission(curr_mission, true)
+	launcher.run_tdm_copy()
