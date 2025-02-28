@@ -54,7 +54,7 @@ func _on_btn_open_mission_pressed() -> void:
 func _on_btn_close_mission_pressed() -> void:
 	if fms.is_save_timer_counting():
 		fms.stop_timer_and_save()
-		fms.remove_current_mission()
+	fms.remove_current_mission()
 
 
 func update_buttons() -> void:
