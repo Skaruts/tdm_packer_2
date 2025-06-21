@@ -1,16 +1,12 @@
 extends BasePopup
 
 
-@onready var category_tree       : Tree     = %category_tree
-
 @onready var le_tdm              : LineEdit = %le_tdm
 @onready var le_dr               : LineEdit = %le_dr
 @onready var le_tdm_copy         : LineEdit = %le_tdm_copy
 @onready var btn_browse_tdm      : Button   = %btn_browse_tdm
 @onready var btn_browse_dr       : Button   = %btn_browse_dr
 @onready var btn_browse_tdm_copy : Button   = %btn_browse_tdm_copy
-
-@onready var tabs                : TabContainer = %tabs
 
 @onready var sb_gui_font_size    : SpinBox     = %sb_gui_font_size
 @onready var sb_code_font_size   : SpinBox     = %sb_code_font_size
@@ -22,23 +18,8 @@ var temp_config: ConfigData
 
 
 func _on_ready() -> void:
-	#
-	# 	init tree
-	#
-	category_tree.hide_root = true
-	var root := category_tree.create_item()
-	var general := root.create_child()
-	general.set_text(0, "General")
-	category_tree.set_selected(general, 0)
-	root.create_child().set_text(0, "Paths")
-	category_tree.item_selected.connect(
-		func() -> void:
-			tabs.current_tab = category_tree.get_selected().get_index()
-	)
+	%tabs.current_tab = 0
 
-	#
-	#	init signals
-	#
 	sb_gui_font_size.value_changed.connect(_on_sb_gui_font_size_value_changed)
 	sb_code_font_size.value_changed.connect(_on_sb_code_font_size_value_changed)
 

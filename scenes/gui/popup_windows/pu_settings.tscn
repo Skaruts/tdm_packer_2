@@ -1,13 +1,14 @@
-[gd_scene load_steps=4 format=3 uid="uid://bdcwd3fh8e61y"]
+[gd_scene load_steps=5 format=3 uid="uid://bdcwd3fh8e61y"]
 
 [ext_resource type="Script" uid="uid://3di4rd3tiucr" path="res://scenes/gui/popup_windows/pu_settings.gd" id="1_kyeu5"]
 [ext_resource type="Texture2D" uid="uid://dtc2xhj88w4lo" path="res://assets/icons/icons8-folder.svg" id="2_86vlf"]
+[ext_resource type="StyleBox" uid="uid://byni8x36qkwsd" path="res://resources/darker_panel.tres" id="2_by5op"]
 [ext_resource type="Script" uid="uid://d10ddpoov81uu" path="res://scenes/gui/custom/gui_custom_line_edit.gd" id="2_furee"]
 
 [node name="settings_dialog" type="Window"]
 auto_translate_mode = 1
 position = Vector2i(0, 24)
-size = Vector2i(700, 400)
+size = Vector2i(600, 350)
 script = ExtResource("1_kyeu5")
 
 [node name="Panel" type="Panel" parent="."]
@@ -16,89 +17,84 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = ExtResource("2_by5op")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
-layout_mode = 1
+[node name="PanelContainer" type="PanelContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="tabs" type="TabContainer" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-
-[node name="category_tree" type="Tree" parent="Panel/VBoxContainer/HBoxContainer"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(125, 0)
-layout_mode = 2
-
-[node name="tabs" type="TabContainer" parent="Panel/VBoxContainer/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
 current_tab = 0
-tabs_visible = false
 
-[node name="general_settings" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs"]
+[node name="General" type="VBoxContainer" parent="PanelContainer/VBoxContainer/tabs"]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer"]
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "GUI Font Size"
 
-[node name="sb_gui_font_size" type="SpinBox" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer"]
+[node name="sb_gui_font_size" type="SpinBox" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 rounded = true
 select_all_on_focus = true
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer2"]
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Code Font Size"
 
-[node name="sb_code_font_size" type="SpinBox" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer2"]
+[node name="sb_code_font_size" type="SpinBox" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 rounded = true
 select_all_on_focus = true
 
-[node name="HSeparator2" type="HSeparator" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings"]
+[node name="HSeparator2" type="HSeparator" parent="PanelContainer/VBoxContainer/tabs/General"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General"]
 layout_mode = 2
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings"]
-layout_mode = 2
-
-[node name="cbt_show_roots" type="CheckButton" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer3"]
+[node name="cbt_show_roots" type="CheckButton" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer3"]
 unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
 text = "Show Tree Roots"
 
-[node name="HSeparator" type="HSeparator" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings"]
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/VBoxContainer/tabs/General"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General"]
 layout_mode = 2
 
-[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer4"]
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer4"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Popup Background Opacity"
 
-[node name="sb_bg_opacity" type="SpinBox" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer4"]
+[node name="sb_bg_opacity" type="SpinBox" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer4"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -107,29 +103,29 @@ rounded = true
 suffix = "%"
 select_all_on_focus = true
 
-[node name="paths" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs"]
+[node name="Paths" type="VBoxContainer" parent="PanelContainer/VBoxContainer/tabs"]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="tdm_path" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths"]
+[node name="tdm_path" type="VBoxContainer" parent="PanelContainer/VBoxContainer/tabs/Paths"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_path"]
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/Paths/tdm_path"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "TDM Executable"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_path"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/Paths/tdm_path"]
 layout_mode = 2
 
-[node name="le_tdm" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_path/HBoxContainer"]
+[node name="le_tdm" type="LineEdit" parent="PanelContainer/VBoxContainer/tabs/Paths/tdm_path/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_furee")
 
-[node name="btn_browse_tdm" type="Button" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_path/HBoxContainer"]
+[node name="btn_browse_tdm" type="Button" parent="PanelContainer/VBoxContainer/tabs/Paths/tdm_path/HBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -137,24 +133,28 @@ icon = ExtResource("2_86vlf")
 flat = true
 expand_icon = true
 
-[node name="dr_path" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths"]
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/VBoxContainer/tabs/Paths"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="dr_path" type="VBoxContainer" parent="PanelContainer/VBoxContainer/tabs/Paths"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/dr_path"]
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/Paths/dr_path"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "DarkRadiant Executable (Optional)"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/dr_path"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/Paths/dr_path"]
 layout_mode = 2
 
-[node name="le_dr" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/dr_path/HBoxContainer"]
+[node name="le_dr" type="LineEdit" parent="PanelContainer/VBoxContainer/tabs/Paths/dr_path/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_furee")
 
-[node name="btn_browse_dr" type="Button" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/dr_path/HBoxContainer"]
+[node name="btn_browse_dr" type="Button" parent="PanelContainer/VBoxContainer/tabs/Paths/dr_path/HBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -162,24 +162,28 @@ icon = ExtResource("2_86vlf")
 flat = true
 expand_icon = true
 
-[node name="tdm_copy_path" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths"]
+[node name="HSeparator2" type="HSeparator" parent="PanelContainer/VBoxContainer/tabs/Paths"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="tdm_copy_path" type="VBoxContainer" parent="PanelContainer/VBoxContainer/tabs/Paths"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_copy_path"]
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/Paths/tdm_copy_path"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "TDM Copy Executable (Optional)"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_copy_path"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/Paths/tdm_copy_path"]
 layout_mode = 2
 
-[node name="le_tdm_copy" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_copy_path/HBoxContainer"]
+[node name="le_tdm_copy" type="LineEdit" parent="PanelContainer/VBoxContainer/tabs/Paths/tdm_copy_path/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_furee")
 
-[node name="btn_browse_tdm_copy" type="Button" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_copy_path/HBoxContainer"]
+[node name="btn_browse_tdm_copy" type="Button" parent="PanelContainer/VBoxContainer/tabs/Paths/tdm_copy_path/HBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -187,39 +191,27 @@ icon = ExtResource("2_86vlf")
 flat = true
 expand_icon = true
 
-[node name="button_bar" type="HBoxContainer" parent="Panel/VBoxContainer"]
+[node name="button_bar" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/button_bar"]
-layout_mode = 2
-size_flags_horizontal = 3
-alignment = 1
-
-[node name="btn_apply" type="Button" parent="Panel/VBoxContainer/button_bar/HBoxContainer"]
+[node name="btn_apply" type="Button" parent="PanelContainer/VBoxContainer/button_bar"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 6
 disabled = true
 text = "Apply"
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/button_bar"]
-layout_mode = 2
-size_flags_horizontal = 3
-alignment = 1
-
-[node name="btn_ok" type="Button" parent="Panel/VBoxContainer/button_bar/HBoxContainer3"]
+[node name="btn_ok" type="Button" parent="PanelContainer/VBoxContainer/button_bar"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 6
 text = "OK"
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer/button_bar"]
-layout_mode = 2
-size_flags_horizontal = 3
-alignment = 1
-
-[node name="btn_cancel" type="Button" parent="Panel/VBoxContainer/button_bar/HBoxContainer2"]
+[node name="btn_cancel" type="Button" parent="PanelContainer/VBoxContainer/button_bar"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 6
 text = "Cancel"
 
-[connection signal="toggled" from="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer3/cbt_show_roots" to="." method="_on_cbt_show_roots_toggled"]
-[connection signal="value_changed" from="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer4/sb_bg_opacity" to="." method="_on_sb_bg_opacity_value_changed"]
+[connection signal="toggled" from="PanelContainer/VBoxContainer/tabs/General/HBoxContainer3/cbt_show_roots" to="." method="_on_cbt_show_roots_toggled"]
+[connection signal="value_changed" from="PanelContainer/VBoxContainer/tabs/General/HBoxContainer4/sb_bg_opacity" to="." method="_on_sb_bg_opacity_value_changed"]
