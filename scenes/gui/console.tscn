@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cmbv0kqxobxm"]
 
-[ext_resource type="Script" path="res://scenes/gui/gui_console.gd" id="1_odksq"]
+[ext_resource type="Script" uid="uid://del8fji7grk07" path="res://scenes/gui/gui_console.gd" id="1_odksq"]
 
 [node name="console" type="TabContainer"]
 anchors_preset = 12

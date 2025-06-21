@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://davxn03cmf2qn"]
 
-[ext_resource type="Script" path="res://scenes/gui/gui_missions_list.gd" id="1_ob3rl"]
+[ext_resource type="Script" uid="uid://djyn58dw733q5" path="res://scenes/gui/gui_missions_list.gd" id="1_ob3rl"]
 
 [node name="missions_list" type="TabContainer"]
 anchors_preset = 15

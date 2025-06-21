@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cch1qviuewj5"]
 
-[ext_resource type="Script" path="res://scenes/gui/gui_tab_files.gd" id="1_lvyyf"]
+[ext_resource type="Script" uid="uid://c4u5jw8aj2wwo" path="res://scenes/gui/gui_tab_files.gd" id="1_lvyyf"]
 
 [node name="tab_files" type="TabContainer"]
 anchors_preset = 15

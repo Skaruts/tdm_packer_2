@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://c5f55dvs1omb5"]
 
-[ext_resource type="Script" path="res://scenes/gui/quit_save_confirmation.gd" id="1_gk4l5"]
+[ext_resource type="Script" uid="uid://deeddfoqh3ha7" path="res://scenes/gui/quit_save_confirmation.gd" id="1_gk4l5"]
 
 [node name="quit_save_confirmation" type="ConfirmationDialog"]
 auto_translate_mode = 1

@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://bjyqwe3hqlqwx"]
 
-[ext_resource type="Script" path="res://scenes/gui/gui_tab_package.gd" id="1_0pq56"]
+[ext_resource type="Script" uid="uid://da5n5juxpg61i" path="res://scenes/gui/gui_tab_package.gd" id="1_0pq56"]
 [ext_resource type="CodeHighlighter" uid="uid://baolxejcyhdtf" path="res://resources/syntax_pkignore.tres" id="2_2grlp"]
 [ext_resource type="CodeHighlighter" uid="uid://cinkuelpqifd7" path="res://resources/syntax_modfile.tres" id="2_ngnom"]
 

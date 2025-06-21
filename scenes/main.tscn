@@ -1,9 +1,9 @@
 [gd_scene load_steps=10 format=3 uid="uid://bxhl1rene8xie"]
 
-[ext_resource type="Script" path="res://scenes/main.gd" id="1_soa3g"]
+[ext_resource type="Script" uid="uid://cn753q050wieh" path="res://scenes/main.gd" id="1_soa3g"]
 [ext_resource type="PackedScene" uid="uid://wnofs5lvgk2j" path="res://scenes/gui/menu_bar.tscn" id="2_js7kq"]
 [ext_resource type="PackedScene" uid="uid://davxn03cmf2qn" path="res://scenes/gui/missions_list.tscn" id="3_ipwni"]
-[ext_resource type="Script" path="res://scenes/gui/gui_workspace_mgr.gd" id="4_vywpp"]
+[ext_resource type="Script" uid="uid://djn2qjsdxybfc" path="res://scenes/gui/gui_workspace_mgr.gd" id="4_vywpp"]
 [ext_resource type="PackedScene" uid="uid://cmbv0kqxobxm" path="res://scenes/gui/console.tscn" id="5_fktis"]
 [ext_resource type="PackedScene" uid="uid://bdcwd3fh8e61y" path="res://scenes/gui/popup_windows/pu_settings.tscn" id="7_ao82v"]
 [ext_resource type="PackedScene" uid="uid://c5f55dvs1omb5" path="res://scenes/gui/popup_windows/pu_quit_save_confirmation.tscn" id="7_rmgbx"]
