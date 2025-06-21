@@ -93,7 +93,6 @@ func _on_menu_id_pressed(id:int) -> void:
 func open_dialog(dialog_name: String) -> void:
 	match dialog_name:
 		"settings":
-			popups.settings_dialog.temp_data = data.config.duplicate()
 			popups.show_popup(popups.settings_dialog)
 		"about":
 			popups.show_message(
