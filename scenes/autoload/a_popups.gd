@@ -36,7 +36,8 @@ func _on_popup_visibility_changed(pu:Window) -> void:
 		popup_stack.push_back(pu)
 		popup_background.visible = true
 	else:
-		popup_stack.pop_back()
+		var last_pu: Window = popup_stack.pop_back()
+		if last_pu != pu: logs.error("popup stack mismatch")
 		if popup_stack.size() == 0:
 			popup_background.visible = false
 
