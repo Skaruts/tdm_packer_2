@@ -79,8 +79,8 @@ func _on_menu_id_pressed(id:int) -> void:
 		MENU_DEBUG_GET_WINDOW_SIZE:
 			var w := get_window()
 			var ss := DisplayServer.screen_get_size()
-			logs.print(w.position.x == (ss.x/2-w.size.x/2))
-			while w.position.x != (ss.x/2-w.size.x/2):
+			logs.print(w.position.x == (ss.x/2.0 - w.size.x/2.0))
+			while w.position.x != (ss.x/2.0 - w.size.x/2.0):
 				await get_tree().process_frame
 				logs.error("%s | %s" % [ss, w.size])
 				w.move_to_center()

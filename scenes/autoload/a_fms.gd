@@ -286,7 +286,7 @@ func add_mission(id:String) -> Mission:
 		popups.show_message("", "Mission '%s' is already loaded." % [id])
 		return
 
-	var last_mission = curr_mission
+	var last_mission := curr_mission
 
 	var mission := load_mission(id, true)
 	curr_mission = mission

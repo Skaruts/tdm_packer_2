@@ -7,7 +7,7 @@ var __properties:Dictionary
 
 
 func _get(prop: StringName) -> Variant:
-	for key in __properties:
+	for key:String in __properties:
 		if prop in __properties[key]:
 			return __properties[key][prop]
 
@@ -16,7 +16,7 @@ func _get(prop: StringName) -> Variant:
 
 
 func _set(prop: StringName, val: Variant) -> bool:
-	for key in __properties:
+	for key:String in __properties:
 		if prop in __properties[key]:
 			__properties[key][prop] = val
 			dirty = true
@@ -32,8 +32,8 @@ func _set(prop: StringName, val: Variant) -> bool:
 func save(path:String) -> int:
 	var cf := ConfigFile.new()
 
-	for key in __properties:
-		for prop in __properties[key]:
+	for key:String in __properties:
+		for prop:String in __properties[key]:
 			cf.set_value(key, prop, __properties[key][prop])
 
 	var err := cf.save(path)
@@ -52,8 +52,8 @@ func load(path:String) -> int:
 	var err := cf.load(path)
 	if err != OK: return err
 
-	for key in __properties:
-		for prop in __properties[key]:
+	for key:String in __properties:
+		for prop:String in __properties[key]:
 			__properties[key][prop] = cf.get_value(key, prop, __properties[key][prop])
 
 	dirty = false

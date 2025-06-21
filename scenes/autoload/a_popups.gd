@@ -55,7 +55,7 @@ func _connect_callback(pu:Window, _signal:StringName, callback:Variant=null) -> 
 #		Regular Popups
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 func show_message(title:String, text:String, callback:Variant=null) -> void:
-	_connect_callback(message_dialog, "confirmed", callback as Callable)
+	_connect_callback(message_dialog, "confirmed", callback)
 	message_dialog.title = title
 	message_dialog.dialog_text = text
 	message_dialog.popup()

@@ -32,7 +32,7 @@ nodepaths="*res://scenes/autoload/a_nodepaths.gd"
 
 [debug]
 
-gdscript/warnings/enable=false
+gdscript/warnings/standalone_expression=2
 gdscript/warnings/untyped_declaration=2
 
 [display]

@@ -31,7 +31,7 @@ func _ready() -> void:
 func _on_timer_timeout() -> void:
 	#logs.print("checking pids: ", pids.size())
 	if not pids.size(): return
-	for pid in pids:
+	for pid:int in pids:
 		if not OS.is_process_running(pid):
 			var f:Callable = pids[pid]
 			f.call()
