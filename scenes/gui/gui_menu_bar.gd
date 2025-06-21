@@ -7,6 +7,7 @@ enum {
 	MENU_OPEN_MISSION_FOLDER,
 	MENU_OPEN_MISSION_TEST_FOLDER,
 	MENU_DEBUG_GET_WINDOW_SIZE,
+	MENU_ABOUT,
 	MENU_EXIT,
 }
 
@@ -48,6 +49,8 @@ func _ready() -> void:
 	main_menu.add_separator()
 	main_menu.add_item("Settings", MENU_SETTINGS)
 	main_menu.add_separator()
+	main_menu.add_item("About", MENU_ABOUT)
+	main_menu.add_separator()
 	main_menu.add_item("Exit", MENU_EXIT)
 
 	main_menu.id_pressed.connect(_on_menu_id_pressed)
@@ -74,7 +77,8 @@ func _on_menu_id_pressed(id:int) -> void:
 		MENU_OPEN_PACKER_FOLDER:       launcher.open_fm_packer_folder()
 		MENU_OPEN_MISSION_FOLDER:      launcher.open_mission_folder()
 		MENU_OPEN_MISSION_TEST_FOLDER: launcher.open_mission_test_folder()
-		MENU_SETTINGS:                 open_settings()
+		MENU_SETTINGS:                 open_dialog("settings")
+		MENU_ABOUT:                    open_dialog("about")
 		MENU_EXIT:                     get_tree().quit()
 		MENU_DEBUG_GET_WINDOW_SIZE:
 			var w := get_window()
@@ -86,9 +90,16 @@ func _on_menu_id_pressed(id:int) -> void:
 				w.move_to_center()
 
 
-func open_settings() -> void:
-	popups.settings_dialog.temp_data = data.config.duplicate()
-	popups.show_popup(popups.settings_dialog)
+func open_dialog(dialog_name: String) -> void:
+	match dialog_name:
+		"settings":
+			popups.settings_dialog.temp_data = data.config.duplicate()
+			popups.show_popup(popups.settings_dialog)
+		"about":
+			popups.show_message(
+				"About",
+				"TDM PAcker 2\nVersion %s\n\nBy Skaruts" % data.VERSION,
+			)
 
 
 func _on_main_tab_button_pressed(idx: int) -> void:
