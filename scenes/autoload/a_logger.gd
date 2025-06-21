@@ -1,15 +1,12 @@
 extends Node
 # autoloaded script
 
-
-# version 10
-# TODO:
-#      - dump logs to a file on demand
-#          . or periodically?
-#          . or append on the fly?
+#
+#        Logger     (version 17)
+#
 
 
-
+const _LOGS_FILE = "res://logs.txt"
 const __NULL = "__non-null_null__"
 
 
@@ -33,44 +30,91 @@ var colors := {
 }
 
 
+#var ansi_colors := { # TODO: this doesn't seem to work on windows 7
+	#end_tag  = "[/fgcolor]",
+#
+	#info     = "[fgcolor=blue]",
+	#warning  = "[fgcolor=yellow]",
+	#reminder = "[fgcolor=pink]",
+	#error    = "[fgcolor=red]",
+	#caller   = "[fgcolor=purple]",
+	#success  = "[fgcolor=green]",
+	#task     = "[fgcolor=lime]",
+#}
+
+
 class LoggerError extends RefCounted:
 	var ok:bool
 	var error:String
 	func _init(_ok:bool, err_msg:Variant=null) -> void:
 		ok = _ok
 		if err_msg:
-			error = err_msg as String
+			error = err_msg
 
 
 
-var messages:Array[String]
-var errors:Array[String]
-var warnings:Array[String]
+var dump_logs     := true
+
+var log_prints    := true
+var log_infos     := true
+var log_reminders := true
+var log_tasks     := true
+var log_warnings  := true
+var log_errors    := true
+
+
+var all_messages:Array[String]
+@warning_ignore("shadowed_global_identifier")
+var prints:Array[String]
+var infos:Array[String]
+var tasks:Array[String]
 var reminders:Array[String]
+var warnings:Array[String]
+var errors:Array[String]
 
 
 
-func __store_message(message:String) -> void:
-	messages.append(message)
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 
-@warning_ignore("shadowed_variable")
-func __store_error(error:String) -> void:
-	messages.append(error)
-	errors.append(error)
+#		Internal API
 
-@warning_ignore("shadowed_variable")
-func __store_warning(warning:String) -> void:
-	messages.append(warning)
-	warnings.append(warning)
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+func _init() -> void:
+	if dump_logs: _write_file("")
 
-@warning_ignore("shadowed_variable")
-func __store_reminder(reminder:String) -> void:
-	messages.append(reminder)
-	reminders.append(reminder)
 
+func _read_file() -> String:
+	return FileAccess.get_file_as_string(_LOGS_FILE)
+
+func _write_file(msg:String) -> void:
+	var file := FileAccess.open(_LOGS_FILE, FileAccess.WRITE)
+	if not file:
+		error("Logger: can't write file '%s'" % [_LOGS_FILE])
+		return
+	file.store_string(msg)
+	file.close()
+
+
+
+func _dump_message(msg:String) -> void:
+	var logs := _read_file()
+	if logs == "":
+		_write_file("%s" % msg)
+	else:
+		_write_file("%s\n%s" % [logs, msg])
+
+
+func _cache_and_dump_message(array:Array[String], msg:String) -> void:
+	all_messages.append(msg)
+	array.append(msg)
+	if dump_logs:
+		_dump_message(msg)
 
 
 func _format(message:String, format:String) -> String:
+	#if OS.has_feature("template"):
+		#return "%s%s%s" % [ ansi_colors[format], message, ansi_colors.end_tag ]
+	#else:
 	return "%s%s%s" % [ colors[format], message, colors.end_tag ]
 
 
@@ -89,59 +133,62 @@ func _get_caller(error_level:int) -> String:
 #		Public API
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-func error(msg:Variant, __error_level:=0) -> void:
-	var caller:String = _get_caller(1)
+func error(msg:Variant, print_path:=true, __error_level:=0) -> void:
+	if not log_errors: return
+	var caller:String = _get_caller(__error_level+1) if print_path else ""
 	var full_msg := caller + str(msg)
-	__store_error(full_msg)
-
-	# if project exported, don't use rich text formatting
-	if OS.has_feature("template"):
-		push_error( full_msg )
-	else:
+	_cache_and_dump_message(errors, "● ERROR: " + full_msg)
+	push_error( full_msg )
+	if not OS.has_feature("template"):
 		print_rich( _format("● ERROR: " + full_msg, "error") )
 
 
-func warning(msg:Variant, __error_level:=0) -> void:
-	var caller:String = _get_caller(1)
+func warning(msg:Variant, print_path:=true, __error_level:=0) -> void:
+	if not log_warnings: return
+	var caller:String = _get_caller(__error_level+1) if print_path else ""
 	var full_msg := caller + str(msg)
-	__store_warning(full_msg)
-
-	if OS.has_feature("template"):
-		push_warning( full_msg )
-	else:
+	_cache_and_dump_message(warnings, "● WARNING: " + full_msg)
+	push_warning( full_msg )
+	if not OS.has_feature("template"):
 		print_rich( _format("● WARNING: " + full_msg, "warning") )
 
 
-func reminder(msg:Variant, __error_level:=0) -> void:
-	var caller:String = _get_caller(1)
+func print_subwarning(msg:String) -> void:
+	if not log_warnings: return
+	msg = "\t" + msg
+	_cache_and_dump_message(warnings, msg)
+	print(msg)
+
+
+func print_suberror(msg:String) -> void:
+	if not log_errors: return
+	msg = "\t" + msg
+	_cache_and_dump_message(errors, msg)
+	print(msg)
+
+
+func reminder(msg:Variant, print_path:=true, __error_level:=0) -> void:
+	if not log_reminders: return
+	var caller:String = _get_caller(__error_level+1) if print_path else ""
 	var full_msg := "● REMINDER: " + caller + str(msg)
-	__store_reminder(full_msg)
-
-	if OS.has_feature("template"):
-		print( "> REMINDER: " + str(msg) )
-	else:
-		print_rich( _format(full_msg, "reminder") )
+	_cache_and_dump_message(reminders, full_msg)
+	print_rich( _format(full_msg, "reminder") )
 
 
-func info(msg:Variant) -> void:
-	var full_msg := "INFO: " + str(msg)
-	__store_message(full_msg)
-
-	if OS.has_feature("template"):
-		print( full_msg )
-	else:
-		print_rich( _format(full_msg, "info") )
+func info(msg:Variant, print_path:=false, __error_level:=0) -> void:
+	if not log_infos: return
+	var caller:String = _get_caller(__error_level+1) if print_path else ""
+	var full_msg := "INFO: " + caller + str(msg)
+	_cache_and_dump_message(infos, full_msg)
+	print_rich( _format(full_msg, "info") )
 
 
-func task(msg:Variant) -> void:
-	var full_msg := "TASK: " + str(msg)
-	__store_message(full_msg)
-
-	if OS.has_feature("template"):
-		print( full_msg )
-	else:
-		print_rich(_format(full_msg, "task"))
-
+func task(msg:Variant, print_path:=false, __error_level:=0) -> void:
+	if not log_tasks: return
+	var caller:String = _get_caller(__error_level+1) if print_path else ""
+	var full_msg := "TASK: " + caller + str(msg)
+	_cache_and_dump_message(tasks, full_msg)
+	print_rich(_format(full_msg, "task"))
 
 
 func varargs_to_str(array:Array) -> String:
@@ -152,48 +199,45 @@ func varargs_to_str(array:Array) -> String:
 	return "%s ".repeat(args.size()).strip_edges() % args
 
 
-# simulates varargs
+# simulates varargs, and supports up to 20 arguments
 func print( arg0:Variant=__NULL,  arg1:Variant=__NULL,  arg2:Variant=__NULL,  arg3:Variant=__NULL,
 			arg4:Variant=__NULL,  arg5:Variant=__NULL,  arg6:Variant=__NULL,  arg7:Variant=__NULL,
 			arg8:Variant=__NULL,  arg9:Variant=__NULL,  arg10:Variant=__NULL, arg11:Variant=__NULL,
 			arg12:Variant=__NULL, arg13:Variant=__NULL, arg14:Variant=__NULL, arg15:Variant=__NULL,
 			arg16:Variant=__NULL, arg17:Variant=__NULL, arg18:Variant=__NULL, arg19:Variant=__NULL
 		) -> void:
+	if not log_prints: return
 
 	var msg:String = varargs_to_str([arg0,  arg1,  arg2,  arg3,  arg4, arg5,  arg6,  arg7,  arg8,  arg9,
 		arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19])
 
-	var caller:String = _get_caller(1)
-
-	var full_msg := caller + msg
-	__store_message(full_msg)
-
-	if OS.has_feature("template"):
-		print(full_msg)
-	else:
-		print_rich(_format(caller, "caller") + msg)
-
-
-# print array of args
-func printa( args:Array, __error_level := 1) -> void:
-	var msg:String = varargs_to_str(args)
+	var __error_level := 1
 	var caller:String = _get_caller(__error_level)
 
 	var full_msg := caller + msg
-	__store_message(full_msg)
+	_cache_and_dump_message(prints, full_msg)
+	print_rich(_format(caller, "caller") + msg)
 
-	if OS.has_feature("template"):
-		print(full_msg)
-	else:
-		print_rich(_format(caller, "caller") + msg)
+
+# print array of args
+func printa( args:Array, print_path:=false, __error_level:=0) -> void:
+	if not log_prints: return
+	var msg:String = varargs_to_str(args)
+	var caller:String = _get_caller(__error_level+1) if print_path else ""
+	var full_msg := caller + msg
+	_cache_and_dump_message(prints, full_msg)
+	print_rich(_format(caller, "caller") + msg)
 
 
 # run a function, benchmark it, and return its results
-# if not 'silent', automatically print the 'task' or 'error' message
-# provided in 'messages', and reports the benchmark time
-@warning_ignore("shadowed_variable")
-func run(f:Callable, messages:={}, silent:=false) -> Variant:
-	if silent: return f.call()
+# if not 'suppress', then it prints out the 'task' or 'error' messages
+# provided in the 'msgs' Dictionary, and reports the benchmark time
+func run_task(msgs:Dictionary[String, String], suppress:bool, f:Callable) -> Variant:
+	if suppress: return f.call()
+
+	var has_messages := not msgs.is_empty()
+	if has_messages and msgs.start != "":
+		task(msgs.start)
 
 	var t1 := Time.get_ticks_msec()
 	var res:Variant = f.call()
@@ -201,10 +245,10 @@ func run(f:Callable, messages:={}, silent:=false) -> Variant:
 
 	var time_str := "%.3f s" % [(t2-t1)/1000.0]
 
-	if not messages.is_empty():
+	if not msgs.is_empty():
 		if not res is LoggerError or res.ok:
-			task(messages.task + "  (%s)" % [time_str])
+			task(msgs.end + "  (%s)" % [time_str])
 		else:
-			error(messages.error + res.error, 1)
+			error(msgs.error + res.error, 1)
 
 	return res
