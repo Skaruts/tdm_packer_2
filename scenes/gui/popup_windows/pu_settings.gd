@@ -15,10 +15,7 @@ extends BasePopup
 @onready var sbox_gui_font_size: SpinBox = %sbox_gui_font_size
 @onready var sbox_code_font_size: SpinBox = %sbox_code_font_size
 @onready var ckbtn_show_roots: CheckButton = %ckbtn_show_roots
-
-@onready var btn_apply: Button = %btn_apply
-@onready var btn_ok: Button = %btn_ok
-@onready var btn_cancel: Button = %btn_cancel
+@onready var cb_bg_opacity: SpinBox = $Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer4/cb_bg_opacity
 
 
 var temp_config: ConfigData
@@ -70,6 +67,8 @@ func _on_popup() -> void:
 	sbox_gui_font_size.set_value_no_signal(temp_config.gui_font_size)
 	sbox_code_font_size.set_value_no_signal(temp_config.code_font_size)
 	ckbtn_show_roots.set_pressed_no_signal(temp_config.show_tree_roots)
+	cb_bg_opacity.set_value_no_signal(temp_config.popup_bg_opacity * 100)
+
 
 
 func _on_input(event: InputEvent) -> void:
@@ -106,7 +105,7 @@ func _validate_and_update_colors(line_edit:CustomLineEdit, filepath:String, key:
 
 
 func _update_apply_button() -> void:
-	btn_apply.disabled = temp_config.is_equal_to(data.config)
+	%btn_apply.disabled = temp_config.is_equal_to(data.config)
 
 
 
@@ -194,4 +193,9 @@ func _on_sbox_code_font_size_value_changed(value: float) -> void:
 
 func _on_ckbtn_show_roots_toggled(toggled_on: bool) -> void:
 	temp_config.show_tree_roots = toggled_on
+	_update_apply_button()
+
+
+func _on_spin_box_value_changed(value: float) -> void:
+	temp_config.popup_bg_opacity = value/100.0
 	_update_apply_button()

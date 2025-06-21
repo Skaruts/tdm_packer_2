@@ -57,6 +57,8 @@ text = "GUI Font Size"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+rounded = true
+select_all_on_focus = true
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings"]
 layout_mode = 2
@@ -70,6 +72,11 @@ text = "Code Font Size"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+rounded = true
+select_all_on_focus = true
+
+[node name="HSeparator2" type="HSeparator" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings"]
+layout_mode = 2
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings"]
 layout_mode = 2
@@ -79,6 +86,25 @@ unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
 text = "Show Tree Roots"
+
+[node name="HSeparator" type="HSeparator" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings"]
+layout_mode = 2
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Popup Background Opacity"
+
+[node name="cb_bg_opacity" type="SpinBox" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 3
+value = 50.0
+rounded = true
+suffix = "%"
+select_all_on_focus = true
 
 [node name="paths" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs"]
 visible = false
@@ -195,3 +221,4 @@ layout_mode = 2
 text = "Cancel"
 
 [connection signal="toggled" from="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer3/ckbtn_show_roots" to="." method="_on_ckbtn_show_roots_toggled"]
+[connection signal="value_changed" from="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer4/cb_bg_opacity" to="." method="_on_spin_box_value_changed"]

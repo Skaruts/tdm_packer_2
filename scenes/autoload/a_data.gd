@@ -15,9 +15,10 @@ const DEFAULT_CONFIG := {
 		tdm_copy_path = "",
 	},
 	gui = {
-		gui_font_size  = 14,
-		code_font_size = 14,
+		gui_font_size   = 14,
+		code_font_size  = 14,
 		show_tree_roots = true,
+		popup_bg_opacity = 0.5,
 	}
 }
 
@@ -74,7 +75,7 @@ func _update_theme(config:ConfigData) -> void:
 	var theme := ThemeDB.get_project_theme()
 	theme.default_font_size = config.gui_font_size
 	theme.set_font_size("font_size", "CodeEdit", config.code_font_size)
-
+	popups.popup_background.color.a = config.popup_bg_opacity
 
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
