@@ -53,7 +53,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "GUI Font Size"
 
-[node name="sbox_gui_font_size" type="SpinBox" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer"]
+[node name="sb_gui_font_size" type="SpinBox" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -68,7 +68,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Code Font Size"
 
-[node name="sbox_code_font_size" type="SpinBox" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer2"]
+[node name="sb_code_font_size" type="SpinBox" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -81,7 +81,7 @@ layout_mode = 2
 [node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings"]
 layout_mode = 2
 
-[node name="ckbtn_show_roots" type="CheckButton" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer3"]
+[node name="cbt_show_roots" type="CheckButton" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer3"]
 unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
@@ -98,7 +98,8 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Popup Background Opacity"
 
-[node name="cb_bg_opacity" type="SpinBox" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer4"]
+[node name="sb_bg_opacity" type="SpinBox" parent="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer4"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 value = 50.0
@@ -122,7 +123,7 @@ text = "TDM Executable"
 [node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_path"]
 layout_mode = 2
 
-[node name="ledit_tdm" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_path/HBoxContainer"]
+[node name="le_tdm" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_path/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -147,7 +148,7 @@ text = "DarkRadiant Executable (Optional)"
 [node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/dr_path"]
 layout_mode = 2
 
-[node name="ledit_dr" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/dr_path/HBoxContainer"]
+[node name="le_dr" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/dr_path/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -172,7 +173,7 @@ text = "TDM Copy Executable (Optional)"
 [node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_copy_path"]
 layout_mode = 2
 
-[node name="ledit_tdm_copy" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_copy_path/HBoxContainer"]
+[node name="le_tdm_copy" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/tabs/paths/tdm_copy_path/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -220,5 +221,5 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Cancel"
 
-[connection signal="toggled" from="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer3/ckbtn_show_roots" to="." method="_on_ckbtn_show_roots_toggled"]
-[connection signal="value_changed" from="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer4/cb_bg_opacity" to="." method="_on_spin_box_value_changed"]
+[connection signal="toggled" from="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer3/cbt_show_roots" to="." method="_on_cbt_show_roots_toggled"]
+[connection signal="value_changed" from="Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer4/sb_bg_opacity" to="." method="_on_sb_bg_opacity_value_changed"]

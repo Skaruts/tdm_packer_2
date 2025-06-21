@@ -3,22 +3,23 @@ extends BasePopup
 
 @onready var category_tree       : Tree     = %category_tree
 
-@onready var ledit_tdm           : LineEdit = %ledit_tdm
-@onready var ledit_dr            : LineEdit = %ledit_dr
-@onready var ledit_tdm_copy      : LineEdit = %ledit_tdm_copy
+@onready var le_tdm              : LineEdit = %le_tdm
+@onready var le_dr               : LineEdit = %le_dr
+@onready var le_tdm_copy         : LineEdit = %le_tdm_copy
 @onready var btn_browse_tdm      : Button   = %btn_browse_tdm
 @onready var btn_browse_dr       : Button   = %btn_browse_dr
 @onready var btn_browse_tdm_copy : Button   = %btn_browse_tdm_copy
 
 @onready var tabs                : TabContainer = %tabs
 
-@onready var sbox_gui_font_size: SpinBox = %sbox_gui_font_size
-@onready var sbox_code_font_size: SpinBox = %sbox_code_font_size
-@onready var ckbtn_show_roots: CheckButton = %ckbtn_show_roots
-@onready var cb_bg_opacity: SpinBox = $Panel/VBoxContainer/HBoxContainer/tabs/general_settings/HBoxContainer4/cb_bg_opacity
+@onready var sb_gui_font_size    : SpinBox     = %sb_gui_font_size
+@onready var sb_code_font_size   : SpinBox     = %sb_code_font_size
+@onready var cbt_show_roots      : CheckButton = %cbt_show_roots
+@onready var sb_bg_opacity       : SpinBox     = %sb_bg_opacity
 
 
 var temp_config: ConfigData
+
 
 func _on_ready() -> void:
 	#
@@ -38,12 +39,12 @@ func _on_ready() -> void:
 	#
 	#	init signals
 	#
-	sbox_gui_font_size.value_changed.connect(_on_sbox_gui_font_size_value_changed)
-	sbox_code_font_size.value_changed.connect(_on_sbox_code_font_size_value_changed)
+	sb_gui_font_size.value_changed.connect(_on_sb_gui_font_size_value_changed)
+	sb_code_font_size.value_changed.connect(_on_sb_code_font_size_value_changed)
 
-	ledit_tdm.text_changed.connect(_on_ledit_tdm_text_changed)
-	ledit_dr.text_changed.connect(_on_ledit_dr_text_changed)
-	ledit_tdm_copy.text_changed.connect(_on_ledit_tdm_copy_text_changed)
+	le_tdm.text_changed.connect(_on_le_tdm_text_changed)
+	le_dr.text_changed.connect(_on_le_dr_text_changed)
+	le_tdm_copy.text_changed.connect(_on_le_tdm_copy_text_changed)
 	btn_browse_tdm.pressed.connect(_on_btn_browse_tdm_pressed)
 	btn_browse_dr.pressed.connect(_on_btn_browse_dr_pressed)
 	btn_browse_tdm_copy.pressed.connect(_on_btn_browse_tdm_copy_pressed)
@@ -56,19 +57,18 @@ func _on_close_requested() -> void:
 func _on_popup() -> void:
 	temp_config = data.config.duplicate()
 
-	ledit_tdm.text      = temp_config.tdm_path
-	ledit_dr.text       = temp_config.dr_path
-	ledit_tdm_copy.text = temp_config.tdm_copy_path
+	le_tdm.text      = temp_config.tdm_path
+	le_dr.text       = temp_config.dr_path
+	le_tdm_copy.text = temp_config.tdm_copy_path
 
-	_validate_and_update_colors(ledit_tdm,      temp_config.tdm_path,      "tdm_path")
-	_validate_and_update_colors(ledit_dr,       temp_config.dr_path,       "dr_path")
-	_validate_and_update_colors(ledit_tdm_copy, temp_config.tdm_copy_path, "tdm_copy_path")
+	_validate_and_update_colors(le_tdm,      temp_config.tdm_path,      "tdm_path")
+	_validate_and_update_colors(le_dr,       temp_config.dr_path,       "dr_path")
+	_validate_and_update_colors(le_tdm_copy, temp_config.tdm_copy_path, "tdm_copy_path")
 
-	sbox_gui_font_size.set_value_no_signal(temp_config.gui_font_size)
-	sbox_code_font_size.set_value_no_signal(temp_config.code_font_size)
-	ckbtn_show_roots.set_pressed_no_signal(temp_config.show_tree_roots)
-	cb_bg_opacity.set_value_no_signal(temp_config.popup_bg_opacity * 100)
-
+	sb_gui_font_size.set_value_no_signal(temp_config.gui_font_size)
+	sb_code_font_size.set_value_no_signal(temp_config.code_font_size)
+	cbt_show_roots.set_pressed_no_signal(temp_config.show_tree_roots)
+	sb_bg_opacity.set_value_no_signal(temp_config.popup_bg_opacity * 100)
 
 
 func _on_input(event: InputEvent) -> void:
@@ -98,10 +98,11 @@ func _validate_and_update_colors(line_edit:CustomLineEdit, filepath:String, key:
 	if Path.file_exists(filepath):
 		temp_config.set(key, filepath)
 		line_edit.set_color(line_edit.COLOR_NORMAL) # COLOR_NORMAL
+		_update_apply_button()
 	else:
 		temp_config.set(key, "")
 		line_edit.set_color(line_edit.COLOR_ERROR)
-	_update_apply_button()
+
 
 
 func _update_apply_button() -> void:
@@ -114,23 +115,25 @@ func _update_apply_button() -> void:
 #		Paths Settings Buttons
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-func _on_ledit_tdm_text_changed(path:String) -> void:
-	_validate_and_update_colors(ledit_tdm, path, "tdm_path")
-
-func _on_ledit_dr_text_changed(path:String) -> void:
-	_validate_and_update_colors(ledit_dr, path, "dr_path")
-
-func _on_ledit_tdm_copy_text_changed(path:String) -> void:
-	_validate_and_update_colors(ledit_tdm_copy, path, "tdm_copy_path")
+func _on_le_tdm_text_changed(path:String) -> void:
+	_validate_and_update_colors(le_tdm, path, "tdm_path")
 
 
-func _get_curr_dir(ledit:LineEdit, config_key:String) -> String:
+func _on_le_dr_text_changed(path:String) -> void:
+	_validate_and_update_colors(le_dr, path, "dr_path")
+
+
+func _on_le_tdm_copy_text_changed(path:String) -> void:
+	_validate_and_update_colors(le_tdm_copy, path, "tdm_copy_path")
+
+
+func _get_curr_dir(le:LineEdit, config_key:String) -> String:
 	var curr_path: String
-	if ledit.text != "" and Path.exists(ledit.text):
-		if Path.is_file(ledit.text):
-			curr_path = ledit.text.get_base_dir()
+	if le.text != "" and Path.exists(le.text):
+		if Path.is_file(le.text):
+			curr_path = le.text.get_base_dir()
 		else:
-			curr_path = ledit.text
+			curr_path = le.text
 	else:
 		curr_path = data.config.get(config_key).get_base_dir()
 		if not Path.exists(curr_path):
@@ -142,36 +145,36 @@ func _get_curr_dir(ledit:LineEdit, config_key:String) -> String:
 func _on_btn_browse_tdm_pressed() -> void:
 	popups.open_single_file({
 			title = "Locate TDM executable",
-			current_dir = _get_curr_dir(ledit_tdm, "tdm_path"),
+			current_dir = _get_curr_dir(le_tdm, "tdm_path"),
 		},
 		func(path:String) -> void:
 			logs.print(path)
-			ledit_tdm.text = path
-			_validate_and_update_colors(ledit_tdm, path, "tdm_path")
+			le_tdm.text = path
+			_validate_and_update_colors(le_tdm, path, "tdm_path")
 	)
 
 
 func _on_btn_browse_dr_pressed() -> void:
 	popups.open_single_file({
 			title = "Locate DarkRadiant executable",
-			current_dir = _get_curr_dir(ledit_dr, "dr_path"),
+			current_dir = _get_curr_dir(le_dr, "dr_path"),
 		},
 		func(path:String) -> void:
 			logs.print(path)
-			ledit_dr.text = path
-			_validate_and_update_colors(ledit_dr, path, "dr_path")
+			le_dr.text = path
+			_validate_and_update_colors(le_dr, path, "dr_path")
 	)
 
 
 func _on_btn_browse_tdm_copy_pressed() -> void:
 	popups.open_single_file({
 			title = "Locate TDM copy executable",
-			current_dir = _get_curr_dir(ledit_tdm_copy, "tdm_copy_path"),
+			current_dir = _get_curr_dir(le_tdm_copy, "tdm_copy_path"),
 		},
 		func(path:String) -> void:
 			logs.print(path)
-			ledit_tdm_copy.text = path
-			_validate_and_update_colors(ledit_tdm_copy, path, "tdm_copy_path")
+			le_tdm_copy.text = path
+			_validate_and_update_colors(le_tdm_copy, path, "tdm_copy_path")
 	)
 
 
@@ -181,21 +184,21 @@ func _on_btn_browse_tdm_copy_pressed() -> void:
 #		General Settings Buttons
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-func _on_sbox_gui_font_size_value_changed(value: float) -> void:
+func _on_sb_gui_font_size_value_changed(value: float) -> void:
 	temp_config.gui_font_size = value
 	_update_apply_button()
 
 
-func _on_sbox_code_font_size_value_changed(value: float) -> void:
+func _on_sb_code_font_size_value_changed(value: float) -> void:
 	temp_config.code_font_size = value
 	_update_apply_button()
 
 
-func _on_ckbtn_show_roots_toggled(toggled_on: bool) -> void:
+func _on_cbt_show_roots_toggled(toggled_on: bool) -> void:
 	temp_config.show_tree_roots = toggled_on
 	_update_apply_button()
 
 
-func _on_spin_box_value_changed(value: float) -> void:
+func _on_sb_bg_opacity_value_changed(value: float) -> void:
 	temp_config.popup_bg_opacity = value/100.0
 	_update_apply_button()
