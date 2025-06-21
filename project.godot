@@ -45,7 +45,7 @@ window/energy_saving/keep_screen_on=false
 
 [gui]
 
-theme/custom="res://resources/theme.res"
+theme/custom="res://resources/theme_4.3.stable.res"
 
 [input]
 
