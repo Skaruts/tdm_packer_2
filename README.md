@@ -2,9 +2,9 @@
 A GUI tool for managing and packing The Dark Mod missions. It can create the `pk4` for you, automatically excluding any files and folders you specify in a `.pkignore` file, and allow you to easily edit some mission files, run DarkRadiant, and more.
 
 
-###### Note: This project uses Godot 4.3-stable. It may not work in older versions. It also uses GDSCript exclusively, which doesn't require the Mono version of Godot, but should be compatible with it.
+###### Note: This project uses Godot 4.4.stable. It may not work in older versions.
 
-###### Note: As this is still a very early version with very little testing, you should backup any missions you use this app with.
+###### Note: As this is still a very early version with very little testing, you should backup any missions you use this app with, and double-check the included/excluded files when packing missions.
 
 ![1_tdmp2_alpha_0 3](https://github.com/user-attachments/assets/c320a674-231e-4364-8d9d-a3b88c42ea4b)
 
