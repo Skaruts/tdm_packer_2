@@ -133,23 +133,25 @@ func _get_caller(error_level:int) -> String:
 #		Public API
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-func error(msg:Variant, print_path:=true, __error_level:=0) -> void:
+func error(msg:Variant, print_path:=true, push:=true, __error_level:=0) -> void:
 	if not log_errors: return
 	var caller:String = _get_caller(__error_level+1) if print_path else ""
 	var full_msg := caller + str(msg)
 	_cache_and_dump_message(errors, "● ERROR: " + full_msg)
-	push_error( full_msg )
-	if not OS.has_feature("template"):
+	if push:
+		push_error( full_msg )
+	if not OS.has_feature("template") or not push:
 		print_rich( _format("● ERROR: " + full_msg, "error") )
 
 
-func warning(msg:Variant, print_path:=true, __error_level:=0) -> void:
+func warning(msg:Variant, print_path:=true, push:=true, __error_level:=0) -> void:
 	if not log_warnings: return
 	var caller:String = _get_caller(__error_level+1) if print_path else ""
 	var full_msg := caller + str(msg)
 	_cache_and_dump_message(warnings, "● WARNING: " + full_msg)
-	push_warning( full_msg )
-	if not OS.has_feature("template"):
+	if push:
+		push_warning( full_msg )
+	if not OS.has_feature("template") or not push:
 		print_rich( _format("● WARNING: " + full_msg, "warning") )
 
 

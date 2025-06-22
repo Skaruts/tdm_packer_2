@@ -3,7 +3,9 @@ extends Node
 
 """
 	A hacky global interface to the console node,
-	so it can be used from anywhere
+	so it can be used from anywhere.
+
+	Also to relay the messages to the logger.
 """
 
 # the console registers itself (main.tscn -> %console_label)
@@ -20,12 +22,12 @@ func print( arg0:Variant=__NULL, arg1:Variant=__NULL, arg2:Variant=__NULL, arg3:
 
 func error(msg:String) -> void:
 	_console_node.error(msg)
-	logs.error(msg)
+	logs.error(msg, false, false)
 
 
 func warning(msg:String) -> void:
 	_console_node.warning(msg)
-	logs.warning(msg)
+	logs.warning(msg, false, false)
 
 
 func info(msg:String) -> void:
