@@ -83,16 +83,16 @@ func _on_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("ui_end"):
 		_select_last_item()
 	elif event.is_action_pressed("ui_cancel"):
-		_on_bar_button_pressed(BarButtonIndex.BUTTON_CANCEL)
+		_on_bar_button_pressed(BarButton.CANCEL)
 
 
 func _on_bar_button_pressed(idx:int) -> void:
-	if idx != BarButtonIndex.BUTTON_CANCEL:
+	if idx != BarButton.CANCEL:
 		if not await _validate_selected_missions():
 			return
 		_commit_data()
 
-	if idx != BarButtonIndex.BUTTON_APPLY:
+	if idx != BarButton.APPLY:
 		close_requested.emit()
 
 
@@ -156,7 +156,7 @@ func _validate_selected_missions() -> bool:
 
 func _on_tr_missions_item_activated() -> void:
 	#logs.print("_on_tr_missions_item_activated")
-	_on_bar_button_pressed(BarButtonIndex.BUTTON_OK)
+	_on_bar_button_pressed(BarButton.OK)
 
 
 func _on_tr_missions_multi_selected(item: TreeItem, column: int, selected: bool) -> void:

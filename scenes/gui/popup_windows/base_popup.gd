@@ -1,10 +1,10 @@
 class_name BasePopup extends Window
 
 
-enum BarButtonIndex {
-	BUTTON_OK,
-	BUTTON_CANCEL,
-	BUTTON_APPLY,
+enum BarButton {
+	OK,
+	CANCEL,
+	APPLY,
 }
 
 var temp_data:Dictionary
@@ -36,9 +36,9 @@ func _ready() -> void:
 			hide()
 	)
 
-	%btn_ok.pressed.connect(_on_bar_button_pressed.bind(BarButtonIndex.BUTTON_OK))
-	%btn_cancel.pressed.connect(_on_bar_button_pressed.bind(BarButtonIndex.BUTTON_CANCEL))
-	%btn_apply.pressed.connect(_on_bar_button_pressed.bind(BarButtonIndex.BUTTON_APPLY))
+	%btn_ok.pressed.connect(_on_bar_button_pressed.bind(BarButton.OK))
+	%btn_cancel.pressed.connect(_on_bar_button_pressed.bind(BarButton.CANCEL))
+	%btn_apply.pressed.connect(_on_bar_button_pressed.bind(BarButton.APPLY))
 
 	_on_ready()
 

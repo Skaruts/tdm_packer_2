@@ -55,16 +55,16 @@ func _on_popup() -> void:
 func _on_input(event: InputEvent) -> void:
 	#if event.is_action_pressed("ui_accept")\
 	#and not btn_ok.disabled:
-		#_on_bar_button_pressed(BarButtonIndex.BUTTON_OK)
+		#_on_bar_button_pressed(BarButton.OK)
 	if event.is_action_pressed("ui_cancel"):
-		_on_bar_button_pressed(BarButtonIndex.BUTTON_CANCEL)
+		_on_bar_button_pressed(BarButton.CANCEL)
 
 
 func _on_bar_button_pressed(idx:int) -> void:
-	if idx != BarButtonIndex.BUTTON_CANCEL:
+	if idx != BarButton.CANCEL:
 		_commit_data()
 
-	if idx != BarButtonIndex.BUTTON_APPLY:
+	if idx != BarButton.APPLY:
 		close_requested.emit()
 
 
