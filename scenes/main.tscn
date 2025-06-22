@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bxhl1rene8xie"]
+[gd_scene load_steps=13 format=3 uid="uid://bxhl1rene8xie"]
 
 [ext_resource type="Script" uid="uid://cn753q050wieh" path="res://scenes/main.gd" id="1_soa3g"]
 [ext_resource type="StyleBox" uid="uid://byni8x36qkwsd" path="res://resources/darker_panel.tres" id="1_tipki"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://cmbv0kqxobxm" path="res://scenes/gui/console.tscn" id="5_fktis"]
 [ext_resource type="PackedScene" uid="uid://bdcwd3fh8e61y" path="res://scenes/gui/popup_windows/pu_settings.tscn" id="7_ao82v"]
 [ext_resource type="PackedScene" uid="uid://c5f55dvs1omb5" path="res://scenes/gui/popup_windows/pu_quit_save_confirmation.tscn" id="7_rmgbx"]
+[ext_resource type="Script" uid="uid://bqgy1hssrn6ea" path="res://scenes/confirmation_dialog.gd" id="7_ya4ey"]
 [ext_resource type="PackedScene" uid="uid://g44k1m10wg8e" path="res://scenes/gui/popup_windows/pu_open_mission.tscn" id="9_85g3d"]
 [ext_resource type="PackedScene" uid="uid://dd4rsrmnsk1gq" path="res://scenes/gui/popup_windows/pu_main_progress_bar.tscn" id="10_choun"]
 
@@ -99,12 +100,15 @@ color = Color(0, 0, 0, 0.5)
 [node name="AcceptDialog" type="AcceptDialog" parent="."]
 unique_name_in_owner = true
 initial_position = 2
-size = Vector2i(131, 100)
+size = Vector2i(300, 150)
 
 [node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]
 unique_name_in_owner = true
 initial_position = 2
-size = Vector2i(350, 100)
+size = Vector2i(300, 100)
+min_size = Vector2i(300, 100)
+max_size = Vector2i(600, 300)
+script = ExtResource("7_ya4ey")
 
 [node name="FileDialog" type="FileDialog" parent="."]
 unique_name_in_owner = true

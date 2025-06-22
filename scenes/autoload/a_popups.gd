@@ -67,8 +67,9 @@ func show_message(title:String, text:String, callback:Variant=null) -> void:
 	message_dialog.popup()
 
 
-func show_confirmation(options: Dictionary, callback:Callable) -> void:
-	_connect_callback(confirmation_dialog, "confirmed", callback)
+func show_confirmation(options: Dictionary, confirm:Variant=null, cancel:Variant=null) -> void:
+	_connect_callback(confirmation_dialog, "confirmed", confirm)
+	_connect_callback(confirmation_dialog, "canceled", cancel)
 	confirmation_dialog.title              = "Please Confirm" if not "title" in options else options.title
 	confirmation_dialog.dialog_text        = "Are you sure?" if not "text" in options else options.text
 	confirmation_dialog.cancel_button_text = "Cancel" if not "cancel_text" in options else options.cancel_text

@@ -1,10 +1,9 @@
 extends BasePopup
 
 
-var _first_item     : TreeItem
-var _last_item      : TreeItem
-var _selected_items : Dictionary
-
+var _first_item        : TreeItem
+var _last_item         : TreeItem
+var _selected_missions : Dictionary
 
 @onready var lb_header   : Label = %lb_header
 @onready var tr_missions : Tree  = %tr_missions
@@ -43,8 +42,12 @@ func _on_popup() -> void:
 		var path := mission_paths[i]
 		var idx  := i % tr_missions.columns
 		var mission_name := path.get_file()
+
 		var is_valid_mission := Path.file_exists(Path.join(path, data.MODFILE_FILENAME))
 		var is_loaded := fms.is_mission_already_loaded(mission_name)
+
+		if mission_name == "sk_nupcials":
+			logs.print(is_valid_mission, Path.join(path, data.MODFILE_FILENAME))
 
 		if idx == 0:
 			item = _root.create_child()
@@ -85,36 +88,23 @@ func _on_input(event: InputEvent) -> void:
 
 func _on_bar_button_pressed(idx:int) -> void:
 	if idx != BarButtonIndex.BUTTON_CANCEL:
-		if not await _commit_data():
+		if not await _validate_selected_missions():
 			return
+		_commit_data()
 
 	if idx != BarButtonIndex.BUTTON_APPLY:
 		close_requested.emit()
 
 
-func _commit_data() -> bool:
+func _commit_data() -> void:
 	var missions:Array[String]
-	#logs.print(_selected_items)
-	if _selected_items.size() == 0:
-		return false
-
-	for item:TreeItem in _selected_items:
-		var cols:Array[int] = _selected_items[item]
-		for col:int in cols:
-			assert(item.get_text(col) != "")
-			var is_valid_mission: bool = item.get_metadata(col)
-			if not is_valid_mission:
-				# TODO: ask user if it should create a modfile in the folder
-				continue
-
-			missions.append(item.get_text(col))
-
+	for mission_name:String in _selected_missions:
+		missions.append(mission_name)
 	await fms.add_missions(missions)
-	return missions.size() > 0
 
 
 func _on_close() -> void:
-	_selected_items.clear()
+	_selected_missions.clear()
 
 
 func _hack_to_force_tree_to_update_visuals() -> void:
@@ -144,8 +134,24 @@ func _select_last_item() -> void:
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 func _on_tr_missions_cell_selected() -> void:
-	logs.print("_on_tr_missions_cell_selected")
+	#logs.print("_on_tr_missions_cell_selected")
 	btn_ok.disabled = false
+
+
+func _validate_selected_missions() -> bool:
+	var to_load := 0
+
+	for mission_name:String in _selected_missions:
+		var is_valid: bool = _selected_missions[mission_name]
+		if not is_valid:
+			popups.show_confirmation({
+				text = "Folder '%s' has no 'darkmod.txt'.\nCreate a new one?" % mission_name,
+			})
+			if not await popups.confirmation_dialog.answer:
+				continue
+		to_load += 1
+
+	return to_load == _selected_missions.size()
 
 
 func _on_tr_missions_item_activated() -> void:
@@ -154,12 +160,9 @@ func _on_tr_missions_item_activated() -> void:
 
 
 func _on_tr_missions_multi_selected(item: TreeItem, column: int, selected: bool) -> void:
+	var item_text: String = item.get_text(column)
 	if selected:
-		if not item in _selected_items:
-			_selected_items[item] = Array([], TYPE_INT, "", null)
-		_selected_items[item].append(column)
+		if not item_text in _selected_missions:
+			_selected_missions[item_text] = item.get_metadata(column)
 	else:
-		if item in _selected_items:
-			_selected_items[item].erase(column)
-			if _selected_items[item].size() == 0:
-				_selected_items.erase(item)
+		_selected_missions.erase(item_text)
