@@ -2,7 +2,7 @@ class_name GuiWorkspaceManager
 extends TabContainer
 
 
-const MissionWorkspaceScene = preload(nodepaths.WORKSPACE_PATH)
+@export var MissionWorkspaceScene:PackedScene  # preload(nodepaths.WORKSPACE_PATH)
 
 
 var curr_pack_tab := 0

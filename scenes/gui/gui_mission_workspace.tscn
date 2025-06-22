@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://bklc6tbbkf5go"]
 
-[ext_resource type="Script" uid="uid://b0ayxji58557l" path="res://scenes/gui/gui_mission_workspace.gd" id="1_ea3uw"]
-[ext_resource type="PackedScene" uid="uid://bjyqwe3hqlqwx" path="res://scenes/gui/tab_package.tscn" id="1_nfafx"]
-[ext_resource type="PackedScene" uid="uid://cch1qviuewj5" path="res://scenes/gui/tab_files.tscn" id="2_s3cyb"]
+[ext_resource type="Script" uid="uid://b0ayxji58557l" path="res://scenes/gui/gui_mission_workspace.gd" id="1_ii8rx"]
+[ext_resource type="PackedScene" uid="uid://bjyqwe3hqlqwx" path="res://scenes/gui/gui_tab_package.tscn" id="2_dcpu1"]
+[ext_resource type="PackedScene" uid="uid://cch1qviuewj5" path="res://scenes/gui/gui_tab_files.tscn" id="3_rthwn"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_k80oc"]
 
@@ -15,14 +15,14 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_k80oc")
 current_tab = 0
 tabs_visible = false
-script = ExtResource("1_ea3uw")
+script = ExtResource("1_ii8rx")
 
-[node name="tab_package" parent="." instance=ExtResource("1_nfafx")]
+[node name="tab_package" parent="." instance=ExtResource("2_dcpu1")]
 unique_name_in_owner = true
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="tab_files" parent="." instance=ExtResource("2_s3cyb")]
+[node name="tab_files" parent="." instance=ExtResource("3_rthwn")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2

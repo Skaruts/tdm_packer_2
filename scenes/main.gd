@@ -15,6 +15,7 @@ func _enter_tree() -> void:
 	popups.open_mission           = %open_mission
 	popups.main_progress_bar      = %main_progress_bar
 
+
 func _ready() -> void:
 	get_tree().set_auto_accept_quit(false)
 	get_window().title = data.app_title
@@ -34,6 +35,7 @@ func _ready() -> void:
 
 	# do this again in case the window got wrongly repositioned due to frame drops
 	# (don't just do it here once, though, as it will be visually worse)
+	# (still looks bad often, though)
 	await get_tree().process_frame
 	w.move_to_center()
 
