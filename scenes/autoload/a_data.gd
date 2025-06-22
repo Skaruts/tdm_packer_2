@@ -6,7 +6,7 @@ extends Node
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 #		Constants
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-const VERSION  = "a0.3.2"
+const VERSION = "a0.3.2"
 
 const DEFAULT_CONFIG := {
 	paths = {
@@ -117,9 +117,9 @@ func update_config(new_config:ConfigData) -> void:
 	_update_theme()
 
 	# some stuff needs to know the config changed
+	fms.update_folders()
 	gui.menu_bar.update_menu()
 	gui.missions_list.update_buttons()
-	fms.update_folders()
 
 
 
