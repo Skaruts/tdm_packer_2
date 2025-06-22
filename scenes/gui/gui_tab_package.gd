@@ -118,8 +118,8 @@ func set_mission(mission: Mission) -> void:
 
 func _build_map_list() -> void:
 	map_list.clear()
-	for map_name in _mission.map_sequence:
-		map_list.add_item(map_name)
+	for map_filename:String in _mission.mdata.map_files:
+		map_list.add_item(map_filename)
 
 
 func on_mission_reloaded() -> void:
@@ -137,10 +137,10 @@ func on_mission_reloaded() -> void:
 	ce_description.tag_saved_version()
 	ce_readme.tag_saved_version()
 	ce_pkignore.tag_saved_version()
-	le_title.tag_saved_version()
-	le_author.tag_saved_version()
-	le_version.tag_saved_version()
-	le_tdm_version.tag_saved_version()
+	#le_title.tag_saved_version()
+	#le_author.tag_saved_version()
+	#le_version.tag_saved_version()
+	#le_tdm_version.tag_saved_version()
 
 	_build_trees()
 	_build_map_list()
@@ -172,7 +172,7 @@ func reload_file(filename:String) -> void:
 			ce_pkignore.tag_saved_version()
 
 		"map_sequence":
-			logs.print(_mission.map_sequence)
+			logs.print(_mission.mdata.map_files)
 			_build_map_list()
 
 
@@ -245,9 +245,9 @@ func _on_btn_add_map_pressed() -> void:
 		},
 		func(path:String) -> void:
 			logs.info(path)
-			var map_name := path.get_basename().get_file()
-			if _mission.add_map(map_name):
-				map_list.add_item(map_name)
+			var map_filename := path.get_basename().get_file()
+			if _mission.add_map_file(map_filename):
+				map_list.add_item(map_filename)
 				fms.save_maps_file(_mission)
 	)
 
@@ -256,9 +256,9 @@ func _on_btn_remove_map_pressed() -> void:
 	var items := map_list.get_selected_items()
 	if not items.size(): return
 	var idx := items[0]    # NOTE: the map list shouldn't allow selecting multiple files
-	var map_name := map_list.get_item_text(idx)
+	var map_filename := map_list.get_item_text(idx)
 
-	if _mission.remove_map(map_name):
+	if _mission.remove_map_file(map_filename):
 		map_list.remove_item(idx)
 		fms.save_maps_file(_mission)
 

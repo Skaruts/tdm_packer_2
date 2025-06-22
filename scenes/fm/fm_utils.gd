@@ -200,7 +200,7 @@ static func _add_maps_to_ignores(mission:Mission, ign_dirs:Set, ign_files:Set) -
 	for dir:String in dpaths:
 		ign_dirs.add( Path.join(mission.paths.maps, dir) )
 
-	var used_map_names := mission.map_sequence
+	var used_map_names := mission.mdata.map_files
 
 	var fpaths_copy := fpaths.duplicate()
 	for filepath:String in fpaths_copy:

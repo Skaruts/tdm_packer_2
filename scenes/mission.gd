@@ -44,15 +44,12 @@ class MissionData extends RefCounted:
 	# other
 	var pkignore    : String
 	var readme      : String
-	var map_names   : Array[String]
-
+	var map_files   : Array[String]
 
 
 var paths := MissionPaths.new()
 var mdata := MissionData.new()
 
-
-var map_sequence: Array[String]
 
 var id      : String
 var zipname : String
@@ -80,19 +77,29 @@ func set_id(_id:String) -> void:
 	zipname = id + ".pk4"
 
 
-func add_map(name:String, _silent:=false) -> bool:
-	if name in map_sequence: return false
-	map_sequence.append(name)
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+
+#		Maps
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+func add_map_file(string:String) -> bool:
+	if string in mdata.map_files: return false
+	mdata.map_files.append(string)
 	return true
 
-func remove_map(name:String, _silent:=false) -> bool:
-	assert(name in map_sequence)
-	map_sequence.erase(name)
+func remove_map_file(string:String) -> bool:
+	assert(string in mdata.map_files)
+	mdata.map_files.erase(string)
 	return true
 
 
 
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 
+#		Paths
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 func set_paths(path:String) -> void:
 	paths.root      = path
 	if data.config.tdm_copy_path != "":

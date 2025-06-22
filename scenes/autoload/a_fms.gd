@@ -143,10 +143,13 @@ func load_file(mis:Mission, filename:String, default_content:="") -> void:
 
 
 func load_map_sequence(mis:Mission) -> void:
-	mis.map_sequence = []
+	mis.mdata.map_files.clear()
 
 	if Path.file_exists(mis.paths.startingmap):
-		mis.map_sequence = [Path.read_file_string(mis.paths.startingmap).strip_edges()]
+		# TODO: maybe I should read this file by lines too, to prevent problems
+		# with invalid lines
+		var map_filename := Path.read_file_string(mis.paths.startingmap).strip_edges()
+		mis.mdata.map_files.append(map_filename)
 		mis.remove_hash(mis.paths.mapsequence)
 		mis.store_hash(mis.paths.startingmap)
 
@@ -161,7 +164,7 @@ func load_map_sequence(mis:Mission) -> void:
 
 				line = line.substr( line.find(':')+1 )
 				line = line.strip_edges(false, true)
-				mis.map_sequence.append(line)
+				mis.mdata.map_files.append(line)
 
 			mis.remove_hash(mis.paths.startingmap)
 			mis.store_hash(mis.paths.mapsequence)
@@ -190,8 +193,8 @@ enum ModfileSection {
 
 func load_modfile(mis:Mission) -> void:
 	check_file_and_create(mis, "modfile", data.DEFAULT_MODFILE)
-	var text := Path.read_file_string(mis.paths.modfile)
-	mis.mdata.map_titles.clear()
+	var file_string := Path.read_file_string(mis.paths.modfile)
+	var map_titles : Array[String]
 
 	var commit_section := \
 		func(text:String, section: ModfileSection) -> void:
@@ -201,10 +204,13 @@ func load_modfile(mis:Mission) -> void:
 				ModfileSection.Version:     mis.mdata.version     = text
 				ModfileSection.TDM_Version: mis.mdata.tdm_version = text
 				ModfileSection.Description: mis.mdata.description = text
-				ModfileSection.Map_Title:	mis.mdata.map_titles.append(text)
+				ModfileSection.Map_Title:
+					map_titles.append(text)
+					#mis.set_map_title( text)
+					#mis.mdata.map_titles.append(text)
 					#mis.mdata.description = text
 
-	var tokens := text.replace('\n', ' ').split(' ')
+	var tokens := file_string.replace('\n', ' ').split(' ')
 	var curr_section := ModfileSection.None
 	var section_text := ""
 	#var final_text := ""
@@ -245,6 +251,12 @@ func load_modfile(mis:Mission) -> void:
 		i += 1
 	commit_section.call(section_text.strip_edges(), curr_section)
 
+	mis.mdata.map_titles.clear()
+	for idx:int in map_titles.size():
+		if idx >= mis.mdata.map_files.size():
+			logs.warning("map titles exceed number of map files: %s/%s" % [idx, mis.mdata.map_files.size()])
+		mis.mdata.map_titles.append(map_titles[idx])
+
 	mis.store_hash(mis.paths.modfile)
 
 
@@ -280,11 +292,15 @@ func save_mission(mission:Mission, reload:=false) -> void:
 
 func save_modfile(mis:Mission) -> void:
 	#_save_mission_file(mis, mis.mdata.modfile, mis.paths.modfile, core.MODFILE_FILENAME, Mission.DirtyFlags.MODFILE)
-	var modfile := "Title: %s\nDescription: %s\nAuthor: %s\nVersion: %s\nRequired TDM Version: %s"
+	var modfile := "Title: %s\nDescription: %s\nAuthor: %s\nVersion: %s\nRequired TDM Version: %s\n"
 	var md := mis.mdata
 	modfile = modfile % [md.title, md.description, md.author, md.version, md.tdm_version]
 
 	# TODO: add map titles
+	if mis.mdata.map_titles.size() > 0:
+		for i:int in mis.mdata.map_titles.size():
+			var title := mis.mdata.map_titles[i]
+			modfile += "Mission %s Title: %s\n" % [i+1, title]
 
 	Path.write_file(mis.paths.modfile, modfile)
 	console.print("Saved modfile")
@@ -313,15 +329,15 @@ func _save_mission_file(mis:Mission, content:String, filepath:String, filename:S
 
 
 func save_maps_file(mis:Mission) -> bool:
-	logs.print("map_sequence:  ", mis.map_sequence)
+	logs.print("maps:  ", mis.mdata.map_files)
 
-	if mis.map_sequence.size() <= 1: # save startingmap.txt
+	if mis.mdata.map_files.size() <= 1: # save startingmap.txt
 		if Path.file_exists(mis.paths.mapsequence):
 			DirAccess.remove_absolute(mis.paths.mapsequence)
 
 		var map:String
-		if mis.map_sequence.size():
-			map = mis.map_sequence[0]
+		if mis.mdata.map_files.size():
+			map = mis.mdata.map_files[0]
 
 		_save_mission_file(mis, map, mis.paths.startingmap, data.STARTINGMAP_FILENAME, Mission.DirtyFlags.MAPS, true)
 		mis.remove_hash(mis.paths.mapsequence)
@@ -331,8 +347,8 @@ func save_maps_file(mis:Mission) -> bool:
 			DirAccess.remove_absolute(mis.paths.startingmap)
 
 		var string := ""
-		for i:int in mis.map_sequence.size():
-			string += "Mission %d: %s\n" % [i+1, mis.map_sequence[i]]
+		for i:int in mis.mdata.map_files.size():
+			string += "Mission %d: %s\n" % [i+1, mis.mdata.map_files[i]]
 		_save_mission_file(mis, string, mis.paths.mapsequence, data.MAPSEQUENCE_FILENAME, Mission.DirtyFlags.MAPS, true)
 		mis.remove_hash(mis.paths.startingmap)
 		mis.store_hash(mis.paths.mapsequence)
@@ -449,7 +465,7 @@ func check_mission_filesystem() -> bool:
 	var new_list := Path.get_filepaths_recursive(curr_mission.paths.root)
 	var changed_files: Array[String]
 
-	if curr_mission.map_sequence.size() <= 1:
+	if curr_mission.mdata.map_files.size() <= 1:
 		if not Path.file_exists(curr_mission.paths.startingmap) \
 		or not _check_file_hash(curr_mission, curr_mission.paths.startingmap):
 			changed_files.append("map_sequence")
