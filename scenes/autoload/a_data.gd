@@ -37,10 +37,10 @@ const FADED_TEXT_COLOR  = Color(0.3, 0.3, 0.3)
 const EDITED_FILE_COLOR = Color(1, 0.851, 0.53)
 
 # Tecnically constants, as they'll never change
-var CWD           := ProjectSettings.globalize_path("res://")
-var DATA_PATH     := ProjectSettings.globalize_path("res://data")
-var SETTINGS_PATH := ProjectSettings.globalize_path("res://data/settings.cfg")
-var MISSIONS_FILE := ProjectSettings.globalize_path("res://data/missions.dat")
+var CWD           := Path.to_global("res://")
+var DATA_PATH     := Path.to_global("res://data")
+var SETTINGS_PATH := Path.to_global("res://data/settings.cfg")
+var MISSIONS_FILE := Path.to_global("res://data/missions.dat")
 
 const IGNORES_FILENAME     = ".pkignore"
 const MODFILE_FILENAME     = "darkmod.txt"
