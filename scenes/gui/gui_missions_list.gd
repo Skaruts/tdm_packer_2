@@ -107,23 +107,25 @@ func _on_pu_missions_menu_id_pressed(id:int) -> void:
 
 
 func _on_btn_open_mission_pressed() -> void:
-	popups.open_folder({
-			title = "Open Mission",
-			root_subfolder = fms.fms_folder,
-		},
-		func(path:String) -> void:
-			if Path.file_exists(Path.join(path, data.MODFILE_FILENAME)):
-				fms.add_mission(path.get_file())
-			else:
-				popups.show_confirmation({
-						text        = "File 'darkmod.txt' not found in '%s'.\n\nDo you want to create it?\n" % [path.get_file()],
-						ok_text     = "Create",
-						cancel_text = "Abort",
-					},
-					func() -> void:
-						fms.add_mission(path.get_file())
-				)
-	)
+	#popups.open_folder({
+			#title = "Open Mission",
+			#root_subfolder = fms.fms_folder,
+		#},
+		#func(path:String) -> void:
+			#if Path.file_exists(Path.join(path, data.MODFILE_FILENAME)):
+				#fms.add_mission(path.get_file())
+			#else:
+				#popups.show_confirmation({
+						#text        = "File 'darkmod.txt' not found in '%s'.\n\nDo you want to create it?\n" % [path.get_file()],
+						#ok_text     = "Create",
+						#cancel_text = "Abort",
+					#},
+					#func() -> void:
+						#fms.add_mission(path.get_file())
+				#)
+	#)
+
+	popups.show_popup( popups.open_mission )
 
 
 func _on_btn_close_mission_pressed() -> void:

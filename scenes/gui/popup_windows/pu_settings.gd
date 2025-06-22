@@ -87,7 +87,7 @@ func _validate_and_update_colors(line_edit:CustomLineEdit, filepath:String, key:
 
 
 func _update_apply_button() -> void:
-	%btn_apply.disabled = temp_config.is_equal_to(data.config)
+	btn_apply.disabled = temp_config.is_equal_to(data.config)
 
 
 

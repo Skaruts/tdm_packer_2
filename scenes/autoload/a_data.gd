@@ -29,7 +29,7 @@ const DEFAULT_MODFILE =                          \
 		+ "Version: 1\n"                         \
 		+ "Required TDM Version: 2.12"
 
-const ERROR_COLOR       = Color(1, 0.37, 0.37)
+const ERROR_COLOR       = Color(1.0, 0.49, 0.49)
 const WARNING_COLOR     = Color(1, 0.67500007152557, 0.22000002861023)
 const VALID_COLOR       = Color(0.43, 1, 0.43)
 const TEXT_COLOR        = Color(0.80000001192093, 0.80000001192093, 0.79607844352722)
@@ -49,7 +49,8 @@ const MAPSEQUENCE_FILENAME = "tdm_mapsequence.txt"
 const README_FILENAME      = "readme.txt"
 const CURRENT_FM_FILE      = "currentfm.txt"
 
-
+const FILE_ICON   = preload(nodepaths.FILE_ICON_PATH)
+const FOLDER_ICON = preload(nodepaths.FOLDER_ICON_PATH)
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 #		Data

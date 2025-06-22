@@ -46,8 +46,7 @@ enum EditorIndex {
 	PkIgnore,
 }
 
-const FILE_ICON   = preload(nodepaths.FILE_ICON_PATH)
-const FOLDER_ICON = preload(nodepaths.FOLDER_ICON_PATH)
+
 
 
 @onready var cedit_modfile: CodeEdit = %cedit_modfile
@@ -352,7 +351,7 @@ func _build_inc_tree(mroot:FMTreeNode, gui_root:TreeItem) -> void:
 	for tn:FMTreeNode in mroot.children:
 		if tn.ignored: continue
 
-		var icon := FOLDER_ICON if tn.is_dir else FILE_ICON
+		var icon := data.FOLDER_ICON if tn.is_dir else data.FILE_ICON
 		var gui_tree_item:TreeItem
 
 		if tn.is_dir and tn.name == "maps" and not tn.has_included_files():
@@ -372,7 +371,7 @@ func _build_exc_tree(mroot:FMTreeNode, gui_root:TreeItem) -> void:
 		elif not c.ignored:
 			continue
 
-		var icon := FOLDER_ICON if c.is_dir else FILE_ICON
+		var icon := data.FOLDER_ICON if c.is_dir else data.FILE_ICON
 		var gui_tree_item := _create_node(tree_excluded_files, c.name, gui_root, icon)
 		_build_exc_tree(c, gui_tree_item)
 

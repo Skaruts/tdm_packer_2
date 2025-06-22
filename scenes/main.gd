@@ -12,6 +12,7 @@ func _enter_tree() -> void:
 	popups.file_dialog            = %FileDialog
 	popups.settings_dialog        = %settings_dialog
 	popups.quit_save_confirmation = %quit_save_confirmation
+	popups.open_mission           = %open_mission
 
 
 func _ready() -> void:

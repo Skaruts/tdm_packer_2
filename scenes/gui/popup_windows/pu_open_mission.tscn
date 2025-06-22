@@ -1,0 +1,96 @@
+[gd_scene load_steps=3 format=3 uid="uid://g44k1m10wg8e"]
+
+[ext_resource type="Script" uid="uid://dldykivstxpef" path="res://scenes/gui/popup_windows/pu_open_,mission.gd" id="1_0g3l0"]
+[ext_resource type="StyleBox" uid="uid://byni8x36qkwsd" path="res://resources/darker_panel.tres" id="1_8mobw"]
+
+[node name="open_mission" type="Window"]
+title = "Open Mission"
+initial_position = 4
+size = Vector2i(600, 500)
+script = ExtResource("1_0g3l0")
+
+[node name="Panel" type="Panel" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = ExtResource("1_8mobw")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="tabs" type="TabContainer" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+current_tab = 0
+tabs_visible = false
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/tabs"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/VBoxContainer"]
+layout_mode = 2
+
+[node name="lb_header" type="Label" parent="PanelContainer/VBoxContainer/tabs/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Available Missions"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/VBoxContainer/tabs/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="tr_missions" type="Tree" parent="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath(".")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath(".")
+hide_root = true
+auto_tooltip = false
+
+[node name="lb_warnings" type="Label" parent="PanelContainer/VBoxContainer/tabs/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "some warning text"
+
+[node name="button_bar" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="btn_apply" type="Button" parent="PanelContainer/VBoxContainer/button_bar"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 6
+disabled = true
+text = "Apply"
+
+[node name="btn_ok" type="Button" parent="PanelContainer/VBoxContainer/button_bar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 6
+text = "Open"
+
+[node name="btn_cancel" type="Button" parent="PanelContainer/VBoxContainer/button_bar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 6
+text = "Cancel"
+
+[connection signal="cell_selected" from="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer/tr_missions" to="." method="_on_tr_missions_cell_selected"]
+[connection signal="item_activated" from="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer/tr_missions" to="." method="_on_tr_missions_item_activated"]

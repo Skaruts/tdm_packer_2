@@ -16,9 +16,10 @@ var file_dialog            : FileDialog
 
 var quit_save_confirmation : ConfirmationDialog
 var settings_dialog        : Window
+var open_mission           : Window
 
-var popup_stack    : Array[Window]
 
+var popup_stack : Array[Window]
 
 func _ready() -> void:
 	confirmation_dialog.get_label().autowrap_mode = TextServer.AUTOWRAP_ARBITRARY
@@ -29,6 +30,7 @@ func _ready() -> void:
 	file_dialog.visibility_changed.connect(_on_popup_visibility_changed.bind(file_dialog))
 	quit_save_confirmation.visibility_changed.connect(_on_popup_visibility_changed.bind(quit_save_confirmation))
 	settings_dialog.visibility_changed.connect(_on_popup_visibility_changed.bind(settings_dialog))
+	open_mission.visibility_changed.connect(_on_popup_visibility_changed.bind(open_mission))
 
 
 func _on_popup_visibility_changed(pu:Window) -> void:
