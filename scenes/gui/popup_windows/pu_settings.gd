@@ -111,13 +111,13 @@ func _on_le_tdm_copy_text_changed(path:String) -> void:
 func _get_curr_dir(le:LineEdit, config_key:String) -> String:
 	var curr_path: String
 	if le.text != "" and Path.exists(le.text):
-		if Path.is_file(le.text):
+		if Path.file_exists(le.text):
 			curr_path = le.text.get_base_dir()
 		else:
 			curr_path = le.text
 	else:
 		curr_path = data.config.get(config_key).get_base_dir()
-		if not Path.exists(curr_path):
+		if not Path.dir_exists(curr_path):
 			curr_path = ""
 
 	return curr_path

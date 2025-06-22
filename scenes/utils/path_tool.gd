@@ -1,6 +1,6 @@
 class_name Path extends Object
 
-# version 10
+# version 12
 
 # just trying to unify the default API because it's a bit confusing
 # and inconsistent, imo.
@@ -20,7 +20,7 @@ const _ERROR_STRINGS = [
 		"Query failed error.", "Already in use error.", "Locked error.", "Timeout error.",
 		"Can't connect error.", "Can't resolve error.", "Connection error.",
 		"Can't acquire resource error.", "Can't fork process error.",
-		"Invalid data error.", "Invalid parameter error.", "Already exists error.",
+		"Invalid core error.", "Invalid parameter error.", "Already exists error.",
 		"Does not exist error.", "Database: Read error.", "Database: Write error.",
 		"Compilation failed error.", "Method not found error.", "Linking failed error.",
 		"Script failed error.", "Cycling link (import cycle) error.", "Invalid declaration error.",
@@ -31,9 +31,32 @@ const _ERROR_STRINGS = [
 ]
 
 
+
 static func get_error_text(err:int) -> String:
 	# see @GlobalScope.Error enum
 	return _ERROR_STRINGS[err]
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+
+#		Execution
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+class ExecutionResults:
+	var output:Array
+	var error:int
+
+# https://www.youtube.com/watch?v=765bzFrqIgM
+static func execute(app_path:String, args:Array) -> ExecutionResults:
+	logs.print("executing: ", app_path, ", ", args)
+	var res := ExecutionResults.new()
+	res.output = []
+	res.error = OS.execute(app_path, args, res.output, false, true)
+
+#	logs.print("executing: ", app_path, ", ", args)
+#	logs.print("error: ", error, " | ", output)
+
+	return res
+
 
 
 
@@ -63,12 +86,7 @@ static func file_exists(path:String) -> bool:
 static func exists(path:String) -> bool:
 	return FileAccess.file_exists(path) or DirAccess.dir_exists_absolute(path)
 
-static func is_file(path: String) -> bool:
-	return FileAccess.file_exists(path)
 
-# TODO: test if both conditions are needed
-static func is_dir(path: String) -> bool:
-	return not FileAccess.file_exists(path)	and DirAccess.dir_exists_absolute(path)
 
 
 static func make_dir(path:String) -> int: # returns Error enum
@@ -99,9 +117,9 @@ static func read_file_string(path:String) -> String:
 
 static func get_lines(path:String) -> Array[String]:
 	var file := FileAccess.open(path, FileAccess.READ)
-	var lines := []
-	var len := file.get_length()
-	while file.get_position() < len:
+	var lines: Array[String]
+	var length := file.get_length()
+	while file.get_position() < length:
 		lines.append(file.get_line())
 
 	return lines
@@ -116,6 +134,13 @@ static func write_file(path:String, content:String) -> void:
 	file.close()
 
 
+static func write_bytes_encrypted_with_pass(bytes:PackedByteArray, filename:String, password:String) -> void:
+	var file := FileAccess.open_encrypted_with_pass(filename, FileAccess.WRITE, password)
+	if not file:
+		logs.error( FileAccess.get_open_error() )
+		return
+	file.store_buffer(bytes)
+	file.close()
 
 
 #static func open_path(path:String) -> DirAccess:
@@ -135,10 +160,7 @@ static func move_file(src:String, dest:String) -> void:
 	DirAccess.copy_absolute(src, dest)
 	DirAccess.remove_absolute(src)
 
-static func delete(path:String) -> void:
-	var error := DirAccess.remove_absolute(path)
-	if error:
-		logs.error("Couldn't delete path: not empty. (%s)" % [path])
+
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 
@@ -147,6 +169,7 @@ static func delete(path:String) -> void:
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 static func get_dirnames(path:String) -> Array[String]:
 	return Array( DirAccess.get_directories_at(path) as Array, TYPE_STRING, "", null)
+	#return DirAccess.get_directories_at(path) as Array[String]
 
 
 static func get_dirnames_filtered(path:String, filter:Callable) -> Array[String]:
@@ -154,14 +177,14 @@ static func get_dirnames_filtered(path:String, filter:Callable) -> Array[String]
 	return dirs.filter(filter)
 
 
-static func get_dirnames_recursive(path:String) -> Array[String]:
-	assert(false, "NIY")  # TODO
-	return []
-
-
-static func get_dirnames_recursive_filtered(path:String, filter:Callable) -> Array[String]:
-	assert(false, "NIY")  # TODO
-	return []
+#static func get_dirnames_recursive(path:String) -> Array[String]:
+	#assert(false, "NIY")  # TODO
+	#return []
+#
+#
+#static func get_dirnames_recursive_filtered(path:String, filter:Callable) -> Array[String]:
+	#assert(false, "NIY")  # TODO
+	#return []
 
 
 
@@ -177,8 +200,7 @@ static func get_dirpaths(path:String) -> Array[String]:
 
 static func get_dirpaths_filtered(path:String, filter:Callable) -> Array[String]:
 	var dirs := get_dirpaths(path)
-	dirs = dirs.filter(filter)
-	return dirs
+	return dirs.filter(filter)
 
 
 static func get_dirpaths_recursive(root:String) -> Array[String]:
@@ -190,9 +212,9 @@ static func get_dirpaths_recursive(root:String) -> Array[String]:
 	return dirs
 
 
-static func get_dirpaths_recursive_filtered(path:String, filter:Callable) -> Array[String]:
-	assert(false, "NIY")  # TODO
-	return []
+#static func get_dirpaths_recursive_filtered(path:String, filter:Callable) -> Array[String]:
+	#assert(false, "NIY")  # TODO
+	#return []
 
 
 static func delete_dir(path:String) -> void:
@@ -200,6 +222,10 @@ static func delete_dir(path:String) -> void:
 	if error:
 		logs.error("Couldn't delete dir: not empty. (%s)" % [path])
 
+static func delete_file(path:String) -> void:
+	var error := DirAccess.remove_absolute(path)
+	if error:
+		logs.error("Couldn't delete dir: not empty. (%s)" % [path])
 
 
 
@@ -208,7 +234,7 @@ static func delete_dir(path:String) -> void:
 #		Files
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-static func get_filenames(path:String, filter:Array = []) -> Array[String]:
+static func get_filenames(path:String, _valid_extensions:Array = []) -> Array[String]:
 	return Array( DirAccess.get_files_at(path) as Array, TYPE_STRING, "", null)
 
 
@@ -240,7 +266,7 @@ static func get_filenames_recursive_filtered(path:String, filter:Callable) -> Ar
 
 
 static func get_filepaths(root:String) -> Array[String]:
-	var files := Array( DirAccess.get_files_at(root) as Array, TYPE_STRING, "", null)
+	var files:Array[String] = Array( DirAccess.get_files_at(root) as Array, TYPE_STRING, "", null)
 	for i in files.size():
 		files[i] = Path.join(root, files[i])
 
@@ -272,29 +298,6 @@ static func get_filepaths_recursive_filtered(path:String, filter:Callable) -> Ar
 
 	return files
 
-
-
-
-#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-
-#		Execution
-
-#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-class ExecutionResults:
-	var output:Array
-	var error:int
-
-# https://www.youtube.com/watch?v=765bzFrqIgM
-static func execute(app_path:String, args:Array) -> ExecutionResults:
-	logs.print("executing: ", app_path, ", ", args)
-	var res := ExecutionResults.new()
-	res.output = []
-	res.error = OS.execute(app_path, args, res.output, false, true)
-
-#	logs.print("executing: ", app_path, ", ", args)
-#	logs.print("error: ", error, " | ", output)
-
-	return res
 
 
 
@@ -330,8 +333,8 @@ static func parse_json_string(string:String) -> Variant: # String
 static func load_json_lines(path:String) -> Array[String]:
 	var file := FileAccess.open(path, FileAccess.READ)
 	var lines := []
-	var len := file.get_length()
-	while file.get_position() < len:
+	var length := file.get_length()
+	while file.get_position() < length:
 		var line := file.get_line()
 		lines.append(parse_json_string(line))
 #		lines.append(JSON.parse_string(line))
@@ -344,8 +347,8 @@ static func load_json_lines(path:String) -> Array[String]:
 static func load_csv_file(path:String) -> Array[String]:
 	var file := FileAccess.open(path, FileAccess.READ)
 	var lines := []
-	var len := file.get_length()
-	while file.get_position() < len:
+	var length := file.get_length()
+	while file.get_position() < length:
 		lines.append(file.get_csv_line())
 
 #	for l in lines:
