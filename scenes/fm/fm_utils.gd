@@ -84,7 +84,7 @@ static func build_file_tree(mission:Mission) -> void:
 	var ign_dirs  := _default_ignored_directories.duplicate()
 	var ign_files := _default_ignored_files.duplicate()
 
-	init_ignores(mission.files.pkignore, ign_dirs, ign_files)
+	init_ignores(mission.mdata.pkignore, ign_dirs, ign_files)
 
 	_add_files_to_ignores(mission.paths.root, ign_dirs, ign_files)
 	_add_maps_to_ignores(mission, ign_dirs, ign_files)

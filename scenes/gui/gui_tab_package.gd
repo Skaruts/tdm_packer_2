@@ -2,60 +2,27 @@ class_name GuiTabPackage
 extends TabContainer
 
 
-
-class ModfileHighlighter extends CodeHighlighter:
-	const KWS = [
-		"Title", "Description", "Author", "Authors",
-		"Required TDM Version", "Version",
-	]
-	func _init() -> void:
-		function_color = data.TEXT_COLOR
-		member_variable_color = data.TEXT_COLOR
-		number_color = Color(0.917, 0.55, 1) # TODO: this isn't working, the function below conflicts with these things
-		symbol_color = data.TEXT_COLOR
-
-		#for kw:String in ["Title", "Description", "Author", "Authors", "Mission", "Required", "TDM", "Version"]:
-			#add_keyword_color(kw, Color("73ff63"))
-
-	func _get_line_syntax_highlighting(idx: int) -> Dictionary:
-		var color_map: Dictionary
-		var text_editor:CodeEdit = get_text_edit()
-		var line:String = text_editor.get_line(idx)
-
-		var colon_idx := line.find(':')
-
-		if colon_idx != -1:
-			var string := line.left(colon_idx).strip_edges()
-			if string in KWS:
-				color_map[0] = { "color": Color("73ff63") }
-				color_map[colon_idx+1] = { "color": data.TEXT_COLOR }
-			elif string.begins_with("Mission") and string.ends_with("Title"):
-				var parts := string.split(' ', false)
-				if parts.size() == 3 and parts[1].is_valid_int():
-					color_map[0] = { "color": Color("73ff63") }
-					color_map[colon_idx+1] = { "color": data.TEXT_COLOR }
-
-
-		return color_map
-
-
-
 enum EditorIndex {
-	Modfile,
+	# modfile
+	Title,
+	Author,
+	Version,
+	TDM_Version,
+	Description,
+	# other
 	Readme,
 	PkIgnore,
 }
 
 
+@onready var le_title       : LineEdit = %le_title
+@onready var le_author      : LineEdit = %le_author
+@onready var le_version     : LineEdit = %le_version
+@onready var le_tdm_version : LineEdit = %le_tdm_version
 
-
-@onready var cedit_modfile: CodeEdit = %cedit_modfile
-@onready var cedit_readme: CodeEdit = %cedit_readme
-@onready var cedit_pkignore: CodeEdit = %cedit_pkignore
-
-#@onready var label_modfile: Label = %label_modfile
-#@onready var label_readme: Label = %label_readme
-#@onready var label_pkignore: Label = %label_pkignore
+@onready var ce_description : CodeEdit = %ce_description
+@onready var ce_readme      : CodeEdit = %ce_readme
+@onready var ce_pkignore    : CodeEdit = %ce_pkignore
 
 @onready var btn_add_map: Button = %btn_add_map
 @onready var btn_remove_map: Button = %btn_remove_map
@@ -76,21 +43,22 @@ var _mission: Mission
 func _ready() -> void:
 	btn_remove_map.disabled = map_list.item_count == 0
 
-	# remove font color, it's only for viewing the syntax in the editor
-	cedit_modfile.set("theme_override_colors/font_color", null)
-	cedit_modfile.syntax_highlighter = ModfileHighlighter.new()
+	#cedit_modfile.syntax_highlighter = ModfileHighlighter.new()
 
-	cedit_modfile.text_changed.connect(_on_code_editor_text_changed.bind(EditorIndex.Modfile))
-	cedit_readme.text_changed.connect(_on_code_editor_text_changed.bind(EditorIndex.Readme))
-	cedit_pkignore.text_changed.connect(_on_code_editor_text_changed.bind(EditorIndex.PkIgnore))
 
-	cedit_modfile.focus_entered.connect(_on_code_editor_focus_changed.bind(EditorIndex.Modfile, true))
-	cedit_readme.focus_entered.connect(_on_code_editor_focus_changed.bind(EditorIndex.Readme, true))
-	cedit_pkignore.focus_entered.connect(_on_code_editor_focus_changed.bind(EditorIndex.PkIgnore, true))
+	var cedits := [ ce_description, ce_readme, ce_pkignore ]
+	for i in cedits.size():
+		var ed:Variant = cedits[i]
+		ed.text_changed.connect(_on_code_editor_text_changed.bind(ed))
+		ed.focus_entered.connect(_on_code_editor_focus_changed.bind(ed, true))
+		ed.focus_exited.connect(_on_code_editor_focus_changed.bind(ed, false))
 
-	cedit_modfile.focus_exited.connect(_on_code_editor_focus_changed.bind(EditorIndex.Modfile, false))
-	cedit_readme.focus_exited.connect(_on_code_editor_focus_changed.bind(EditorIndex.Readme, false))
-	cedit_pkignore.focus_exited.connect(_on_code_editor_focus_changed.bind(EditorIndex.PkIgnore, false))
+	var ledits := [ le_title, le_author, le_version, le_tdm_version ]
+	for i in ledits.size():
+		var ed:LineEdit = ledits[i]
+		#ed.gui_input.connect(_on_ledit_gui_input.bind(i + EditorIndex.Title))
+		ed.text_changed.connect(_on_line_edit_text_changed.bind(ed))
+
 
 	btn_add_map.pressed.connect(_on_btn_add_map_pressed)
 	btn_remove_map.pressed.connect(_on_btn_remove_map_pressed)
@@ -107,27 +75,38 @@ func _ready() -> void:
 	)
 
 
-#func _unhandled_input(event: InputEvent) -> void:
-	#if event.is_action_pressed("save"):
-		#save_current_file()
 
 
 func set_mission(mission: Mission) -> void:
 	_mission = mission
 
-	cedit_pkignore.syntax_highlighter = cedit_pkignore.syntax_highlighter.duplicate()
-	cedit_pkignore.text = _mission.files.pkignore
-	cedit_pkignore.clear_undo_history()
-	cedit_pkignore.tag_saved_version()
+	#le_title.clear_undo_history()
+	#le_author.clear_undo_history()
+	#le_version.clear_undo_history()
+	#le_tdm_version.clear_undo_history()
 
+	#le_title.tag_saved_version()
+	#le_author.tag_saved_version()
+	#le_version.tag_saved_version()
+	#le_tdm_version.tag_saved_version()
 
-	cedit_modfile.text = _mission.files.modfile
-	cedit_modfile.clear_undo_history()
-	cedit_modfile.tag_saved_version()
+	le_title.text       = _mission.mdata.title
+	le_author.text      = _mission.mdata.author
+	le_version.text     = _mission.mdata.version
+	le_tdm_version.text = _mission.mdata.tdm_version
 
-	cedit_readme.text = _mission.files.readme
-	cedit_readme.clear_undo_history()
-	cedit_readme.tag_saved_version()
+	ce_description.text = _mission.mdata.description
+	ce_description.clear_undo_history()
+	ce_description.tag_saved_version()
+
+	ce_pkignore.syntax_highlighter = ce_pkignore.syntax_highlighter.duplicate()
+	ce_pkignore.text = _mission.mdata.pkignore
+	ce_pkignore.clear_undo_history()
+	ce_pkignore.tag_saved_version()
+
+	ce_readme.text = _mission.mdata.readme
+	ce_readme.clear_undo_history()
+	ce_readme.tag_saved_version()
 
 	btn_remove_map.disabled = true
 
@@ -146,129 +125,116 @@ func _build_map_list() -> void:
 func on_mission_reloaded() -> void:
 	if _mission != fms.curr_mission: return
 
-	cedit_modfile.text = _mission.files.modfile
-	cedit_readme.text = _mission.files.readme
-	cedit_pkignore.text = _mission.files.pkignore
+	le_title.text       = _mission.mdata.title
+	le_author.text      = _mission.mdata.author
+	le_version.text     = _mission.mdata.version
+	le_tdm_version.text = _mission.mdata.tdm_version
 
-	cedit_modfile.tag_saved_version()
-	cedit_readme.tag_saved_version()
-	cedit_pkignore.tag_saved_version()
+	ce_description.text = _mission.mdata.description
+	ce_readme.text      = _mission.mdata.readme
+	ce_pkignore.text    = _mission.mdata.pkignore
 
-	#_update_label(label_modfile,  data.MODFILE_FILENAME, false)
-	#_update_label(label_readme,   data.README_FILENAME,  false)
-	#_update_label(label_pkignore, data.IGNORES_FILENAME, false)
+	ce_description.tag_saved_version()
+	ce_readme.tag_saved_version()
+	ce_pkignore.tag_saved_version()
+	le_title.tag_saved_version()
+	le_author.tag_saved_version()
+	le_version.tag_saved_version()
+	le_tdm_version.tag_saved_version()
 
 	_build_trees()
 	_build_map_list()
-
-
-# TODO: this function may not be needed
-#func update_on_mission_saved() -> void:
-	#if _mission != fms.curr_mission: return
-#
-	#_update_label(label_modfile, data.MODFILE_FILENAME, false)
-	#_update_label(label_readme, data.README_FILENAME, false)
-	#_update_label(label_pkignore, data.IGNORES_FILENAME, false)
-	#cedit_modfile.tag_saved_version()
-	#cedit_readme.tag_saved_version()
-	#cedit_pkignore.tag_saved_version()
-
-
-func save_current_file() -> void:
-	if curr_editor == null: return
-
-	var dirty:bool = curr_editor.get_version() != curr_editor.get_saved_version()
-	if not dirty: return
-
-	if curr_editor == cedit_modfile:
-		fms.save_modfile(_mission)
-		#_update_label(label_modfile, data.MODFILE_FILENAME, false)
-	elif curr_editor == cedit_readme:
-		fms.save_readme(_mission)
-		#_update_label(label_readme, data.README_FILENAME, false)
-	elif curr_editor == cedit_pkignore:
-		fms.save_pkignore(_mission)
-		#_update_label(label_pkignore, data.IGNORES_FILENAME, false)
-
-	curr_editor.tag_saved_version()
 
 
 func reload_file(filename:String) -> void:
 	logs.print("reloading file ", filename)
 	match filename:
 		"modfile":
-			cedit_modfile.text = _mission.files.modfile
-			cedit_modfile.tag_saved_version()
-			#_update_label(label_modfile, data.MODFILE_FILENAME, false)
+			le_title.text       = _mission.mdata.title
+			le_author.text      = _mission.mdata.author
+			le_version.text     = _mission.mdata.version
+			le_tdm_version.text = _mission.mdata.tdm_version
+			ce_description.text = _mission.mdata.description
+
+			ce_description.tag_saved_version()
+			#le_title.tag_saved_version()
+			#le_author.tag_saved_version()
+			#le_version.tag_saved_version()
+			#le_tdm_version.tag_saved_version()
+
 		"readme":
 			logs.print("updating readme")
-			cedit_readme.text = _mission.files.readme
-			cedit_readme.tag_saved_version()
-			#_update_label(label_readme, data.README_FILENAME, false)
+			ce_readme.text = _mission.mdata.readme
+			ce_readme.tag_saved_version()
+
 		"pkignore":
-			cedit_pkignore.text = _mission.files.pkignore
-			cedit_pkignore.tag_saved_version()
-			#_update_label(label_pkignore, data.IGNORES_FILENAME, false)
+			ce_pkignore.text = _mission.mdata.pkignore
+			ce_pkignore.tag_saved_version()
+
 		"map_sequence":
 			logs.print(_mission.map_sequence)
 			_build_map_list()
 
 
+func _on_code_editor_focus_changed(editor:CodeEdit, focused:bool) -> void:
+	curr_editor = null
+	ce_description.highlight_current_line = false
+	ce_readme.highlight_current_line = false
+	ce_pkignore.highlight_current_line = false
+
+	if not focused: return
+
+	editor.highlight_current_line = true
+	curr_editor = editor
 
 
-
-
-func _on_code_editor_focus_changed(idx:int, focused:bool) -> void:
-	#logs.print("code_editor_focus_changed: ", idx, focused)
-	if focused:
-		match idx:
-			EditorIndex.Modfile:
-				cedit_modfile.highlight_current_line = true
-				curr_editor = cedit_modfile
-			EditorIndex.Readme:
-				cedit_readme.highlight_current_line = true
-				curr_editor = cedit_readme
-			EditorIndex.PkIgnore:
-				cedit_pkignore.highlight_current_line = true
-				curr_editor = cedit_pkignore
-	else:
-		curr_editor = null
-		match idx:
-			EditorIndex.Modfile:  cedit_modfile.highlight_current_line = false
-			EditorIndex.Readme:   cedit_readme.highlight_current_line = false
-			EditorIndex.PkIgnore: cedit_pkignore.highlight_current_line = false
-
-
-
-
-
-
-func _on_code_editor_text_changed(idx:int) -> void:
-	match idx:
-		EditorIndex.Modfile:
-			var dirty:bool = cedit_modfile.get_version() != cedit_modfile.get_saved_version()
-			#_update_label(label_modfile, data.MODFILE_FILENAME, dirty)
-			_mission.update_modfile(cedit_modfile.text, dirty)
-		EditorIndex.Readme:
-			var dirty:bool = cedit_readme.get_version() != cedit_readme.get_saved_version()
-			#_update_label(label_readme, data.README_FILENAME, dirty)
-			_mission.update_readme(cedit_readme.text, dirty)
-		EditorIndex.PkIgnore:
-			var dirty:bool = cedit_pkignore.get_version() != cedit_pkignore.get_saved_version()
-			#_update_label(label_pkignore, data.IGNORES_FILENAME, dirty)
-			_mission.update_pkignore(cedit_pkignore.text, dirty)
+func _on_code_editor_text_changed(editor:CodeEdit) -> void:
+	match editor:
+		ce_description:
+			var dirty:bool = ce_description.get_version() != ce_description.get_saved_version()
+			_mission.update_description(ce_description.text, dirty)
+		ce_readme:
+			var dirty:bool = ce_readme.get_version() != ce_readme.get_saved_version()
+			_mission.update_readme(ce_readme.text, dirty)
+		ce_pkignore:
+			var dirty:bool = ce_pkignore.get_version() != ce_pkignore.get_saved_version()
+			_mission.update_pkignore(ce_pkignore.text, dirty)
 
 	fms.start_save_timer()
 
 
-#func _update_label(label:Label, text:String, dirty:bool) -> void:
-	#if dirty:
-		#label.text = text + " (*)"
-		#label.set("theme_override_colors/font_color", data.EDITED_FILE_COLOR)
-	#else:
-		#label.text = text
-		#label.set("theme_override_colors/font_color", data.TEXT_COLOR)
 
+#func _on_ledit_gui_input(event:InputEvent, idx:int) -> void:
+	#if not event is InputEventKey: return
+	#match idx:
+		#EditorIndex.Title:
+			#_mission.update_title(le_title.text, true)
+			#fms.start_save_timer()
+		#EditorIndex.Author:
+			#_mission.update_author(le_author.text, true)
+			#fms.start_save_timer()
+		#EditorIndex.Version:
+			#_mission.update_version(le_version.text, true)
+			#fms.start_save_timer()
+		#EditorIndex.TDM_Version:
+			#_mission.update_tdm_version(le_tdm_version.text, true)
+			#fms.start_save_timer()
+
+
+func _on_line_edit_text_changed(new_text:String, ledit:LineEdit) -> void:
+	match ledit:
+		le_title:
+			_mission.update_title(new_text, true)
+			fms.start_save_timer()
+		le_author:
+			_mission.update_author(new_text, true)
+			fms.start_save_timer()
+		le_version:
+			_mission.update_version(new_text, true)
+			fms.start_save_timer()
+		le_tdm_version:
+			_mission.update_tdm_version(new_text, true)
+			fms.start_save_timer()
 
 
 func _on_btn_add_map_pressed() -> void:

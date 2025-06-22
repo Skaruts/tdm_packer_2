@@ -34,6 +34,10 @@ func _ready() -> void:
 	set_process(false)
 
 
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+#		Save timer
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 func _process(delta: float) -> void:
 	_save_timer -= delta
 	if _save_timer > 0: return
@@ -64,7 +68,7 @@ func load_missions() -> void:
 
 	var cf := ConfigFile.new()
 	if cf.load(data.MISSIONS_FILE) == OK:
-		logs.print(cf.get_sections())
+		#logs.print(cf.get_sections())
 		if not Path.file_exists(data.config.tdm_path):
 			console.warning("No TDM path set, or TDM path is invalid: '%s'" % data.config.tdm_path)
 		elif cf.has_section("missions"):
@@ -134,7 +138,7 @@ func check_file_and_create(mis:Mission, filename:String, default_content:="") ->
 
 func load_file(mis:Mission, filename:String, default_content:="") -> void:
 	check_file_and_create(mis, filename, default_content)
-	mis.files.set(filename, Path.read_file_string(mis.paths.get(filename)))
+	mis.mdata.set(filename, Path.read_file_string(mis.paths.get(filename)))
 	mis.store_hash(mis.paths.get(filename))
 
 
@@ -169,10 +173,79 @@ func load_map_sequence(mis:Mission) -> void:
 
 
 func _load_mission_files(mis:Mission) -> void:
-	load_file(mis, "modfile")
-	load_file(mis, "readme")
 	load_map_sequence(mis)
+	load_modfile(mis)
+	load_file(mis, "readme")
 
+
+enum ModfileSection {
+	None,
+	Title,
+	Author,
+	Version,
+	TDM_Version,
+	Description,
+	Map_Title,
+}
+
+func load_modfile(mis:Mission) -> void:
+	check_file_and_create(mis, "modfile", data.DEFAULT_MODFILE)
+	var text := Path.read_file_string(mis.paths.modfile)
+	mis.mdata.map_titles.clear()
+
+	var commit_section := \
+		func(text:String, section: ModfileSection) -> void:
+			match section:
+				ModfileSection.Title:       mis.mdata.title       = text
+				ModfileSection.Author:      mis.mdata.author      = text
+				ModfileSection.Version:     mis.mdata.version     = text
+				ModfileSection.TDM_Version: mis.mdata.tdm_version = text
+				ModfileSection.Description: mis.mdata.description = text
+				ModfileSection.Map_Title:	mis.mdata.map_titles.append(text)
+					#mis.mdata.description = text
+
+	var tokens := text.replace('\n', ' ').split(' ')
+	var curr_section := ModfileSection.None
+	var section_text := ""
+	#var final_text := ""
+
+	var toks_lut := {
+		"Title:"       = ModfileSection.Title,
+		"Author:"      = ModfileSection.Author,
+		"Version:"     = ModfileSection.Version,
+		"Description:" = ModfileSection.Description,
+		# no colons
+		"Required"     = ModfileSection.TDM_Version,  # Required TDM Version:
+		"Mission"      = ModfileSection.Map_Title,    # Mission 1 Title:
+	}
+
+	var token_count := tokens.size()
+	var i := 0
+	while i < token_count:
+		var tok := tokens[i]
+		if tok in toks_lut.keys():
+			commit_section.call(section_text.strip_edges(), curr_section)
+			section_text = ""
+			if tok == "Mission":
+				if i+2 < token_count and tokens[i+2] == "Title:":
+					curr_section = ModfileSection.Map_Title
+					i += 2
+			elif tok == "Required":
+				if i+2 <= token_count \
+				and tokens[i+1] == "TDM" and tokens[i+2] == "Version:":
+					curr_section = ModfileSection.TDM_Version
+					i += 2
+			else:
+				curr_section = toks_lut[tok]
+			#logs.print(">", i, curr_section, tok, " | ", section_text)
+			i+=1
+			continue
+		#logs.print("-", i, curr_section, tok, " | ", section_text)
+		section_text += tok + ' '
+		i += 1
+	commit_section.call(section_text.strip_edges(), curr_section)
+
+	mis.store_hash(mis.paths.modfile)
 
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
@@ -190,6 +263,8 @@ func save_missions_list() -> void:
 func save_mission(mission:Mission, reload:=false) -> void:
 	if not mission.dirty: return
 
+	console.print("Saving mission", mission.id)
+
 	if mission.get_dirty_flag(Mission.DirtyFlags.PKIGNORE):
 		save_pkignore(mission)
 
@@ -204,17 +279,27 @@ func save_mission(mission:Mission, reload:=false) -> void:
 
 
 func save_modfile(mis:Mission) -> void:
-	_save_mission_file(mis, mis.files.modfile, mis.paths.modfile, data.MODFILE_FILENAME, Mission.DirtyFlags.MODFILE)
+	#_save_mission_file(mis, mis.mdata.modfile, mis.paths.modfile, core.MODFILE_FILENAME, Mission.DirtyFlags.MODFILE)
+	var modfile := "Title: %s\nDescription: %s\nAuthor: %s\nVersion: %s\nRequired TDM Version: %s"
+	var md := mis.mdata
+	modfile = modfile % [md.title, md.description, md.author, md.version, md.tdm_version]
+
+	# TODO: add map titles
+
+	Path.write_file(mis.paths.modfile, modfile)
+	console.print("Saved modfile")
+	mis.set_dirty_flag(false, Mission.DirtyFlags.MODFILE)
+
 	mis.store_hash(mis.paths.modfile)
 
 
 func save_readme(mis:Mission) -> void:
-	_save_mission_file(mis, mis.files.readme, mis.paths.readme, data.README_FILENAME, Mission.DirtyFlags.README)
+	_save_mission_file(mis, mis.mdata.readme, mis.paths.readme, data.README_FILENAME, Mission.DirtyFlags.README)
 	mis.store_hash(mis.paths.readme)
 
 
 func save_pkignore(mis:Mission) -> void:
-	_save_mission_file(mis, mis.files.pkignore, mis.paths.pkignore, data.IGNORES_FILENAME, Mission.DirtyFlags.PKIGNORE)
+	_save_mission_file(mis, mis.mdata.pkignore, mis.paths.pkignore, data.IGNORES_FILENAME, Mission.DirtyFlags.PKIGNORE)
 	_soft_reload_mission(mis)
 	mis.store_hash(mis.paths.pkignore)
 
@@ -327,9 +412,6 @@ func add_missions(ids:Array[String]) -> void:
 	popups.main_progress_bar.hide_bar()
 
 
-
-
-
 func get_current_mission_index() -> int:
 	assert(missions.size() > 0)
 	return missions.find(curr_mission)
@@ -367,15 +449,6 @@ func check_mission_filesystem() -> bool:
 	var new_list := Path.get_filepaths_recursive(curr_mission.paths.root)
 	var changed_files: Array[String]
 
-	if not _check_file_hash(curr_mission, curr_mission.paths.modfile):
-		changed_files.append("modfile")
-
-	if not _check_file_hash(curr_mission, curr_mission.paths.readme):
-		changed_files.append("readme")
-
-	if not _check_file_hash(curr_mission, curr_mission.paths.pkignore):
-		changed_files.append("pkignore")
-
 	if curr_mission.map_sequence.size() <= 1:
 		if not Path.file_exists(curr_mission.paths.startingmap) \
 		or not _check_file_hash(curr_mission, curr_mission.paths.startingmap):
@@ -385,6 +458,17 @@ func check_mission_filesystem() -> bool:
 		or not _check_file_hash(curr_mission, curr_mission.paths.mapsequence):
 			changed_files.append("map_sequence")
 
+	if not _check_file_hash(curr_mission, curr_mission.paths.modfile):
+		logs.print("modfile was changed externally")
+		changed_files.append("modfile")
+
+	if not _check_file_hash(curr_mission, curr_mission.paths.readme):
+		changed_files.append("readme")
+
+	if not _check_file_hash(curr_mission, curr_mission.paths.pkignore):
+		changed_files.append("pkignore")
+
+
 	if changed_files.size() == 0:
 		return false
 
@@ -392,10 +476,12 @@ func check_mission_filesystem() -> bool:
 	FMUtils.build_file_tree(curr_mission)
 
 	for file:String in changed_files:
-		if file != "map_sequence":
-			load_file(curr_mission, file)
-		else:
+		if file == "map_sequence":
 			load_map_sequence(curr_mission)
+		elif file == "modfile":
+			load_modfile(curr_mission)
+		else:
+			load_file(curr_mission, file)
 		gui.workspace_mgr.get_current_workspace().tab_package.reload_file(file)
 
 	return true
@@ -429,7 +515,7 @@ func edit_mission() -> void:
 	launcher.run_darkradiant()
 
 
-func test_pack()    -> void:
+func test_pack() -> void:
 	if is_save_timer_counting():
 		save_mission(curr_mission, true)
 	launcher.run_tdm_copy()

@@ -1,8 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://bjyqwe3hqlqwx"]
+[gd_scene load_steps=4 format=3 uid="uid://bjyqwe3hqlqwx"]
 
 [ext_resource type="Script" uid="uid://da5n5juxpg61i" path="res://scenes/gui/gui_tab_package.gd" id="1_0pq56"]
 [ext_resource type="CodeHighlighter" uid="uid://baolxejcyhdtf" path="res://resources/syntax_pkignore.tres" id="2_2grlp"]
-[ext_resource type="CodeHighlighter" uid="uid://cinkuelpqifd7" path="res://resources/syntax_modfile.tres" id="2_ngnom"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_77p0q"]
 
@@ -20,69 +19,149 @@ script = ExtResource("1_0pq56")
 
 [node name="Info" type="HSplitContainer" parent="."]
 layout_mode = 2
-split_offset = -210
+split_offset = 305
 metadata/_tab_index = 0
 
-[node name="VSplitContainer" type="VSplitContainer" parent="Info"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="Info"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="Info/VBoxContainer2"]
+visible = false
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+text = "darkmod.txt"
+
+[node name="title_row" type="HBoxContainer" parent="Info/VBoxContainer2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Info/VBoxContainer2/title_row"]
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+text = "Title"
+
+[node name="le_title" type="LineEdit" parent="Info/VBoxContainer2/title_row"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-split_offset = 105
+theme_override_colors/font_placeholder_color = Color(0.37, 0.37, 0.37, 1)
+placeholder_text = "mission title..."
+keep_editing_on_text_submit = true
+emoji_menu_enabled = false
+drag_and_drop_selection_enabled = false
+caret_blink = true
 
-[node name="modfile" type="VBoxContainer" parent="Info/VSplitContainer"]
+[node name="author_row" type="HBoxContainer" parent="Info/VBoxContainer2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Info/VBoxContainer2/author_row"]
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+text = "Author"
+
+[node name="le_author" type="LineEdit" parent="Info/VBoxContainer2/author_row"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_placeholder_color = Color(0.37, 0.37, 0.37, 1)
+placeholder_text = "author name..."
+keep_editing_on_text_submit = true
+emoji_menu_enabled = false
+drag_and_drop_selection_enabled = false
+caret_blink = true
+
+[node name="version_row" type="HBoxContainer" parent="Info/VBoxContainer2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Info/VBoxContainer2/version_row"]
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+text = "Version"
+
+[node name="le_version" type="LineEdit" parent="Info/VBoxContainer2/version_row"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_placeholder_color = Color(0.37, 0.37, 0.37, 1)
+placeholder_text = "mission version..."
+keep_editing_on_text_submit = true
+emoji_menu_enabled = false
+drag_and_drop_selection_enabled = false
+caret_blink = true
+
+[node name="tdm_version_row" type="HBoxContainer" parent="Info/VBoxContainer2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Info/VBoxContainer2/tdm_version_row"]
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+text = "TDM Version"
+
+[node name="le_tdm_version" type="LineEdit" parent="Info/VBoxContainer2/tdm_version_row"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_placeholder_color = Color(0.37, 0.37, 0.37, 1)
+placeholder_text = "required tdm version..."
+keep_editing_on_text_submit = true
+emoji_menu_enabled = false
+drag_and_drop_selection_enabled = false
+caret_blink = true
+
+[node name="VSplitContainer" type="VSplitContainer" parent="Info/VBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+split_offset = 30
+
+[node name="description" type="VBoxContainer" parent="Info/VBoxContainer2/VSplitContainer"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="label_modfile" type="Label" parent="Info/VSplitContainer/modfile"]
+[node name="Label" type="Label" parent="Info/VBoxContainer2/VSplitContainer/description"]
 layout_mode = 2
-text = "darkmod.txt"
+text = "Description"
 
-[node name="cedit_modfile" type="CodeEdit" parent="Info/VSplitContainer/modfile"]
+[node name="ce_description" type="CodeEdit" parent="Info/VBoxContainer2/VSplitContainer/description"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_colors/font_color = Color(0.45098, 1, 0.388235, 1)
-theme_override_styles/focus = SubResource("StyleBoxEmpty_77p0q")
-text = "Title: Gorgeous Title
-Description: Beautiful Description
-Author: Amazing Author
-Version: 99
-Required TDM Version: 99.1
-"
+theme_override_colors/font_placeholder_color = Color(0.368627, 0.368627, 0.368627, 1)
+placeholder_text = "mission description..."
+emoji_menu_enabled = false
 drag_and_drop_selection_enabled = false
 wrap_mode = 1
 caret_blink = true
-syntax_highlighter = ExtResource("2_ngnom")
 highlight_all_occurrences = true
 auto_brace_completion_enabled = true
 
-[node name="maps" type="VBoxContainer" parent="Info/VSplitContainer"]
+[node name="maps" type="VBoxContainer" parent="Info/VBoxContainer2/VSplitContainer"]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Info/VSplitContainer/maps"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Info/VBoxContainer2/VSplitContainer/maps"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Info/VSplitContainer/maps/HBoxContainer"]
+[node name="Label" type="Label" parent="Info/VBoxContainer2/VSplitContainer/maps/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Map Sequence"
 
-[node name="btn_add_map" type="Button" parent="Info/VSplitContainer/maps/HBoxContainer"]
+[node name="btn_add_map" type="Button" parent="Info/VBoxContainer2/VSplitContainer/maps/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Add a map to the map sequence. "
 text = "Add"
 
-[node name="btn_remove_map" type="Button" parent="Info/VSplitContainer/maps/HBoxContainer"]
+[node name="btn_remove_map" type="Button" parent="Info/VBoxContainer2/VSplitContainer/maps/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Remove a map from the map sequence. "
 disabled = true
 text = "Remove"
 
-[node name="map_list" type="ItemList" parent="Info/VSplitContainer/maps"]
+[node name="map_list" type="ItemList" parent="Info/VBoxContainer2/VSplitContainer/maps"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
@@ -95,24 +174,13 @@ size_flags_horizontal = 3
 layout_mode = 2
 text = "readme.txt"
 
-[node name="cedit_readme" type="CodeEdit" parent="Info/VBoxContainer"]
+[node name="ce_readme" type="CodeEdit" parent="Info/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_colors/font_placeholder_color = Color(0.368627, 0.368627, 0.368627, 1)
 theme_override_styles/focus = SubResource("StyleBoxEmpty_77p0q")
-text = "Lorem ipsum dolor something something Lorem ipsum dolor something something Lorem ipsum dolor something something Lorem ipsum dolor something something Lorem ipsum dolor something something Lorem ipsum dolor something something Lorem ipsum dolor something something Lorem ipsum dolor something something Lorem ipsum dolor something something Lorem ipsum dolor something something 
-
-Lorem ipsum dolor something something 
-Lorem ipsum dolor something something 
-Lorem ipsum dolor something something 
-Lorem ipsum dolor something something 
-Lorem ipsum dolor something something 
-Lorem ipsum dolor something something 
-Lorem ipsum dolor something something 
-Lorem ipsum dolor something something 
-Lorem ipsum dolor something something 
-Lorem ipsum dolor something something 
-"
+placeholder_text = "readme file content..."
 drag_and_drop_selection_enabled = false
 wrap_mode = 1
 caret_blink = true
@@ -134,7 +202,7 @@ layout_mode = 2
 layout_mode = 2
 text = ".pkignore"
 
-[node name="cedit_pkignore" type="CodeEdit" parent="Pack/VBoxContainer"]
+[node name="ce_pkignore" type="CodeEdit" parent="Pack/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3

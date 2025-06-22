@@ -12,7 +12,7 @@ var dir_count:int
 var ignored_directories:Set
 var ignored_files:Set
 
-class _MissionPaths: # this allows auto-completion and strict typing, unlike dictionaries
+class MissionPaths: # this allows auto-completion and strict typing, unlike dictionaries
 	var root        : String
 	var test_root   : String  # root dir of TDM copy for testing pk4s
 	var fm_test     : String
@@ -32,13 +32,24 @@ class _MissionPaths: # this allows auto-completion and strict typing, unlike dic
 	var startingmap : String
 	var mapsequence : String
 
-class _MissionFiles:
-	var pkignore : String
-	var modfile  : String
-	var readme   : String
 
-var paths : _MissionPaths
-var files : _MissionFiles
+class MissionData extends RefCounted:
+	# modfile
+	var title       : String
+	var description : String
+	var author      : String
+	var version     : String
+	var tdm_version : String
+	var map_titles  : Array[String]
+	# other
+	var pkignore    : String
+	var readme      : String
+	var map_names   : Array[String]
+
+
+
+var paths := MissionPaths.new()
+var mdata := MissionData.new()
 
 
 var map_sequence: Array[String]
@@ -59,51 +70,14 @@ var dirty := 0
 
 
 
-func _init() -> void:
-	paths = _MissionPaths.new()
-	files = _MissionFiles.new()
+#func _init() -> void:
+	#paths = MissionPaths.new()
+	#mdata = MissionData.new()
 
 
 func set_id(_id:String) -> void:
 	id = _id
 	zipname = id + ".pk4"
-
-
-func store_hash(filepath:String) -> void:
-	file_hashes[filepath] = FMUtils.get_file_hash(filepath)
-
-
-func remove_hash(filepath:String) -> void:
-	if filepath in file_hashes:
-		file_hashes.erase(filepath)
-
-
-func set_dirty_flag(file_dirty:bool, flag:DirtyFlags, _silent:=false) -> void:
-	#var old_dirty := dirty
-	if file_dirty: dirty |= flag
-	else:          dirty &= ~flag
-
-	#if old_dirty != dirty and not silent:
-		#gui.missions_list.update_current_mission_id()
-
-
-
-func get_dirty_flag(flag:DirtyFlags) -> bool:
-	return dirty & flag != 0
-
-
-func update_pkignore(text:String, file_dirty:=true, silent:=false) -> void:
-	files.pkignore = text
-	set_dirty_flag(file_dirty, DirtyFlags.PKIGNORE, silent)
-
-func update_modfile(text:String, file_dirty:=true, silent:=false) -> void:
-	files.modfile = text
-	set_dirty_flag(file_dirty, DirtyFlags.MODFILE, silent)
-
-func update_readme(text:String, file_dirty:=true, silent:=false) -> void:
-	files.readme = text
-	set_dirty_flag(file_dirty, DirtyFlags.README, silent)
-
 
 
 func add_map(name:String, _silent:=false) -> bool:
@@ -115,7 +89,6 @@ func remove_map(name:String, _silent:=false) -> bool:
 	assert(name in map_sequence)
 	map_sequence.erase(name)
 	return true
-
 
 
 
@@ -139,3 +112,60 @@ func set_paths(path:String) -> void:
 	paths.pkignore  = Path.join(path, data.IGNORES_FILENAME)
 	paths.startingmap = Path.join(path, data.STARTINGMAP_FILENAME)
 	paths.mapsequence = Path.join(path, data.MAPSEQUENCE_FILENAME)
+
+
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+
+#		Files
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+func store_hash(filepath:String) -> void:
+	file_hashes[filepath] = FMUtils.get_file_hash(filepath)
+
+
+func remove_hash(filepath:String) -> void:
+	if filepath in file_hashes:
+		file_hashes.erase(filepath)
+
+
+func set_dirty_flag(file_dirty:bool, flag:DirtyFlags, _silent:=false) -> void:
+	#var old_dirty := dirty
+	if file_dirty: dirty |= flag
+	else:          dirty &= ~flag
+
+	#if old_dirty != dirty and not silent:
+		#gui.missions_list.update_current_mission_id()
+
+
+func get_dirty_flag(flag:DirtyFlags) -> bool:
+	return dirty & flag != 0
+
+
+func update_pkignore(text:String, file_dirty:=true, silent:=false) -> void:
+	mdata.pkignore = text
+	set_dirty_flag(file_dirty, DirtyFlags.PKIGNORE, silent)
+
+func update_description(text:String, file_dirty:=true, silent:=false) -> void:
+	mdata.description = text
+	set_dirty_flag(file_dirty, DirtyFlags.MODFILE, silent)
+
+func update_readme(text:String, file_dirty:=true, silent:=false) -> void:
+	mdata.readme = text
+	set_dirty_flag(file_dirty, DirtyFlags.README, silent)
+
+func update_title(text:String, file_dirty:=true, silent:=false) -> void:
+	mdata.title = text
+	set_dirty_flag(file_dirty, DirtyFlags.MODFILE, silent)
+
+func update_author(text:String, file_dirty:=true, silent:=false) -> void:
+	mdata.author = text
+	set_dirty_flag(file_dirty, DirtyFlags.MODFILE, silent)
+
+func update_version(text:String, file_dirty:=true, silent:=false) -> void:
+	mdata.version = text
+	set_dirty_flag(file_dirty, DirtyFlags.MODFILE, silent)
+
+func update_tdm_version(text:String, file_dirty:=true, silent:=false) -> void:
+	mdata.tdm_version = text
+	set_dirty_flag(file_dirty, DirtyFlags.MODFILE, silent)
