@@ -72,7 +72,7 @@ func _load_config() -> bool:
 	var err := config.load(SETTINGS_PATH)
 	return err == OK
 
-func _update_theme(config:ConfigData) -> void:
+func _update_theme() -> void:
 	var theme := ThemeDB.get_project_theme()
 	theme.default_font_size = config.gui_font_size
 	theme.set_font_size("font_size", "CodeEdit", config.code_font_size)
@@ -105,7 +105,7 @@ func initialize() -> void:
 		return
 
 	_save_config() # save in case some settings are missing from the file
-	_update_theme(config)
+	_update_theme()
 
 
 func update_config(new_config:ConfigData) -> void:
@@ -114,7 +114,7 @@ func update_config(new_config:ConfigData) -> void:
 
 	config.update(new_config)
 	_save_config()
-	_update_theme(config)
+	_update_theme()
 
 	# some stuff needs to know the config changed
 	gui.menu_bar.update_menu()

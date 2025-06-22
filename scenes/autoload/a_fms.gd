@@ -245,10 +245,10 @@ func save_maps_file(mis:Mission) -> bool:
 		if Path.file_exists(mis.paths.startingmap):
 			DirAccess.remove_absolute(mis.paths.startingmap)
 
-		var str:String
+		var string := ""
 		for i:int in mis.map_sequence.size():
-			str += "Mission %d: %s\n" % [i+1, mis.map_sequence[i]]
-		_save_mission_file(mis, str, mis.paths.mapsequence, data.MAPSEQUENCE_FILENAME, Mission.DirtyFlags.MAPS, true)
+			string += "Mission %d: %s\n" % [i+1, mis.map_sequence[i]]
+		_save_mission_file(mis, string, mis.paths.mapsequence, data.MAPSEQUENCE_FILENAME, Mission.DirtyFlags.MAPS, true)
 		mis.remove_hash(mis.paths.startingmap)
 		mis.store_hash(mis.paths.mapsequence)
 
@@ -357,16 +357,15 @@ func remove_current_mission() -> void:
 
 func _check_file_hash(mis:Mission, path:String) -> bool:
 	if path not in mis.file_hashes: return false
-	var hash := FMUtils.get_file_hash(path)
-	return hash == mis.file_hashes[path]
+	var file_hash := FMUtils.get_file_hash(path)
+	return file_hash == mis.file_hashes[path]
 
 
 func check_mission_filesystem() -> bool:
 	if missions.size() == 0: return false
 
-	var old_list:Array[String] = curr_mission.full_filelist.duplicate()
+	#var old_list:Array[String] = curr_mission.full_filelist.duplicate()
 	var new_list := Path.get_filepaths_recursive(curr_mission.paths.root)
-
 	var changed_files: Array[String]
 
 	if not _check_file_hash(curr_mission, curr_mission.paths.modfile):

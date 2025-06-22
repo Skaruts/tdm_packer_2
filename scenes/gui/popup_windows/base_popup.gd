@@ -15,11 +15,11 @@ var temp_data:Dictionary
 @onready var btn_cancel: Button = %btn_cancel
 
 
-func _on_ready()                     -> void: pass  # to override
-func _on_popup()                     -> void: assert(false, "must override")
-func _on_input(event: InputEvent)    -> void: pass  # to override
-func _on_bar_button_pressed(idx:int) -> void: assert(false, "must override")
-func _on_close()                     -> void: pass  # to override
+func _on_ready()                      -> void: pass  # to override
+func _on_popup()                      -> void: assert(false, "must override")
+func _on_input(_event: InputEvent)    -> void: pass  # to override
+func _on_bar_button_pressed(_idx:int) -> void: assert(false, "must override")
+func _on_close()                      -> void: pass  # to override
 
 
 func _ready() -> void:

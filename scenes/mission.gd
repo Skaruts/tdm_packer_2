@@ -78,8 +78,8 @@ func remove_hash(filepath:String) -> void:
 		file_hashes.erase(filepath)
 
 
-func set_dirty_flag(file_dirty:bool, flag:DirtyFlags, silent:=false) -> void:
-	var old_dirty := dirty
+func set_dirty_flag(file_dirty:bool, flag:DirtyFlags, _silent:=false) -> void:
+	#var old_dirty := dirty
 	if file_dirty: dirty |= flag
 	else:          dirty &= ~flag
 
@@ -106,12 +106,12 @@ func update_readme(text:String, file_dirty:=true, silent:=false) -> void:
 
 
 
-func add_map(name:String, silent:=false) -> bool:
+func add_map(name:String, _silent:=false) -> bool:
 	if name in map_sequence: return false
 	map_sequence.append(name)
 	return true
 
-func remove_map(name:String, silent:=false) -> bool:
+func remove_map(name:String, _silent:=false) -> bool:
 	assert(name in map_sequence)
 	map_sequence.erase(name)
 	return true

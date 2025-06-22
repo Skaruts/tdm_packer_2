@@ -25,12 +25,12 @@ class ModfileHighlighter extends CodeHighlighter:
 		var colon_idx := line.find(':')
 
 		if colon_idx != -1:
-			var str := line.left(colon_idx).strip_edges()
-			if str in KWS:
+			var string := line.left(colon_idx).strip_edges()
+			if string in KWS:
 				color_map[0] = { "color": Color("73ff63") }
 				color_map[colon_idx+1] = { "color": data.TEXT_COLOR }
-			elif str.begins_with("Mission") and str.ends_with("Title"):
-				var parts := str.split(' ', false)
+			elif string.begins_with("Mission") and string.ends_with("Title"):
+				var parts := string.split(' ', false)
 				if parts.size() == 3 and parts[1].is_valid_int():
 					color_map[0] = { "color": Color("73ff63") }
 					color_map[colon_idx+1] = { "color": data.TEXT_COLOR }
@@ -96,12 +96,12 @@ func _ready() -> void:
 	btn_remove_map.pressed.connect(_on_btn_remove_map_pressed)
 
 	map_list.item_selected.connect(
-		func(index: int) -> void:
+		func(_index: int) -> void:
 			btn_remove_map.disabled = false
 	)
 
 	map_list.empty_clicked.connect(
-		func(at_position: Vector2, mouse_button_index: int) -> void:
+		func(_at_position: Vector2, _mouse_button_index: int) -> void:
 			map_list.deselect_all()
 			btn_remove_map.disabled = true
 	)

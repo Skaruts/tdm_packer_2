@@ -14,7 +14,7 @@ const tdm_log_file1 := "DarkMod.log"
 const tdm_log_file2 := "DarkMod.temp.log"
 
 # to keep track of a running TDM process
-var pids:Dictionary# Array[int]
+var pids:Dictionary
 var timer:Timer
 
 
@@ -29,7 +29,6 @@ func _ready() -> void:
 
 
 func _on_timer_timeout() -> void:
-	#logs.print("checking pids: ", pids.size())
 	if not pids.size(): return
 	for pid:int in pids:
 		if not OS.is_process_running(pid):
@@ -40,7 +39,7 @@ func _on_timer_timeout() -> void:
 
 func _run_app_thread(path:String, args:Array[String]) -> void:
 	var res := Path.execute(path, args)
-	call_deferred_thread_group("emit_signal", "_execution_finished", res)
+	call_deferred_thread_group("emit_signal", _execution_finished, res)
 
 
 
@@ -70,20 +69,16 @@ func run_darkradiant() -> void:
 		return
 
 	console.task("Running DarkRadiant for '%s'" % fms.curr_mission.id)
-	var pid := OS.create_process(exec_filepath, [arg])
-
-
-
-
-
+	var _pid := OS.create_process(exec_filepath, [arg])
 
 
 func run_tdm() -> void:
-	_run_game("Running TDM", fms.curr_mission, data.config.tdm_path, "tdm_process_started", "tdm_process_ended")
+	_run_game("Running TDM", data.config.tdm_path, tdm_process_started, tdm_process_ended)
 
 
 func run_tdm_copy() -> void:
 	var mission := fms.curr_mission
+
 	# check if source pk4 file exists
 	var src_pak_file :String = Path.join(mission.paths.root, mission.zipname)
 	if not Path.file_exists(src_pak_file):
@@ -118,11 +113,10 @@ func run_tdm_copy() -> void:
 			"Couldn't copy '%s' to the test location '%s'. ERROR: %s.\n" % [mission.zipname, dest_pak_file, Path.get_error_text(copy_err)]
 		)
 		return
+	_run_game("Running TDM test version", data.config.tdm_copy_path, tdm_copy_process_started, tdm_copy_process_ended)
 
-	_run_game("Running TDM test version", mission, data.config.tdm_copy_path, "tdm_copy_process_started", "tdm_copy_process_ended")
 
-
-func _run_game(task_name:String, mission:Mission, exec_filepath:String, start_signal:StringName, end_signal:StringName) -> void:
+func _run_game(task_name:String, exec_filepath:String, start_signal:Signal, end_signal:Signal) -> void:
 	# launch TDM test version
 
 	var game_dir :String = exec_filepath.get_base_dir()
@@ -138,11 +132,10 @@ func _run_game(task_name:String, mission:Mission, exec_filepath:String, start_si
 	# switch the 'currentfm.txt' file to point to this fm before launching TDM
 	Path.write_file(currfm_path, fms.curr_mission.id)
 
-	#logs.task("Starting TDM process")
 	console.task(task_name)
 	var pid := OS.create_process(exec_filepath, [])
 	if pid >= 0:
-		emit_signal(start_signal)
+		start_signal.emit()
 
 		# Since Godot can't change the CWD, TDM will create logs inside the
 		# Packer's directory, and they need to be moved to TDM dir after it
@@ -159,4 +152,4 @@ func _run_game(task_name:String, mission:Mission, exec_filepath:String, start_si
 			)
 
 			console.info("TDM process ended")
-			emit_signal(end_signal)
+			end_signal.emit()

@@ -20,7 +20,7 @@ func _ready() -> void:
 	add_button("Don't Save", false, ACTION)
 
 
-func _on_custom_action(action: StringName) -> void:
+func _on_custom_action(_action: StringName) -> void:
 	close_requested.emit()
 	popup_closed.emit(false)
 	hide()

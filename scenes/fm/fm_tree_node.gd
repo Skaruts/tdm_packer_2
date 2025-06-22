@@ -54,6 +54,7 @@ func has_ignored_files() -> bool:
 	return false
 
 
+@warning_ignore("shadowed_variable")
 func get_child_named(name:String) -> Variant:
 	for c:FMTreeNode in children:
 		if c.name == name:

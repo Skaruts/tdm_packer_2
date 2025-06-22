@@ -52,7 +52,7 @@ func update_list() -> void:
 	il_missions.clear()
 	for m:Mission in fms.missions:
 		var id := m.id
-		var idx := il_missions.add_item(id)
+		var _idx := il_missions.add_item(id)
 
 		#if m.file_tree == null:
 			#il_missions.set_item_custom_fg_color(idx, data.ERROR_COLOR)
@@ -88,7 +88,7 @@ func update_buttons() -> void:
 #        signals
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-func _on_il_missions_item_clicked(index: int, at_position: Vector2, mouse_button_index: int) -> void:
+func _on_il_missions_item_clicked(index: int, _at_position: Vector2, mouse_button_index: int) -> void:
 	if mouse_button_index > 2:
 		return
 

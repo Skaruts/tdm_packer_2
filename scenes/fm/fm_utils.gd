@@ -39,7 +39,7 @@ static func pack_mission(mission:Mission, scene_tree:SceneTree) -> void:
 	await _pack_files(mission, scene_tree)
 
 	var t2 := Time.get_ticks_msec()
-	var total_time := "%.2f" % [(t2-t1)/1000]
+	var total_time := "%.2f" % [(t2-t1)/1000.0]
 
 	console.task("Finished packing '%s'..." % [mission.zipname])
 	console.info("%s dirs, %s files, %s seconds" % [mission.dir_count, mission.file_count, total_time])
@@ -129,7 +129,7 @@ static func print_tree_node_recursive(root:FMTreeNode) -> void:
 
 
 static func build_mission_filepaths(mission:Mission, root:FMTreeNode) -> Array[String]:
-	var filepaths:Array[String]
+	var filepaths:Array[String] = []
 
 	for c:FMTreeNode in root.children:
 		if not c.ignored:
@@ -172,8 +172,8 @@ static func init_ignores(pkignore:String, ign_dirs:Set, ign_files:Set) -> void:
 static func _get_used_map_names(file:String) -> Array[String]:
 	var map_names:Array[String]
 	if Path.file_exists(file):
-		var str := Path.read_file_string(file)
-		map_names = [ str.strip_edges().split('\n', false)[0] ]
+		var string := Path.read_file_string(file)
+		map_names = [ string.strip_edges().split('\n', false)[0] ]
 	return map_names
 
 
