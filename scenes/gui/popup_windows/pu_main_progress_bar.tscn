@@ -50,7 +50,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 10
-text = "Cancel"
+text = "Abort"
 
 [connection signal="window_input" from="." to="." method="_on_window_input"]
 [connection signal="pressed" from="TabContainer/MarginContainer/VBoxContainer3/VBoxContainer2/btn_canel" to="." method="_on_btn_canel_pressed"]

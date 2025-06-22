@@ -293,7 +293,7 @@ func add_missions(ids:Array[String]) -> void:
 	var num_missions_processed := 0
 
 	for i:float in ids.size():
-		if popups.main_progress_bar.cancel_status:
+		if popups.main_progress_bar.aborted:
 			popups.main_progress_bar.hide_bar()
 			break
 
@@ -301,31 +301,9 @@ func add_missions(ids:Array[String]) -> void:
 		popups.main_progress_bar.set_percentage(i/ids.size())
 		popups.main_progress_bar.set_text("Loading '%s'" % id)
 
-		#var fm_path := Path.join(fms.fms_folder, id)
-		#var modfile_path := Path.join(fm_path, data.MODFILE_FILENAME)
-		var should_load := true
-		#var cancel_load := func() -> void:
-			#should_load = false
-
-		#if not Path.file_exists(modfile_path):
-			#popups.show_confirmation({
-					#title = "Confirm",
-					#text = "create modfile?",
-				#},
-				#func() -> void: pass,
-				#cancel_load,
-			#)
-			#if await popups.confirmation_dialog.canceled:
-			##await popups.confirmation_dialog.visibility_changed
-				#should_load = false
-			#
-		#logs.print("should load", should_load)
-		if should_load:
-			#var last_mission := curr_mission
-			var mission := load_mission(id, true)
-			curr_mission = mission
-
-			gui.workspace_mgr.add_workspace(mission)
+		var mission := load_mission(id, true)
+		curr_mission = mission
+		gui.workspace_mgr.add_workspace(mission)
 
 		num_missions_processed += 1
 		logs.print("add mission: ", missions.find(curr_mission), curr_mission.id)
@@ -342,8 +320,8 @@ func add_missions(ids:Array[String]) -> void:
 		popups.main_progress_bar.set_text("All missions loaded")
 		popups.main_progress_bar.set_percentage(1)
 
-	if popups.main_progress_bar.cancel_status:
-		popups.main_progress_bar.set_text("Cancelled")
+	if popups.main_progress_bar.aborted:
+		popups.main_progress_bar.set_text("Aborting")
 
 	await get_tree().create_timer(1).timeout
 	popups.main_progress_bar.hide_bar()
