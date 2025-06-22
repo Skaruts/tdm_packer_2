@@ -1,0 +1,56 @@
+[gd_scene load_steps=2 format=3 uid="uid://dd4rsrmnsk1gq"]
+
+[ext_resource type="Script" uid="uid://cjpx5oa5qwnku" path="res://scenes/gui/popup_windows/pu_main_progress_bar.gd" id="1_syrd3"]
+
+[node name="main_progress_bar" type="Popup"]
+auto_translate_mode = 1
+initial_position = 2
+size = Vector2i(500, 120)
+visible = true
+script = ExtResource("1_syrd3")
+
+[node name="TabContainer" type="TabContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+current_tab = 0
+tabs_visible = false
+
+[node name="MarginContainer" type="MarginContainer" parent="TabContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+metadata/_tab_index = 0
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="TabContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/MarginContainer/VBoxContainer3"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="lb_status" type="Label" parent="TabContainer/MarginContainer/VBoxContainer3/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "status"
+
+[node name="progress_bar" type="ProgressBar" parent="TabContainer/MarginContainer/VBoxContainer3/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="TabContainer/MarginContainer/VBoxContainer3"]
+layout_mode = 2
+
+[node name="btn_canel" type="Button" parent="TabContainer/MarginContainer/VBoxContainer3/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+text = "Cancel"
+
+[connection signal="window_input" from="." to="." method="_on_window_input"]
+[connection signal="pressed" from="TabContainer/MarginContainer/VBoxContainer3/VBoxContainer2/btn_canel" to="." method="_on_btn_canel_pressed"]

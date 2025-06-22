@@ -13,7 +13,7 @@ func _enter_tree() -> void:
 	popups.settings_dialog        = %settings_dialog
 	popups.quit_save_confirmation = %quit_save_confirmation
 	popups.open_mission           = %open_mission
-
+	popups.main_progress_bar      = %main_progress_bar
 
 func _ready() -> void:
 	get_tree().set_auto_accept_quit(false)

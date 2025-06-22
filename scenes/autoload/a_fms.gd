@@ -79,7 +79,7 @@ func load_missions() -> void:
 	console.info("Loaded %s missions." % missions.size())
 
 
-func _mission_already_loaded(id:String) -> bool:
+func is_mission_already_loaded(id:String) -> bool:
 	for m:Mission in missions:
 		if m.id == id:
 			return true
@@ -281,24 +281,54 @@ func select_mission(idx:int) -> void:
 	logs.print("select_mission", idx, curr_mission.id)
 
 
-func add_mission(id:String) -> Mission:
-	if _mission_already_loaded(id):
-		popups.show_message("", "Mission '%s' is already loaded." % [id])
-		return
+func add_missions(ids:Array[String]) -> void:
+	console.task("opening mission" if ids.size() < 2 else "opening missions")
 
-	var last_mission := curr_mission
+	popups.main_progress_bar.show_bar()
+	popups.main_progress_bar.set_percentage(0)
+	popups.main_progress_bar.set_cancel_enabled(true)
 
-	var mission := load_mission(id, true)
-	curr_mission = mission
-	sort_missions()
-	save_missions_list()
+	await get_tree().process_frame
+	var num_missions_loaded := 0
 
-	gui.missions_list.update_list()
-	gui.workspace_mgr.add_workspace(mission)
-	gui.menu_bar.update_menu()
+	for i:float in ids.size():
+		if popups.main_progress_bar.cancel_status:
+			popups.main_progress_bar.hide_bar()
+			break
 
-	logs.print("add mission: ", missions.find(curr_mission), curr_mission.id)
-	return mission
+		var id := ids[i]
+		popups.main_progress_bar.set_percentage(i/ids.size())
+		popups.main_progress_bar.set_text("Loading '%s'" % id)
+
+		var last_mission := curr_mission
+		var mission := load_mission(id, true)
+		curr_mission = mission
+
+		gui.workspace_mgr.add_workspace(mission)
+		num_missions_loaded += 1
+
+		logs.print("add mission: ", missions.find(curr_mission), curr_mission.id)
+		await get_tree().process_frame
+
+	if num_missions_loaded > 0:
+		popups.main_progress_bar.set_text("Updating UI")
+		popups.main_progress_bar.set_percentage(0.95)
+		sort_missions()
+		save_missions_list()
+		gui.missions_list.update_list()
+		gui.menu_bar.update_menu()
+
+		popups.main_progress_bar.set_text("All missions loaded")
+		popups.main_progress_bar.set_percentage(1)
+
+	if popups.main_progress_bar.cancel_status:
+		popups.main_progress_bar.set_text("Cancelled")
+
+	await get_tree().create_timer(1).timeout
+	popups.main_progress_bar.hide_bar()
+
+
+
 
 
 func get_current_mission_index() -> int:

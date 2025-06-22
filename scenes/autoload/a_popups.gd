@@ -17,9 +17,11 @@ var file_dialog            : FileDialog
 var quit_save_confirmation : ConfirmationDialog
 var settings_dialog        : Window
 var open_mission           : Window
+var main_progress_bar      : MainProgressBar
 
 
-var popup_stack : Array[Window]
+var popup_counter := 0
+
 
 func _ready() -> void:
 	confirmation_dialog.get_label().autowrap_mode = TextServer.AUTOWRAP_ARBITRARY
@@ -31,16 +33,17 @@ func _ready() -> void:
 	quit_save_confirmation.visibility_changed.connect(_on_popup_visibility_changed.bind(quit_save_confirmation))
 	settings_dialog.visibility_changed.connect(_on_popup_visibility_changed.bind(settings_dialog))
 	open_mission.visibility_changed.connect(_on_popup_visibility_changed.bind(open_mission))
+	main_progress_bar.visibility_changed.connect(_on_popup_visibility_changed.bind(main_progress_bar))
 
 
 func _on_popup_visibility_changed(pu:Window) -> void:
 	if pu.visible:
-		popup_stack.push_back(pu)
 		popup_background.visible = true
+		popup_counter += 1
 	else:
-		var last_pu: Window = popup_stack.pop_back()
-		if last_pu != pu: logs.error("popup stack mismatch")
-		if popup_stack.size() == 0:
+		popup_counter -= 1
+		assert(popup_counter >= 0)
+		if popup_counter == 0:
 			popup_background.visible = false
 
 

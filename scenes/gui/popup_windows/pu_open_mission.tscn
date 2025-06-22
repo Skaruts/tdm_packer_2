@@ -6,7 +6,7 @@
 [node name="open_mission" type="Window"]
 title = "Open Mission"
 initial_position = 4
-size = Vector2i(600, 500)
+size = Vector2i(500, 600)
 script = ExtResource("1_0g3l0")
 
 [node name="Panel" type="Panel" parent="."]
@@ -94,3 +94,4 @@ text = "Cancel"
 
 [connection signal="cell_selected" from="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer/tr_missions" to="." method="_on_tr_missions_cell_selected"]
 [connection signal="item_activated" from="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer/tr_missions" to="." method="_on_tr_missions_item_activated"]
+[connection signal="multi_selected" from="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer/tr_missions" to="." method="_on_tr_missions_multi_selected"]
