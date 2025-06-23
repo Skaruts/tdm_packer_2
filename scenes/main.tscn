@@ -1,5 +1,6 @@
-[gd_scene load_steps=15 format=3 uid="uid://bxhl1rene8xie"]
+[gd_scene load_steps=16 format=3 uid="uid://bxhl1rene8xie"]
 
+[ext_resource type="Theme" uid="uid://cwwst3eo1ivnj" path="res://resources/theme_4.4_stable.res" id="1_a8y0u"]
 [ext_resource type="Script" uid="uid://cn753q050wieh" path="res://scenes/main.gd" id="1_soa3g"]
 [ext_resource type="StyleBox" uid="uid://byni8x36qkwsd" path="res://resources/darker_panel.tres" id="1_tipki"]
 [ext_resource type="PackedScene" uid="uid://wnofs5lvgk2j" path="res://scenes/gui/gui_menu_bar.tscn" id="2_js7kq"]
@@ -23,6 +24,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
+theme = ExtResource("1_a8y0u")
 theme_override_styles/panel = ExtResource("1_tipki")
 script = ExtResource("1_soa3g")
 
@@ -98,7 +100,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.5)
+color = Color(0.00784314, 0.00784314, 0.0392157, 0.501961)
 
 [node name="AcceptDialog" type="AcceptDialog" parent="."]
 unique_name_in_owner = true
