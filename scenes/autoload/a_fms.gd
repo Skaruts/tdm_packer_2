@@ -233,8 +233,8 @@ func load_modfile(mis:Mission) -> void:
 		"Mission"      = ModfileSection.Map_Title,    # Mission 1 Title:
 	}
 
-	# TODO: use lower case tokens, just in case
-
+	# use lower case tokens, in case it was manually edited by the user
+	# and contains case mistakes
 	var token_count := tokens.size()
 	var i := 0
 	while i < token_count:
@@ -242,20 +242,27 @@ func load_modfile(mis:Mission) -> void:
 		if tok in toks_lut.keys():
 			commit_section.call(section_text.strip_edges(), curr_section, map_index)
 			section_text = ""
-			if i+2 < token_count:
-				if tok == "Mission":
-					if tokens[i+2] == "Title:":
-						map_index = tokens[i+1].to_int()-1
-						i += 2
-				elif tok == "Required":
-					if tokens[i+1] == "TDM" and tokens[i+2] == "Version:":
-						i += 2
 
-			curr_section = toks_lut[tok]
-			#logs.print(">", i, curr_section, tok, " | ", section_text, " | ", map_index)
-			i+=1
+			if tok.to_lower() == "mission":
+				logs.print(tokens[i+2], tokens[i+2].to_lower() == "title:")
+				if i+2 < token_count and tokens[i+2].to_lower() == "title:":
+					curr_section = toks_lut[tok]
+					map_index = tokens[i+1].to_int()-1
+					i += 2
+			elif tok.to_lower() == "required":
+				if i+2 < token_count \
+				and tokens[i+1].to_lower() == "tdm" \
+				and tokens[i+2].to_lower() == "version:":
+					curr_section = toks_lut[tok]
+					i += 2
+			else:
+				curr_section = toks_lut[tok]
+
+			logs.print(">", i, curr_section, tok, " | ", section_text, " | ", map_index)
+			i += 1
 			continue
-		#logs.print("-", i, curr_section, tok, " | ", section_text, " | ", map_index)
+
+		logs.print("-", i, curr_section, tok, " | ", section_text, " | ", map_index)
 		section_text += tok + ' '
 		i += 1
 	commit_section.call(section_text.strip_edges(), curr_section, map_index)
