@@ -73,6 +73,8 @@ func _ready() -> void:
 	tr_map_list.set_column_title(1, "Title")
 	tr_map_list.set_column_expand(0, true)
 	tr_map_list.set_column_expand(1, true)
+	tr_map_list.set_column_expand_ratio(1, 2)
+	#tr_map_list.set_column_custom_minimum_width(0, 150)
 	tr_map_list.set_column_title_alignment(0, tree_alignment)
 	tr_map_list.set_column_title_alignment(1, tree_alignment)
 
