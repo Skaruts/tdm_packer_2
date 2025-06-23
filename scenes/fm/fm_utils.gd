@@ -78,7 +78,7 @@ static func _pack_files(mission:Mission) -> ErrorReport:
 
 		var fpath:String = mission.filepaths[i]
 		var rel_path := fpath.trim_prefix(mission.paths.root + '/')
-		#popups.pack_mission.call_thread_safe("print", "    %s" % [rel_path])
+		popups.pack_mission.call_thread_safe("print", "    %s" % [rel_path])
 		zipper.start_file(rel_path)
 
 		var filename := fpath.get_file()
@@ -92,12 +92,10 @@ static func _pack_files(mission:Mission) -> ErrorReport:
 			content = content.replace(data.TOK_MIN_VERSION, mission.mdata.tdm_version)
 			if content.contains(data.TOK_DATETIME):
 				content = content.replace(data.TOK_DATETIME, data.get_date_time_string())
-			logs.print(filename, filename in subst_files, content)
+			#logs.print(filename, filename in subst_files, content)
 			zipper.write_file(content.to_utf8_buffer())
 
 		zipper.close_file()
-
-
 	zipper.close()
 	return report
 
@@ -136,7 +134,6 @@ static func build_file_tree(mission:Mission) -> void:
 static func _build_mission_nodes(mission:Mission, parent:FMTreeNode, ign_dirs:Set, ign_files:Set) -> void:
 	var dpaths:Array[String] = Path.get_dirpaths(parent.path)
 	var fpaths:Array[String] = Path.get_filepaths(parent.path)
-
 
 	for dir:String in dpaths:
 		var dir_node := FMTreeNode.new(dir, parent)
@@ -199,7 +196,6 @@ static func init_ignores(pkignore:String, ign_dirs:Set, ign_files:Set) -> void:
 			ign_dirs.add(line)
 		else:
 			ign_files.add(line)
-
 
 
 static func _get_used_map_names(file:String) -> Array[String]:
