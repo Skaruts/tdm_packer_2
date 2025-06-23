@@ -109,7 +109,6 @@ func soft_reload_mission(mis:Mission, force_update:=false) -> void:
 
 
 func load_mission(id: String, create_modfile := false) -> Mission:
-	console.print("Loading '%s'" % [id])
 
 	var mission := Mission.new()
 	mission.id = id
@@ -133,6 +132,7 @@ func load_mission(id: String, create_modfile := false) -> Mission:
 	mission.update_zipname()
 	FMUtils.build_file_tree(mission)
 
+	console.info("Opened mission - %s" % [mission.id])
 	return mission
 
 
@@ -410,7 +410,7 @@ func select_mission(idx:int) -> void:
 
 func add_missions(ids:Array[String]) -> void:
 	if ids.size() == 0: return
-	console.task("opening mission" if ids.size() < 2 else "opening missions")
+	#console.task("opening mission" if ids.size() < 2 else "opening missions")
 
 	popups.main_progress_bar.show_bar()
 	popups.main_progress_bar.set_percentage(0)
@@ -467,6 +467,7 @@ func remove_current_mission() -> void:
 	var last_idx := get_current_mission_index()
 	var curr_idx: int
 	logs.print("remove_current_mission: ", last_idx, curr_mission.id)
+	var mission_id: String = curr_mission.id
 
 	missions.erase(curr_mission)
 	if missions.size() > 0:
@@ -477,6 +478,9 @@ func remove_current_mission() -> void:
 	else:
 		curr_mission = null
 		save_missions_list()
+
+	console.info("Closed mission - %s" % mission_id)
+
 	gui.missions_list.update_list()
 	gui.workspace_mgr.remove_workspace(last_idx)
 	gui.menu_bar.update_menu()
