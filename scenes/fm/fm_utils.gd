@@ -39,8 +39,11 @@ static func pack_mission(mission:Mission) -> void:
 		func(path:String) -> bool:
 			return path.get_extension() == "pk4" and path.get_file().begins_with(mission.id)
 	)
-	for old_pak in old_paks:
-		Path.delete_file(old_pak)
+	for old_pak:String in old_paks:
+		var err := Path.delete_file(old_pak)
+		if err != OK:
+			popups.pack_mission.call_thread_safe("error", "(%s) couldn't delete file '%s'" % [Path.get_error_text(err), old_pak])
+			return
 
 	var t1 := Time.get_ticks_msec()
 	var report := _pack_files(mission)

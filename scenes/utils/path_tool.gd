@@ -217,15 +217,13 @@ static func get_dirpaths_recursive(root:String) -> Array[String]:
 	#return []
 
 
-static func delete_dir(path:String) -> void:
+static func delete_dir(path:String) -> int:
 	var error := DirAccess.remove_absolute(path)
-	if error:
-		logs.error("Couldn't delete dir: not empty. (%s)" % [path])
+	return error
 
-static func delete_file(path:String) -> void:
+static func delete_file(path:String) -> int:
 	var error := DirAccess.remove_absolute(path)
-	if error:
-		logs.error("Couldn't delete dir: not empty. (%s)" % [path])
+	return error
 
 
 
