@@ -93,7 +93,7 @@ static func _pack_files(mission:Mission) -> ErrorReport:
 			if content.contains(data.TOK_DATETIME):
 				content = content.replace(data.TOK_DATETIME, data.get_date_time_string())
 			logs.print(filename, filename in subst_files, content)
-			zipper.write_file(var_to_bytes(content))
+			zipper.write_file(content.to_utf8_buffer())
 
 		zipper.close_file()
 
