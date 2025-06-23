@@ -1,13 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://g44k1m10wg8e"]
+[gd_scene load_steps=3 format=3 uid="uid://da31xyevr7054"]
 
-[ext_resource type="Script" uid="uid://dldykivstxpef" path="res://scenes/gui/popup_windows/pu_open_mission.gd" id="1_0g3l0"]
-[ext_resource type="StyleBox" uid="uid://byni8x36qkwsd" path="res://resources/darker_panel.tres" id="1_8mobw"]
+[ext_resource type="Script" uid="uid://dhog4vwtinckh" path="res://scenes/gui/popup_windows/pu_add_map.gd" id="1_tf34y"]
+[ext_resource type="StyleBox" uid="uid://byni8x36qkwsd" path="res://resources/darker_panel.tres" id="2_72ybi"]
 
-[node name="open_mission" type="Window"]
-title = "Open Mission"
+[node name="add_map" type="Window"]
+title = "Add Map"
 initial_position = 2
 size = Vector2i(500, 600)
-script = ExtResource("1_0g3l0")
+script = ExtResource("1_tf34y")
 
 [node name="Panel" type="Panel" parent="."]
 anchors_preset = 15
@@ -15,7 +15,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = ExtResource("1_8mobw")
+theme_override_styles/panel = ExtResource("2_72ybi")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 anchors_preset = 15
@@ -44,14 +44,22 @@ layout_mode = 2
 [node name="lb_header" type="Label" parent="PanelContainer/VBoxContainer/tabs/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Available Missions"
+size_flags_horizontal = 3
+text = "Available Maps"
+
+[node name="cbt_hide_excluded" type="CheckButton" parent="PanelContainer/VBoxContainer/tabs/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Hide all the maps that are currently excluded from the pk4"
+button_pressed = true
+text = "Hide Excluded"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/VBoxContainer/tabs/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="tr_missions" type="Tree" parent="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer"]
+[node name="tr_maps" type="Tree" parent="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -92,6 +100,7 @@ layout_mode = 2
 size_flags_horizontal = 6
 text = "Cancel"
 
-[connection signal="cell_selected" from="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer/tr_missions" to="." method="_on_tr_missions_cell_selected"]
-[connection signal="item_activated" from="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer/tr_missions" to="." method="_on_tr_missions_item_activated"]
-[connection signal="multi_selected" from="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer/tr_missions" to="." method="_on_tr_missions_multi_selected"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/tabs/VBoxContainer/HBoxContainer/cbt_hide_excluded" to="." method="_on_cbt_hide_excluded_pressed"]
+[connection signal="cell_selected" from="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer/tr_maps" to="." method="_on_tr_maps_cell_selected"]
+[connection signal="item_activated" from="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer/tr_maps" to="." method="_on_tr_maps_item_activated"]
+[connection signal="multi_selected" from="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer/tr_maps" to="." method="_on_tr_maps_multi_selected"]

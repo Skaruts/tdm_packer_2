@@ -308,19 +308,21 @@ func _on_line_edit_text_changed(new_text:String, ledit:LineEdit) -> void:
 
 
 func _on_btn_add_map_pressed() -> void:
-	popups.open_single_file({
-			title = "Choose Map",
-			root_subfolder = _mission.paths.maps,
-			filters = ["*.map;Map Files"],
-		},
-		func(path:String) -> void:
-			logs.info(path)
-			var map_filename := path.get_basename().get_file()
-			if _mission.add_map_file(map_filename):
-				_add_map_tree_item(map_filename)
-				fms.start_save_timer(true)
-				tr_map_list.set_selected( _tree_root.get_child(-1), 0 )
-	)
+	popups.show_popup(popups.add_map)
+
+	#popups.open_single_file({
+			#title = "Choose Map",
+			#root_subfolder = _mission.paths.maps,
+			#filters = ["*.map;Map Files"],
+		#},
+		#func(path:String) -> void:
+			#logs.info(path)
+			#var map_filename := path.get_basename().get_file()
+			#if _mission.add_map_file(map_filename):
+				#_add_map_tree_item(map_filename)
+				#fms.start_save_timer(true)
+				#tr_map_list.set_selected( _tree_root.get_child(-1), 0 )
+	#)
 
 
 func _on_btn_remove_map_pressed() -> void:

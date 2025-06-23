@@ -15,6 +15,7 @@ func _enter_tree() -> void:
 	popups.open_mission           = %open_mission
 	popups.main_progress_bar      = %main_progress_bar
 	popups.pack_mission           = %pack_mission
+	popups.add_map                = %add_map
 
 func _ready() -> void:
 	get_tree().set_auto_accept_quit(false)

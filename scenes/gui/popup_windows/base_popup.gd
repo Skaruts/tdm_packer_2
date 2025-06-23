@@ -47,3 +47,8 @@ func _input(event: InputEvent) -> void:
 	_on_input(event)
 	#if   event.is_action_pressed("ui_cancel"): close(false)
 #	elif event.is_action_pressed("ui_accept"): close(true)
+
+
+func _update_button(btn:Button, enable:bool) -> void:
+	btn.disabled = not enable
+	btn.focus_mode = Control.FOCUS_ALL if enable else Control.FOCUS_NONE
