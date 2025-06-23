@@ -258,11 +258,11 @@ func load_modfile(mis:Mission) -> void:
 			else:
 				curr_section = toks_lut[tok]
 
-			logs.print(">", i, curr_section, tok, " | ", section_text, " | ", map_index)
+			#logs.print(">", i, curr_section, tok, " | ", section_text, " | ", map_index)
 			i += 1
 			continue
 
-		logs.print("-", i, curr_section, tok, " | ", section_text, " | ", map_index)
+		#logs.print("-", i, curr_section, tok, " | ", section_text, " | ", map_index)
 		section_text += tok + ' '
 		i += 1
 	commit_section.call(section_text.strip_edges(), curr_section, map_index)
