@@ -289,7 +289,7 @@ func save_missions_list() -> void:
 func save_mission(mission:Mission, reload:=false) -> void:
 	if not mission.dirty: return
 
-	console.print("Saving mission", mission.id)
+	#console.print("Saving mission", mission.id)
 
 	if mission.get_dirty_flag(Mission.DirtyFlags.PKIGNORE):
 		save_pkignore(mission)

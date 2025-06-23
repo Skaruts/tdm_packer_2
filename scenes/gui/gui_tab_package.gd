@@ -60,7 +60,7 @@ func _add_map_tree_item(filename:String, title:="") -> TreeItem:
 	#item.set_icon(0, data.FILE_ICON)
 	#item.set_icon_max_width(0, 16)
 
-	item.set_custom_color(1, Color.GOLDENROD)
+	item.set_custom_color(1, Color(0.82, 0.698, 0.361))# Color.GOLDENROD)
 	item.set_text(1, title)
 
 	return item

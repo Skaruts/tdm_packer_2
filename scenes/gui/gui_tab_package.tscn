@@ -21,23 +21,27 @@ script = ExtResource("1_0pq56")
 
 [node name="Info" type="HSplitContainer" parent="."]
 layout_mode = 2
-split_offset = 305
+split_offset = 325
 metadata/_tab_index = 0
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="Info"]
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="Info/VBoxContainer2"]
+[node name="Label" type="Label" parent="Info/VBoxContainer2"]
 visible = false
 custom_minimum_size = Vector2(105, 0)
 layout_mode = 2
 text = "darkmod.txt"
 
-[node name="title_row" type="VBoxContainer" parent="Info/VBoxContainer2"]
+[node name="HSeparator" type="HSeparator" parent="Info/VBoxContainer2"]
+visible = false
+layout_mode = 2
+
+[node name="title_row" type="HBoxContainer" parent="Info/VBoxContainer2"]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="Info/VBoxContainer2/title_row"]
-custom_minimum_size = Vector2(105, 0)
+custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 text = "Title"
 
@@ -52,7 +56,7 @@ emoji_menu_enabled = false
 drag_and_drop_selection_enabled = false
 caret_blink = true
 
-[node name="HSeparator" type="HSeparator" parent="Info/VBoxContainer2"]
+[node name="HSeparator3" type="HSeparator" parent="Info/VBoxContainer2"]
 visible = false
 layout_mode = 2
 
@@ -60,7 +64,7 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Label" type="Label" parent="Info/VBoxContainer2/author_row"]
-custom_minimum_size = Vector2(105, 0)
+custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 text = "Author"
 
@@ -75,15 +79,19 @@ emoji_menu_enabled = false
 drag_and_drop_selection_enabled = false
 caret_blink = true
 
-[node name="version_row" type="HBoxContainer" parent="Info/VBoxContainer2"]
+[node name="HFlowContainer" type="HFlowContainer" parent="Info/VBoxContainer2"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Info/VBoxContainer2/version_row"]
-custom_minimum_size = Vector2(105, 0)
+[node name="version_row" type="HBoxContainer" parent="Info/VBoxContainer2/HFlowContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="Info/VBoxContainer2/HFlowContainer/version_row"]
+custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 text = "Version"
 
-[node name="le_version" type="LineEdit" parent="Info/VBoxContainer2/version_row"]
+[node name="le_version" type="LineEdit" parent="Info/VBoxContainer2/HFlowContainer/version_row"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -94,15 +102,15 @@ emoji_menu_enabled = false
 drag_and_drop_selection_enabled = false
 caret_blink = true
 
-[node name="tdm_version_row" type="HBoxContainer" parent="Info/VBoxContainer2"]
+[node name="tdm_version_row" type="HBoxContainer" parent="Info/VBoxContainer2/HFlowContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="Info/VBoxContainer2/tdm_version_row"]
-custom_minimum_size = Vector2(105, 0)
+[node name="Label" type="Label" parent="Info/VBoxContainer2/HFlowContainer/tdm_version_row"]
 layout_mode = 2
 text = "TDM Version"
 
-[node name="le_tdm_version" type="LineEdit" parent="Info/VBoxContainer2/tdm_version_row"]
+[node name="le_tdm_version" type="LineEdit" parent="Info/VBoxContainer2/HFlowContainer/tdm_version_row"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -114,6 +122,7 @@ drag_and_drop_selection_enabled = false
 caret_blink = true
 
 [node name="HSeparator2" type="HSeparator" parent="Info/VBoxContainer2"]
+visible = false
 layout_mode = 2
 
 [node name="VSplitContainer" type="VSplitContainer" parent="Info/VBoxContainer2"]
@@ -123,7 +132,7 @@ size_flags_vertical = 3
 split_offset = 30
 
 [node name="description" type="VBoxContainer" parent="Info/VBoxContainer2/VSplitContainer"]
-custom_minimum_size = Vector2(50, 50)
+custom_minimum_size = Vector2(175, 50)
 layout_mode = 2
 size_flags_vertical = 3
 
@@ -269,7 +278,7 @@ size_flags_horizontal = 3
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "pack.pk4"
+text = "Files"
 
 [node name="tree_included_files" type="Tree" parent="Pack/HSplitContainer/VBoxContainer"]
 unique_name_in_owner = true
