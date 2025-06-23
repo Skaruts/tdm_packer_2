@@ -544,9 +544,9 @@ func is_mission_packed(mis:Mission) -> bool:
 
 func pack_mission() -> void:
 	if is_save_timer_counting():
-		save_mission(curr_mission, true)
-	FMUtils.pack_mission(curr_mission, get_tree())
-	check_mission_filesystem()
+		_should_reload = true
+		stop_timer_and_save()
+	await launcher.run_in_local_thread(FMUtils.pack_mission.bind(curr_mission))
 
 
 func play_mission() -> void:

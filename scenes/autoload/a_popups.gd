@@ -18,7 +18,7 @@ var quit_save_confirmation : ConfirmationDialog
 var settings_dialog        : Window
 var open_mission           : Window
 var main_progress_bar      : MainProgressBar
-
+var pack_mission           : Window
 
 var popup_counter := 0
 
@@ -46,6 +46,7 @@ func _ready() -> void:
 	settings_dialog.visibility_changed.connect(_on_popup_visibility_changed.bind(settings_dialog))
 	open_mission.visibility_changed.connect(_on_popup_visibility_changed.bind(open_mission))
 	main_progress_bar.visibility_changed.connect(_on_popup_visibility_changed.bind(main_progress_bar))
+	pack_mission.visibility_changed.connect(_on_popup_visibility_changed.bind(pack_mission))
 
 
 func _on_popup_visibility_changed(pu:Window) -> void:

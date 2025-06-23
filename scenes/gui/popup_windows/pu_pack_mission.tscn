@@ -1,0 +1,82 @@
+[gd_scene load_steps=3 format=3 uid="uid://bsajbmjhft0oy"]
+
+[ext_resource type="Script" uid="uid://ccwb566frpaf1" path="res://scenes/gui/popup_windows/pu_pack_mission.gd" id="1_6s3i2"]
+[ext_resource type="StyleBox" uid="uid://byni8x36qkwsd" path="res://resources/darker_panel.tres" id="2_5l5i2"]
+
+[node name="pack_mission" type="Window"]
+auto_translate_mode = 1
+title = "Packing foo.pk4"
+initial_position = 2
+size = Vector2i(700, 450)
+script = ExtResource("1_6s3i2")
+
+[node name="Panel" type="Panel" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = ExtResource("2_5l5i2")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="tabs" type="TabContainer" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+current_tab = 0
+tabs_visible = false
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/tabs"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="lb_header" type="Label" parent="PanelContainer/VBoxContainer/tabs/VBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "Packing foo.pk4"
+
+[node name="rtl_listing" type="RichTextLabel" parent="PanelContainer/VBoxContainer/tabs/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+scroll_following = true
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/VBoxContainer/tabs/VBoxContainer"]
+layout_mode = 2
+
+[node name="progress_bar" type="ProgressBar" parent="PanelContainer/VBoxContainer/tabs/VBoxContainer/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="button_bar" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="btn_apply" type="Button" parent="PanelContainer/VBoxContainer/button_bar"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 6
+text = "Apply"
+
+[node name="btn_ok" type="Button" parent="PanelContainer/VBoxContainer/button_bar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 6
+text = "Start"
+
+[node name="btn_cancel" type="Button" parent="PanelContainer/VBoxContainer/button_bar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 6
+text = "Cancel"

@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://bxhl1rene8xie"]
+[gd_scene load_steps=15 format=3 uid="uid://bxhl1rene8xie"]
 
 [ext_resource type="Script" uid="uid://cn753q050wieh" path="res://scenes/main.gd" id="1_soa3g"]
 [ext_resource type="StyleBox" uid="uid://byni8x36qkwsd" path="res://resources/darker_panel.tres" id="1_tipki"]
@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://bqgy1hssrn6ea" path="res://scenes/gui/popup_windows/pu_confirmation_dialog.gd" id="7_ya4ey"]
 [ext_resource type="PackedScene" uid="uid://g44k1m10wg8e" path="res://scenes/gui/popup_windows/pu_open_mission.tscn" id="9_85g3d"]
 [ext_resource type="PackedScene" uid="uid://dd4rsrmnsk1gq" path="res://scenes/gui/popup_windows/pu_main_progress_bar.tscn" id="10_choun"]
+[ext_resource type="PackedScene" uid="uid://bsajbmjhft0oy" path="res://scenes/gui/popup_windows/pu_pack_mission.tscn" id="13_trceg"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_psa6e"]
 
@@ -134,6 +135,10 @@ unique_name_in_owner = true
 visible = false
 
 [node name="main_progress_bar" parent="." instance=ExtResource("10_choun")]
+unique_name_in_owner = true
+visible = false
+
+[node name="pack_mission" parent="." instance=ExtResource("13_trceg")]
 unique_name_in_owner = true
 visible = false
 

@@ -30,9 +30,8 @@ static func get_file_hash(path:String) -> String:
 #		Packing
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-static func pack_mission(mission:Mission, scene_tree:SceneTree) -> void:
-	console.task("Packing '%s'..." % [mission.zipname])
-	await scene_tree.process_frame
+static func pack_mission(mission:Mission) -> void:
+	popups.pack_mission.call_thread_safe("task", "Packing '%s'..." % [mission.zipname])
 
 	# delete any pk4's that may have been created by the packer
 	# (any whose name begins with the mission id)
@@ -44,18 +43,18 @@ static func pack_mission(mission:Mission, scene_tree:SceneTree) -> void:
 		Path.delete_file(old_pak)
 
 	var t1 := Time.get_ticks_msec()
+	var report := _pack_files(mission)
 
-	await _pack_files(mission, scene_tree)
+	if report.ok:
+		var t2 := Time.get_ticks_msec()
+		var total_time := "%.2f" % [(t2-t1)/1000.0]
+		popups.pack_mission.call_thread_safe("task", "Finished packing '%s'..." % [mission.zipname])
+		popups.pack_mission.call_thread_safe("info", "%s dirs, %s files, %s seconds" % [mission.dir_count, mission.file_count, total_time])
+	else:
+		popups.pack_mission.call_thread_safe("error", report.error)
 
-	var t2 := Time.get_ticks_msec()
-	var total_time := "%.2f" % [(t2-t1)/1000.0]
 
-	console.task("Finished packing '%s'..." % [mission.zipname])
-	console.info("%s dirs, %s files, %s seconds" % [mission.dir_count, mission.file_count, total_time])
-
-
-
-static func _pack_files(mission:Mission, scene_tree:SceneTree) -> ErrorReport:
+static func _pack_files(mission:Mission) -> ErrorReport:
 	var zipper := ZIPPacker.new()
 	var pakpath := Path.join(mission.paths.root, mission.zipname)
 
@@ -63,19 +62,25 @@ static func _pack_files(mission:Mission, scene_tree:SceneTree) -> ErrorReport:
 	if err != OK:
 		return ErrorReport.new(false, "Couldn't create pk4 archive at '%s'" % [pakpath])
 
-	for fpath:String in mission.filepaths:
-		var rel_path := fpath.trim_prefix(mission.paths.root + '/')
+	var report := ErrorReport.new(true)
+	var file_count:float = mission.filepaths.size()
 
-		console.print("packing '%s'" % [rel_path])
-		await scene_tree.process_frame # wait for message to be printed
+	for i:float in file_count:
+		if not popups.pack_mission.is_packing():
+			report = ErrorReport.new(false, "aborted")
+			break
+		popups.pack_mission.call_thread_safe("set_percentage", (i+1)/file_count)
+
+		var fpath:String = mission.filepaths[i]
+		var rel_path := fpath.trim_prefix(mission.paths.root + '/')
+		popups.pack_mission.call_thread_safe("print", "    %s" % [rel_path])
 
 		zipper.start_file(rel_path)
 		zipper.write_file(Path.read_file_bytes(fpath))
 		zipper.close_file()
 
 	zipper.close()
-	return ErrorReport.new(true)
-
+	return report
 
 
 

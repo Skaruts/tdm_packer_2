@@ -37,6 +37,38 @@ func _on_timer_timeout() -> void:
 			pids.erase(pid)
 
 
+
+
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+
+#        Threads
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+var local_threads:Array[Thread]
+
+func run_in_local_thread(f:Callable) -> Variant:
+	var t := Thread.new()
+	local_threads.append(t)
+	t.start(f)
+	while t.is_alive():
+		await get_tree().process_frame
+	local_threads.erase(t)
+	return t.wait_to_finish()
+
+
+func run_in_global_thread(f:Callable) -> Variant:
+	var t := Thread.new()
+	t.start(f)
+	while t.is_alive():
+		await get_tree().process_frame
+	return t.wait_to_finish()
+
+
+
+
+
+
 func _run_app_thread(path:String, args:Array[String]) -> void:
 	var res := Path.execute(path, args)
 	call_deferred_thread_group("emit_signal", _execution_finished, res)

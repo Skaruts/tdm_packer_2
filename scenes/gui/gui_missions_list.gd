@@ -142,7 +142,8 @@ func _on_btn_run_dr_pressed() -> void:
 	fms.edit_mission()
 
 func _on_btn_pack_mission_pressed() -> void:
-	fms.pack_mission()
+	#fms.pack_mission()
+	popups.show_popup(popups.pack_mission)
 
 func _on_btn_test_pack_pressed() -> void:
 	fms.test_pack()
