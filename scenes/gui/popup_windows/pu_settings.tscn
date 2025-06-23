@@ -35,98 +35,131 @@ layout_mode = 2
 size_flags_vertical = 3
 current_tab = 0
 
-[node name="General" type="VBoxContainer" parent="PanelContainer/VBoxContainer/tabs"]
+[node name="General" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs"]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="HBoxContainer5" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer5"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer5/HBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/General/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(119, 0)
 layout_mode = 2
 text = "GUI Font Size"
 
-[node name="sb_gui_font_size" type="SpinBox" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer5/HBoxContainer"]
+[node name="sb_gui_font_size" type="SpinBox" parent="PanelContainer/VBoxContainer/tabs/General/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+tooltip_text = "The font size for the entire UI."
 rounded = true
 select_all_on_focus = true
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer5"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer5/HBoxContainer2"]
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/General/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(119, 0)
 layout_mode = 2
 text = "Code Font Size"
 
-[node name="sb_code_font_size" type="SpinBox" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer5/HBoxContainer2"]
+[node name="sb_code_font_size" type="SpinBox" parent="PanelContainer/VBoxContainer/tabs/General/VBoxContainer/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+tooltip_text = "The font size inside text/code editors."
 rounded = true
 select_all_on_focus = true
 
-[node name="HSeparator2" type="HSeparator" parent="PanelContainer/VBoxContainer/tabs/General"]
+[node name="HSeparator2" type="HSeparator" parent="PanelContainer/VBoxContainer/tabs/General/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer3"]
+[node name="HBoxContainer3" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer3/HBoxContainer"]
-layout_mode = 2
-text = "Pk4 Suffix"
-
-[node name="le_pk4_suffix" type="LineEdit" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer3/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-text = "_v$version"
-
-[node name="cbt_show_roots" type="CheckButton" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer3"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-button_pressed = true
-text = "Show Tree Roots"
-
-[node name="HSeparator" type="HSeparator" parent="PanelContainer/VBoxContainer/tabs/General"]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="HBoxContainer4" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer4"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer4/HBoxContainer"]
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/General/VBoxContainer/HBoxContainer3"]
 layout_mode = 2
 text = "Popup Bg Opacity"
 
-[node name="sb_bg_opacity" type="SpinBox" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer4/HBoxContainer"]
+[node name="sb_bg_opacity" type="SpinBox" parent="PanelContainer/VBoxContainer/tabs/General/VBoxContainer/HBoxContainer3"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+tooltip_text = "How much to darken the background behind popup windows."
 value = 50.0
 rounded = true
 suffix = "%"
 select_all_on_focus = true
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer4"]
+[node name="HBoxContainer4" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="VSeparator" type="VSeparator" parent="PanelContainer/VBoxContainer/tabs/General"]
+layout_mode = 2
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer6" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General/VBoxContainer2"]
+layout_mode = 2
+
+[node name="cbt_show_roots" type="CheckButton" parent="PanelContainer/VBoxContainer/tabs/General/VBoxContainer2/HBoxContainer6"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Show roots in the mission's file trees (in the Pack tab) 
+
+Tree roots are handy for quickly expanding/collapsing
+the entire file tree, but can make the tree look more cluttered."
+button_pressed = true
+text = "Show Tree Roots"
+
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/VBoxContainer/tabs/General/VBoxContainer2"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General/VBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/General/VBoxContainer2/HBoxContainer"]
+layout_mode = 2
+text = "Pk4 Suffix"
+
+[node name="le_pk4_suffix" type="LineEdit" parent="PanelContainer/VBoxContainer/tabs/General/VBoxContainer2/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Suffix to append to the pk4 filename.
+
+Supports the '$version' token, to include the mission version from darkmod.txt."
+text = "_v$version"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General/VBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/General/VBoxContainer2/HBoxContainer2"]
+layout_mode = 2
+text = "Date Time Format"
+
+[node name="le_date_time_format" type="LineEdit" parent="PanelContainer/VBoxContainer/tabs/General/VBoxContainer2/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "The date-time format. Will be used when packing the mission, in files 
+that support and contain the '$date_time' token (e.g, readme.txt)."
+text = "d/m/y t"
 
 [node name="Paths" type="VBoxContainer" parent="PanelContainer/VBoxContainer/tabs"]
 visible = false
@@ -238,6 +271,6 @@ layout_mode = 2
 size_flags_horizontal = 6
 text = "Cancel"
 
-[connection signal="text_changed" from="PanelContainer/VBoxContainer/tabs/General/HBoxContainer3/HBoxContainer/le_pk4_suffix" to="." method="_on_le_pk_4_suffix_text_changed"]
-[connection signal="toggled" from="PanelContainer/VBoxContainer/tabs/General/HBoxContainer3/cbt_show_roots" to="." method="_on_cbt_show_roots_toggled"]
-[connection signal="value_changed" from="PanelContainer/VBoxContainer/tabs/General/HBoxContainer4/HBoxContainer/sb_bg_opacity" to="." method="_on_sb_bg_opacity_value_changed"]
+[connection signal="value_changed" from="PanelContainer/VBoxContainer/tabs/General/VBoxContainer/HBoxContainer3/sb_bg_opacity" to="." method="_on_sb_bg_opacity_value_changed"]
+[connection signal="toggled" from="PanelContainer/VBoxContainer/tabs/General/VBoxContainer2/HBoxContainer6/cbt_show_roots" to="." method="_on_cbt_show_roots_toggled"]
+[connection signal="text_changed" from="PanelContainer/VBoxContainer/tabs/General/VBoxContainer2/HBoxContainer/le_pk4_suffix" to="." method="_on_le_pk_4_suffix_text_changed"]
