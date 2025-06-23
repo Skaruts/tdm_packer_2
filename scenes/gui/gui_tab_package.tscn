@@ -33,7 +33,7 @@ custom_minimum_size = Vector2(105, 0)
 layout_mode = 2
 text = "darkmod.txt"
 
-[node name="title_row" type="HBoxContainer" parent="Info/VBoxContainer2"]
+[node name="title_row" type="VBoxContainer" parent="Info/VBoxContainer2"]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="Info/VBoxContainer2/title_row"]
@@ -51,6 +51,10 @@ keep_editing_on_text_submit = true
 emoji_menu_enabled = false
 drag_and_drop_selection_enabled = false
 caret_blink = true
+
+[node name="HSeparator" type="HSeparator" parent="Info/VBoxContainer2"]
+visible = false
+layout_mode = 2
 
 [node name="author_row" type="HBoxContainer" parent="Info/VBoxContainer2"]
 layout_mode = 2
@@ -108,6 +112,9 @@ keep_editing_on_text_submit = true
 emoji_menu_enabled = false
 drag_and_drop_selection_enabled = false
 caret_blink = true
+
+[node name="HSeparator2" type="HSeparator" parent="Info/VBoxContainer2"]
+layout_mode = 2
 
 [node name="VSplitContainer" type="VSplitContainer" parent="Info/VBoxContainer2"]
 layout_mode = 2
@@ -196,6 +203,7 @@ columns = 2
 column_titles_visible = true
 hide_folding = true
 hide_root = true
+select_mode = 1
 auto_tooltip = false
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Info"]

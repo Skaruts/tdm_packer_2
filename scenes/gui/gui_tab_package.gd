@@ -95,6 +95,12 @@ func _ready() -> void:
 			tr_map_list.deselect_all()
 			_set_button_states(false)
 	)
+	#tr_map_list.focus_exited.connect(
+		#func() -> void:
+			##await get_tree().create_timer(0.5).timeout
+			#await get_tree().process_frame
+			#tr_map_list.deselect_all()
+	#)
 
 	var cedits := [ ce_description, ce_readme, ce_pkignore ]
 	for i in cedits.size():
