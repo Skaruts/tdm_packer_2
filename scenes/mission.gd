@@ -83,6 +83,31 @@ func set_id(_id:String) -> void:
 #		Maps
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+
+func _swap_array_items(array:Array, idx1:int, idx2:int) -> void:
+	var item1 : Variant = array[idx1]
+	var item2 : Variant = array[idx2]
+	array[idx1] = item2
+	array[idx2] = item1
+
+
+func move_map(direction:String, idx:int, silent:=false) -> bool:
+	var moved := false
+	if direction == "move_up":
+		if idx > 0:
+			_swap_array_items(mdata.map_files, idx, idx-1)
+			_swap_array_items(mdata.map_titles, idx, idx-1)
+			moved = true
+	elif direction == "move_down":
+		if idx < mdata.map_files.size()-1:
+			_swap_array_items(mdata.map_files,  idx, idx+1)
+			_swap_array_items(mdata.map_titles, idx, idx+1)
+			moved = true
+	if moved:
+		set_dirty_flag(true, DirtyFlags.MAPS, silent)
+		set_dirty_flag(true, DirtyFlags.MODFILE, silent)
+	return moved
+
 func add_map_file(string:String, silent:=false) -> bool:
 	if string in mdata.map_files: return false
 	mdata.map_files.append(string)

@@ -43,10 +43,11 @@ func _process(delta: float) -> void:
 	if _save_timer > 0: return
 	stop_timer_and_save()
 
-
-func start_save_timer() -> void:
+var _should_reload := false
+func start_save_timer(reload:bool) -> void:
 	_save_timer = _save_delay
 	_mission_to_save = curr_mission
+	_should_reload = reload
 	set_process(true)
 
 
@@ -56,7 +57,8 @@ func is_save_timer_counting() -> bool:
 
 func stop_timer_and_save() -> void:
 	set_process(false)
-	save_mission(_mission_to_save)
+	save_mission(_mission_to_save, _should_reload)
+	_should_reload = false
 
 
 
@@ -292,8 +294,9 @@ func save_mission(mission:Mission, reload:=false) -> void:
 		save_readme(mission)
 
 	if mission.get_dirty_flag(Mission.DirtyFlags.MAPS):
-		save_maps_file(mission)
+		save_maps_file(mission, false)
 
+	#logs.print("saving mission", reload)
 	if reload:
 		_soft_reload_mission(mission)
 
@@ -339,8 +342,8 @@ func _save_mission_file(mis:Mission, content:String, filepath:String, filename:S
 	return true
 
 
-func save_maps_file(mis:Mission) -> bool:
-	logs.print("maps:  ", mis.mdata.map_files)
+func save_maps_file(mis:Mission, reload:bool) -> bool:
+	#logs.print("maps:  ", mis.mdata.map_files)
 
 	if mis.mdata.map_files.size() <= 1: # save startingmap.txt
 		if Path.file_exists(mis.paths.mapsequence):
@@ -364,7 +367,9 @@ func save_maps_file(mis:Mission) -> bool:
 		mis.remove_hash(mis.paths.startingmap)
 		mis.store_hash(mis.paths.mapsequence)
 
-	_soft_reload_mission(mis)
+	if reload:
+		_soft_reload_mission(mis)
+
 	return true
 
 
@@ -471,7 +476,7 @@ func _check_file_hash(mis:Mission, path:String) -> bool:
 
 func check_mission_filesystem() -> bool:
 	if missions.size() == 0: return false
-
+	#logs.print("check_mission_filesystem")
 	#var old_list:Array[String] = curr_mission.full_filelist.duplicate()
 	var new_list := Path.get_filepaths_recursive(curr_mission.paths.root)
 	var changed_files: Array[String]
