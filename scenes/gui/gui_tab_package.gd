@@ -187,6 +187,8 @@ func _set_button_states(enabled:bool) -> void:
 
 
 
+
+
 func _build_map_list() -> void:
 	var item := tr_map_list.get_selected()
 	var idx:int = item.get_index() if item else -1
@@ -202,8 +204,9 @@ func _build_map_list() -> void:
 	if idx > -1:
 		tr_map_list.set_selected( _tree_root.get_child(idx), 0)
 
-func on_mission_reloaded() -> void:
-	if _mission != fms.curr_mission: return
+func on_mission_reloaded(force_update:=false) -> void:
+	if _mission != fms.curr_mission and not force_update:
+		return
 
 	le_title.text       = _mission.mdata.title
 	le_author.text      = _mission.mdata.author
@@ -295,6 +298,7 @@ func _on_line_edit_text_changed(new_text:String, ledit:LineEdit) -> void:
 			fms.start_save_timer(false)
 		le_version:
 			_mission.update_version(new_text, true)
+			update_pack_name()
 			fms.start_save_timer(false)
 		le_tdm_version:
 			_mission.update_tdm_version(new_text, true)
@@ -354,6 +358,12 @@ func set_show_roots(enabled:bool) -> void:
 #		Build Trees
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+func update_pack_name() -> void:
+	var root := tree_included_files.get_root()
+	root.set_text(0, _mission.zipname)
+
+
+
 func _build_trees() -> void:
 	logs.task("Building GUI trees for '%s'..." % _mission.id)
 

@@ -39,9 +39,15 @@ func set_main_workspace_tab(idx:int) -> void:
 		ws.current_tab = idx
 
 
-func on_mission_reloaded() -> void:
-	var ws:MissionWorkspace = get_children()[fms.get_current_mission_index()]
-	ws.on_mission_reloaded()
+func on_mission_reloaded(idx:int, force_update:=false) -> void:
+	var ws:MissionWorkspace = get_children()[idx]
+	ws.on_mission_reloaded(force_update)
+
+
+func update_pack_name(idx:int) -> void:
+	var ws:MissionWorkspace = get_children()[idx]
+	ws.update_pack_name()
+
 
 #func package_reload_file(filename:String) -> void:
 	#var ws:MissionWorkspace = get_children()[fms.get_current_mission_index()]

@@ -96,24 +96,27 @@ func _reload_mission(mis:Mission) -> void:
 	load_file(mis, "pkignore")
 	FMUtils.build_file_tree(mis)
 	_load_mission_files(mis)
-	gui.workspace_mgr.on_mission_reloaded()
+	gui.workspace_mgr.on_mission_reloaded( get_mission_index(mis) )
 	gui.menu_bar.update_menu()
 
 
-func _soft_reload_mission(mis:Mission) -> void:
+func soft_reload_mission(mis:Mission, force_update:=false) -> void:
 	FMUtils.build_file_tree(mis)
-	gui.workspace_mgr.on_mission_reloaded()
+	gui.workspace_mgr.on_mission_reloaded( get_mission_index(mis), force_update )
 	gui.menu_bar.update_menu()
+
+
 
 
 func load_mission(id: String, create_modfile := false) -> Mission:
 	console.print("Loading '%s'" % [id])
 
 	var mission := Mission.new()
+	mission.id = id
+	#mission.zipname = id + data.config.packname_suffix + ".pk4"
 	var fm_path := Path.join(fms_folder, id)
-	mission.set_id(id)
-	mission.set_paths(fm_path)
 
+	mission.set_paths(fm_path)
 	missions.append(mission)
 
 	if not Path.file_exists(mission.paths.modfile):
@@ -123,11 +126,11 @@ func load_mission(id: String, create_modfile := false) -> Mission:
 			logs.error("couldn't find 'darkmod.txt' in '%s'" % fm_path)
 			return mission
 
-	mission.zipname = id + ".pk4"
 	mission.full_filelist = Path.get_filepaths_recursive(mission.paths.root)
 
 	load_file(mission, "pkignore")
 	_load_mission_files(mission)
+	mission.update_zipname()
 	FMUtils.build_file_tree(mission)
 
 	return mission
@@ -305,7 +308,7 @@ func save_mission(mission:Mission, reload:=false) -> void:
 
 	#logs.print("saving mission", reload)
 	if reload:
-		_soft_reload_mission(mission)
+		soft_reload_mission(mission)
 
 
 func save_modfile(mis:Mission) -> void:
@@ -337,7 +340,7 @@ func save_readme(mis:Mission) -> void:
 
 func save_pkignore(mis:Mission) -> void:
 	_save_mission_file(mis, mis.mdata.pkignore, mis.paths.pkignore, data.IGNORES_FILENAME, Mission.DirtyFlags.PKIGNORE)
-	_soft_reload_mission(mis)
+	soft_reload_mission(mis)
 	mis.store_hash(mis.paths.pkignore)
 
 
@@ -375,7 +378,7 @@ func save_maps_file(mis:Mission, reload:bool) -> bool:
 		mis.store_hash(mis.paths.mapsequence)
 
 	if reload:
-		_soft_reload_mission(mis)
+		soft_reload_mission(mis)
 
 	return true
 
@@ -454,6 +457,10 @@ func add_missions(ids:Array[String]) -> void:
 func get_current_mission_index() -> int:
 	assert(missions.size() > 0)
 	return missions.find(curr_mission)
+
+func get_mission_index(mission:Mission) -> int:
+	assert(missions.size() > 0)
+	return missions.find(mission)
 
 
 func remove_current_mission() -> void:
@@ -543,6 +550,14 @@ func pack_mission() -> void:
 
 
 func play_mission() -> void:
+	popups.show_confirmation({
+		text="Play '%s'?" % curr_mission.mdata.title,
+		ok_text = "Yes",
+		cancel_text = "No",
+	})
+	if not await popups.confirmation_dialog.answer:
+		return
+
 	if is_save_timer_counting():
 		save_mission(curr_mission, true)
 	launcher.run_tdm()
@@ -555,6 +570,14 @@ func edit_mission() -> void:
 
 
 func test_pack() -> void:
+	popups.show_confirmation({
+		text="Test '%s'?" % curr_mission.mdata.title,
+		ok_text = "Yes",
+		cancel_text = "No",
+	})
+	if not await popups.confirmation_dialog.answer:
+		return
+
 	if is_save_timer_counting():
 		save_mission(curr_mission, true)
 	launcher.run_tdm_copy()

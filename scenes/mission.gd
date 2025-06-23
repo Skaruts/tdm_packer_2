@@ -67,16 +67,17 @@ var dirty := 0
 
 
 
-#func _init() -> void:
-	#paths = MissionPaths.new()
-	#mdata = MissionData.new()
-
-
-func set_id(_id:String) -> void:
-	id = _id
-	zipname = id + ".pk4"
-
-
+#func _init(_id:String) -> void:
+	#id = _id
+	#zipname = id + data.config.packname_suffix + ".pk4"
+func update_zipname() -> bool:
+	var old_zip_name := zipname
+	var cfg_suffix:String = data.config.packname_suffix
+	var suffix := ""
+	if cfg_suffix.contains(data.TOK_VERSION):
+		suffix = cfg_suffix.replace(data.TOK_VERSION, mdata.version).replace(' ', '_')
+	zipname = id + suffix + ".pk4"
+	return old_zip_name != zipname
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 
@@ -216,6 +217,7 @@ func update_author(text:String, file_dirty:=true, silent:=false) -> void:
 
 func update_version(text:String, file_dirty:=true, silent:=false) -> void:
 	mdata.version = text
+	update_zipname()
 	set_dirty_flag(file_dirty, DirtyFlags.MODFILE, silent)
 
 func update_tdm_version(text:String, file_dirty:=true, silent:=false) -> void:

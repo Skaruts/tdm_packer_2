@@ -39,30 +39,33 @@ current_tab = 0
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General"]
+[node name="HBoxContainer5" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer5"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer5/HBoxContainer"]
+layout_mode = 2
 text = "GUI Font Size"
 
-[node name="sb_gui_font_size" type="SpinBox" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer"]
+[node name="sb_gui_font_size" type="SpinBox" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer5/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 rounded = true
 select_all_on_focus = true
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer2"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer5"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer5/HBoxContainer2"]
+layout_mode = 2
 text = "Code Font Size"
 
-[node name="sb_code_font_size" type="SpinBox" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer2"]
+[node name="sb_code_font_size" type="SpinBox" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer5/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -76,9 +79,24 @@ theme_override_constants/separation = 12
 [node name="HBoxContainer3" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General"]
 layout_mode = 2
 
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer3/HBoxContainer"]
+layout_mode = 2
+text = "Pk4 Suffix"
+
+[node name="le_pk4_suffix" type="LineEdit" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer3/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "_v$version"
+
 [node name="cbt_show_roots" type="CheckButton" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer3"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 button_pressed = true
 text = "Show Tree Roots"
 
@@ -89,12 +107,15 @@ theme_override_constants/separation = 12
 [node name="HBoxContainer4" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer4"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer4"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Popup Background Opacity"
 
-[node name="sb_bg_opacity" type="SpinBox" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer4"]
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer4/HBoxContainer"]
+layout_mode = 2
+text = "Popup Bg Opacity"
+
+[node name="sb_bg_opacity" type="SpinBox" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer4/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -102,6 +123,10 @@ value = 50.0
 rounded = true
 suffix = "%"
 select_all_on_focus = true
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="Paths" type="VBoxContainer" parent="PanelContainer/VBoxContainer/tabs"]
 visible = false
@@ -213,5 +238,6 @@ layout_mode = 2
 size_flags_horizontal = 6
 text = "Cancel"
 
+[connection signal="text_changed" from="PanelContainer/VBoxContainer/tabs/General/HBoxContainer3/HBoxContainer/le_pk4_suffix" to="." method="_on_le_pk_4_suffix_text_changed"]
 [connection signal="toggled" from="PanelContainer/VBoxContainer/tabs/General/HBoxContainer3/cbt_show_roots" to="." method="_on_cbt_show_roots_toggled"]
-[connection signal="value_changed" from="PanelContainer/VBoxContainer/tabs/General/HBoxContainer4/sb_bg_opacity" to="." method="_on_sb_bg_opacity_value_changed"]
+[connection signal="value_changed" from="PanelContainer/VBoxContainer/tabs/General/HBoxContainer4/HBoxContainer/sb_bg_opacity" to="." method="_on_sb_bg_opacity_value_changed"]

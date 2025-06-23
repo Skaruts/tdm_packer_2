@@ -18,6 +18,10 @@ func set_mission(m:Mission) -> void:
 	#tab_files.set_mission(m) # TODO
 
 
-func on_mission_reloaded() -> void:
-	tab_package.on_mission_reloaded()
-	tab_files.on_mission_reloaded()
+func on_mission_reloaded(force_update:=false) -> void:
+	tab_package.on_mission_reloaded(force_update)
+	tab_files.on_mission_reloaded(force_update)
+
+func update_pack_name() -> void:
+	tab_package.update_pack_name()
+	tab_files.update_pack_name()

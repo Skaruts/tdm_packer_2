@@ -18,6 +18,7 @@ const DEFAULT_CONFIG := {
 		gui_font_size   = 14,
 		code_font_size  = 14,
 		show_tree_roots = true,
+		packname_suffix = "_v$version",
 		popup_bg_opacity = 0.5,
 	}
 }
@@ -51,6 +52,13 @@ const CURRENT_FM_FILE      = "currentfm.txt"
 
 const FILE_ICON   = preload(nodepaths.FILE_ICON_PATH)
 const FOLDER_ICON = preload(nodepaths.FOLDER_ICON_PATH)
+
+const TOK_VERSION     := "$version"
+const TOK_AUTHOR      := "$author"
+const TOK_TITLE       := "$title"
+const TOK_MIN_VERSION := "$min_version"
+const TOK_PACK_DATE   := "$pack_date"
+
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 #		Data
@@ -120,6 +128,14 @@ func update_config(new_config:ConfigData) -> void:
 	fms.update_folders()
 	gui.menu_bar.update_menu()
 	gui.missions_list.update_buttons()
+
+	for i:int in fms.missions.size():
+		var mis:Mission = fms.missions[i]
+		if mis.update_zipname():
+			#fms.soft_reload_mission(mis, true)
+			#gui.workspace_mgr.update_pack_name( fms.get_mission_index(mis) )
+			gui.workspace_mgr.update_pack_name( i )
+
 
 
 

@@ -13,6 +13,7 @@ extends BasePopup
 @onready var cbt_show_roots      : CheckButton = %cbt_show_roots
 @onready var sb_bg_opacity       : SpinBox     = %sb_bg_opacity
 
+@onready var le_pk4_suffix: LineEdit = %le_pk4_suffix
 
 var temp_config: ConfigData
 
@@ -38,9 +39,9 @@ func _on_close_requested() -> void:
 func _on_popup() -> void:
 	temp_config = data.config.duplicate()
 
-	le_tdm.text      = temp_config.tdm_path
-	le_dr.text       = temp_config.dr_path
-	le_tdm_copy.text = temp_config.tdm_copy_path
+	le_tdm.text        = temp_config.tdm_path
+	le_dr.text         = temp_config.dr_path
+	le_tdm_copy.text   = temp_config.tdm_copy_path
 
 	_validate_and_update_colors(le_tdm,      temp_config.tdm_path,      "tdm_path")
 	_validate_and_update_colors(le_dr,       temp_config.dr_path,       "dr_path")
@@ -50,6 +51,8 @@ func _on_popup() -> void:
 	sb_code_font_size.set_value_no_signal(temp_config.code_font_size)
 	cbt_show_roots.set_pressed_no_signal(temp_config.show_tree_roots)
 	sb_bg_opacity.set_value_no_signal(temp_config.popup_bg_opacity * 100)
+
+	le_pk4_suffix.text = temp_config.packname_suffix
 
 
 func _on_input(event: InputEvent) -> void:
@@ -182,4 +185,9 @@ func _on_cbt_show_roots_toggled(toggled_on: bool) -> void:
 
 func _on_sb_bg_opacity_value_changed(value: float) -> void:
 	temp_config.popup_bg_opacity = value/100.0
+	_update_apply_button()
+
+
+func _on_le_pk_4_suffix_text_changed(new_text: String) -> void:
+	temp_config.packname_suffix = new_text
 	_update_apply_button()

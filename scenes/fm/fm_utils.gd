@@ -34,6 +34,15 @@ static func pack_mission(mission:Mission, scene_tree:SceneTree) -> void:
 	console.task("Packing '%s'..." % [mission.zipname])
 	await scene_tree.process_frame
 
+	# delete any pk4's that may have been created by the packer
+	# (any whose name begins with the mission id)
+	var old_paks := Path.get_filepaths_filtered(mission.paths.root,
+		func(path:String) -> bool:
+			return path.get_extension() == "pk4" and path.get_file().begins_with(mission.id)
+	)
+	for old_pak in old_paks:
+		Path.delete_file(old_pak)
+
 	var t1 := Time.get_ticks_msec()
 
 	await _pack_files(mission, scene_tree)
