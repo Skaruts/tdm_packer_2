@@ -24,17 +24,18 @@ func _ready() -> void:
 	main_menu = %btn_menu.get_popup()
 
 	# open folders menu
-	open_menu = PopupMenu.new()
-	open_menu.name = "open_menu"  # for the node tree, for debugging
-	main_menu.add_child(open_menu)
-	main_menu.add_submenu_item("Open Folder", "open_menu", 69)
+	#open_menu = PopupMenu.new()
+	#open_menu.name = "open_menu"  # for the node tree, for debugging
 
-	open_menu.add_item("Mission folder", MENU_OPEN_MISSION_FOLDER)
-	open_menu.add_item("Mission test folder", MENU_OPEN_MISSION_TEST_FOLDER)
-	open_menu.add_separator()
-	open_menu.add_item("TDM Packer folder", MENU_OPEN_PACKER_FOLDER)
+	#main_menu.add_child(open_menu)
+	#main_menu.add_submenu_item("Open Folder", "open_menu", 69)
 
-	open_menu.id_pressed.connect(_on_menu_id_pressed)
+	#open_menu.add_item("Mission folder", MENU_OPEN_MISSION_FOLDER)
+	#open_menu.add_item("Mission test folder", MENU_OPEN_MISSION_TEST_FOLDER)
+	#open_menu.add_separator()
+	main_menu.add_item("TDM Packer folder", MENU_OPEN_PACKER_FOLDER)
+
+	#open_menu.id_pressed.connect(_on_menu_id_pressed)
 
 	# debug menu
 	var debug_menu := PopupMenu.new()
@@ -46,7 +47,7 @@ func _ready() -> void:
 	debug_menu.id_pressed.connect(_on_menu_id_pressed)
 
 	# main menu stuff
-	main_menu.add_separator()
+	#main_menu.add_separator()
 	main_menu.add_item("Settings", MENU_SETTINGS)
 	main_menu.add_separator()
 	main_menu.add_item("About", MENU_ABOUT)
@@ -62,14 +63,6 @@ func initialize() -> void:
 
 func update_menu() -> void:
 	var disabled := not fms.curr_mission
-	open_menu.set_item_disabled(
-		open_menu.get_item_index(MENU_OPEN_MISSION_FOLDER),
-		disabled or data.config.tdm_path == ""
-	)
-	open_menu.set_item_disabled(
-		open_menu.get_item_index(MENU_OPEN_MISSION_TEST_FOLDER),
-		disabled or data.config.tdm_copy_path == "" or not Path.dir_exists(fms.curr_mission.paths.test_root)
-	)
 
 
 func _on_menu_id_pressed(id:int) -> void:
