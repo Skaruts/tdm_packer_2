@@ -55,6 +55,7 @@ func _on_popup() -> void:
 	sb_bg_opacity.set_value_no_signal(temp_config.popup_bg_opacity * 100)
 
 	le_pk4_suffix.text = temp_config.packname_suffix
+	le_date_time_format.text = temp_config.date_time_format
 
 
 func _on_input(event: InputEvent) -> void:
