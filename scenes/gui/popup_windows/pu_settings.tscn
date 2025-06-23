@@ -143,7 +143,7 @@ size_flags_horizontal = 3
 tooltip_text = "Suffix to append to the pk4 filename.
 
 Supports the '$version' token, to include the mission version from darkmod.txt."
-text = "_v$version"
+theme_override_colors/font_placeholder_color = Color(0.368627, 0.368627, 0.368627, 1)
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/General/VBoxContainer2"]
 layout_mode = 2
@@ -159,7 +159,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "The date-time format. Will be used when packing the mission, in files 
 that support and contain the '$date_time' token (e.g, readme.txt)."
-text = "d/m/y t"
+theme_override_colors/font_placeholder_color = Color(0.368627, 0.368627, 0.368627, 1)
 
 [node name="Paths" type="VBoxContainer" parent="PanelContainer/VBoxContainer/tabs"]
 visible = false
