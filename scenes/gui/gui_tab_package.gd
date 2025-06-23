@@ -367,7 +367,7 @@ func update_pack_name() -> void:
 
 
 func _build_trees() -> void:
-	logs.task("Building GUI trees for '%s'..." % _mission.id)
+	logs.task("Building GUI trees for %s..." % _mission.id)
 
 	tree_included_files.clear()
 	tree_excluded_files.clear()
@@ -389,7 +389,7 @@ func _build_trees() -> void:
 
 	if not Path.dir_exists(_mission.paths.maps) \
 	or not _mission.file_tree.get_child_named("maps").has_included_files():
-		console.warning("mission '%s' has no valid maps" % _mission.id)
+		console.warning("%s has no valid maps" % _mission.id)
 
 	#var t2 := Time.get_ticks_msec()
 	#var total_time := "%.5f" % [(t2-t1)/1000]
@@ -405,7 +405,6 @@ func _build_inc_tree(mroot:FMTreeNode, gui_root:TreeItem) -> void:
 		var gui_tree_item:TreeItem
 
 		if tn.is_dir and tn.name == "maps" and not tn.has_included_files():
-			#console.warning("mission '%s' has no valid maps" % _mission.id)
 			gui_tree_item = _create_node(tree_included_files, tn.name, gui_root, icon, data.ERROR_COLOR)
 		else:
 			gui_tree_item = _create_node(tree_included_files, tn.name, gui_root, icon)

@@ -109,7 +109,6 @@ func soft_reload_mission(mis:Mission, force_update:=false) -> void:
 
 
 func load_mission(id: String, create_modfile := false) -> Mission:
-
 	var mission := Mission.new()
 	mission.id = id
 	#mission.zipname = id + data.config.packname_suffix + ".pk4"
@@ -132,7 +131,7 @@ func load_mission(id: String, create_modfile := false) -> Mission:
 	mission.update_zipname()
 	FMUtils.build_file_tree(mission)
 
-	console.info("Opened mission - %s" % [mission.id])
+	console.print("Opened %s" % [id])
 	return mission
 
 
@@ -464,10 +463,11 @@ func get_mission_index(mission:Mission) -> int:
 
 
 func remove_current_mission() -> void:
+	console.print("Closed %s" % curr_mission.id)
+
 	var last_idx := get_current_mission_index()
 	var curr_idx: int
 	logs.print("remove_current_mission: ", last_idx, curr_mission.id)
-	var mission_id: String = curr_mission.id
 
 	missions.erase(curr_mission)
 	if missions.size() > 0:
@@ -479,7 +479,6 @@ func remove_current_mission() -> void:
 		curr_mission = null
 		save_missions_list()
 
-	console.info("Closed mission - %s" % mission_id)
 
 	gui.missions_list.update_list()
 	gui.workspace_mgr.remove_workspace(last_idx)
