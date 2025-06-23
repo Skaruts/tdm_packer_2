@@ -32,19 +32,30 @@ enum EditorIndex {
 @onready var label_included_files: Label = %label_included_files
 @onready var label_excluded_files: Label = %label_excluded_files
 
-@onready var map_list: ItemList = %map_list
+#@onready var map_list: ItemList = %map_list
+@onready var tr_map_list: Tree = %tr_map_list
 
 
 var curr_editor: CodeEdit
 var _mission: Mission
+var _tree_root:TreeItem
 
+var tree_alignment := HORIZONTAL_ALIGNMENT_LEFT
 
 
 func _ready() -> void:
-	btn_remove_map.disabled = map_list.item_count == 0
+	tr_map_list.columns = 2
+	tr_map_list.hide_root = true
+	tr_map_list.set_column_title(0, "Map")
+	tr_map_list.set_column_title(1, "Title")
 
-	#cedit_modfile.syntax_highlighter = ModfileHighlighter.new()
+	tr_map_list.set_column_expand(0, true)
+	tr_map_list.set_column_expand(1, true)
+	tr_map_list.set_column_title_alignment(0, tree_alignment)
+	tr_map_list.set_column_title_alignment(1, tree_alignment)
 
+
+	btn_remove_map.disabled = true
 
 	var cedits := [ ce_description, ce_readme, ce_pkignore ]
 	for i in cedits.size():
@@ -63,17 +74,22 @@ func _ready() -> void:
 	btn_add_map.pressed.connect(_on_btn_add_map_pressed)
 	btn_remove_map.pressed.connect(_on_btn_remove_map_pressed)
 
-	map_list.item_selected.connect(
-		func(_index: int) -> void:
+	tr_map_list.item_edited.connect(
+		func() -> void:
+			logs.print("item was edited")
+			var item := tr_map_list.get_edited()
+			if _mission.set_map_title(item.get_index(), item.get_text(1)):
+				fms.start_save_timer()
+	)
+	tr_map_list.item_selected.connect(
+		func() -> void:
 			btn_remove_map.disabled = false
 	)
-
-	map_list.empty_clicked.connect(
-		func(_at_position: Vector2, _mouse_button_index: int) -> void:
-			map_list.deselect_all()
+	tr_map_list.empty_clicked.connect(
+		func(_click_position: Vector2, _mouse_button_index: int) -> void:
+			tr_map_list.deselect_all()
 			btn_remove_map.disabled = true
 	)
-
 
 
 
@@ -115,11 +131,31 @@ func set_mission(mission: Mission) -> void:
 	set_show_roots(data.config.show_tree_roots)
 
 
+func _add_map_tree_item(filename:String, title:="") -> TreeItem:
+	var item := _tree_root.create_child()
+	item.set_editable(0, false)
+	item.set_editable(1, true)
+
+	item.set_text_alignment(0, tree_alignment)
+	item.set_text_alignment(1, tree_alignment)
+
+	item.set_text(0, filename)
+	#item.set_icon(0, data.FILE_ICON)
+	#item.set_icon_max_width(0, 16)
+
+	item.set_custom_color(1, Color.GOLDENROD)
+	item.set_text(1, title)
+
+	return item
+
 
 func _build_map_list() -> void:
-	map_list.clear()
-	for map_filename:String in _mission.mdata.map_files:
-		map_list.add_item(map_filename)
+	tr_map_list.clear()
+	_tree_root = tr_map_list.create_item()
+	for i:int in _mission.mdata.map_files.size():
+		var filename := _mission.mdata.map_files[i]
+		var title    := "" if _mission.mdata.map_titles.size() <= i else _mission.mdata.map_titles[i]
+		_add_map_tree_item(filename, title)
 
 
 func on_mission_reloaded() -> void:
@@ -203,24 +239,6 @@ func _on_code_editor_text_changed(editor:CodeEdit) -> void:
 	fms.start_save_timer()
 
 
-
-#func _on_ledit_gui_input(event:InputEvent, idx:int) -> void:
-	#if not event is InputEventKey: return
-	#match idx:
-		#EditorIndex.Title:
-			#_mission.update_title(le_title.text, true)
-			#fms.start_save_timer()
-		#EditorIndex.Author:
-			#_mission.update_author(le_author.text, true)
-			#fms.start_save_timer()
-		#EditorIndex.Version:
-			#_mission.update_version(le_version.text, true)
-			#fms.start_save_timer()
-		#EditorIndex.TDM_Version:
-			#_mission.update_tdm_version(le_tdm_version.text, true)
-			#fms.start_save_timer()
-
-
 func _on_line_edit_text_changed(new_text:String, ledit:LineEdit) -> void:
 	match ledit:
 		le_title:
@@ -247,22 +265,24 @@ func _on_btn_add_map_pressed() -> void:
 			logs.info(path)
 			var map_filename := path.get_basename().get_file()
 			if _mission.add_map_file(map_filename):
-				map_list.add_item(map_filename)
-				fms.save_maps_file(_mission)
+				_add_map_tree_item(map_filename)
+				fms.start_save_timer()
 	)
 
 
 func _on_btn_remove_map_pressed() -> void:
-	var items := map_list.get_selected_items()
-	if not items.size(): return
-	var idx := items[0]    # NOTE: the map list shouldn't allow selecting multiple files
-	var map_filename := map_list.get_item_text(idx)
+	# NOTE: the map list shouldn't allow selecting multiple files
+	var item := tr_map_list.get_selected()
+	assert(item != null)
 
-	if _mission.remove_map_file(map_filename):
-		map_list.remove_item(idx)
-		fms.save_maps_file(_mission)
+	var filename := item.get_text(0)
+	var title    := item.get_text(1)
 
-	btn_remove_map.disabled = map_list.item_count == 0
+	if _mission.remove_map_file(filename):
+		_tree_root.remove_child(item)
+		fms.start_save_timer()
+
+	btn_remove_map.disabled = true # _tree_root.get_child_count() == 0
 
 
 func set_show_roots(enabled:bool) -> void:

@@ -45,15 +45,19 @@ func _on_console_toggled() -> void:
 
 
 func _notification(what: int) -> void:
+	if is_inside_tree():
+		await get_tree().process_frame  # wait for popups to close, if any
+
 	match what:
 		NOTIFICATION_WM_CLOSE_REQUEST:
 			if fms.is_save_timer_counting():
-			#if await _check_for_unsaved_missions():
 				fms.stop_timer_and_save()
 			get_tree().quit()
 		NOTIFICATION_WM_WINDOW_FOCUS_IN:
-			fms.check_mission_filesystem()
-			gui.menu_bar.update_menu()
+			#logs.print("NOTIFICATION_WM_WINDOW_FOCUS_IN", popups.popup_has_just_closed)
+			if not popups.popup_has_just_closed:
+				fms.check_mission_filesystem()
+				gui.menu_bar.update_menu()
 
 
 

@@ -163,7 +163,7 @@ func load_map_sequence(mis:Mission) -> void:
 					continue
 
 				line = line.substr( line.find(':')+1 )
-				line = line.strip_edges(false, true)
+				line = line.strip_edges(true, true)
 				mis.mdata.map_files.append(line)
 
 			mis.remove_hash(mis.paths.startingmap)
@@ -173,6 +173,8 @@ func load_map_sequence(mis:Mission) -> void:
 		Path.write_file(mis.paths.startingmap, "")
 		mis.remove_hash(mis.paths.mapsequence)
 		mis.store_hash(mis.paths.startingmap)
+
+	logs.print("on load", mis.mdata.map_files)
 
 
 func _load_mission_files(mis:Mission) -> void:
@@ -194,10 +196,14 @@ enum ModfileSection {
 func load_modfile(mis:Mission) -> void:
 	check_file_and_create(mis, "modfile", data.DEFAULT_MODFILE)
 	var file_string := Path.read_file_string(mis.paths.modfile)
-	var map_titles : Array[String]
+
+	var map_index := -99
+	var map_count := mis.mdata.map_files.size()
+	mis.mdata.map_titles.clear()
+	mis.mdata.map_titles.resize(map_count)
 
 	var commit_section := \
-		func(text:String, section: ModfileSection) -> void:
+		func(text:String, section: ModfileSection, map_index:int) -> void:
 			match section:
 				ModfileSection.Title:       mis.mdata.title       = text
 				ModfileSection.Author:      mis.mdata.author      = text
@@ -205,12 +211,12 @@ func load_modfile(mis:Mission) -> void:
 				ModfileSection.TDM_Version: mis.mdata.tdm_version = text
 				ModfileSection.Description: mis.mdata.description = text
 				ModfileSection.Map_Title:
-					map_titles.append(text)
-					#mis.set_map_title( text)
-					#mis.mdata.map_titles.append(text)
-					#mis.mdata.description = text
+					if map_index >= mis.mdata.map_titles.size():
+						mis.mdata.map_titles.resize(map_index+1)
+					logs.print(map_index, map_index >= mis.mdata.map_titles.size())
+					mis.mdata.map_titles[map_index] = text
 
-	var tokens := file_string.replace('\n', ' ').split(' ')
+	var tokens := file_string.replace('\n', ' ').replace('\t', ' ').split(' ')
 	var curr_section := ModfileSection.None
 	var section_text := ""
 	#var final_text := ""
@@ -225,37 +231,36 @@ func load_modfile(mis:Mission) -> void:
 		"Mission"      = ModfileSection.Map_Title,    # Mission 1 Title:
 	}
 
+	# TODO: use lower case tokens, just in case
+
 	var token_count := tokens.size()
 	var i := 0
 	while i < token_count:
 		var tok := tokens[i]
 		if tok in toks_lut.keys():
-			commit_section.call(section_text.strip_edges(), curr_section)
+			commit_section.call(section_text.strip_edges(), curr_section, map_index)
 			section_text = ""
-			if tok == "Mission":
-				if i+2 < token_count and tokens[i+2] == "Title:":
-					curr_section = ModfileSection.Map_Title
-					i += 2
-			elif tok == "Required":
-				if i+2 <= token_count \
-				and tokens[i+1] == "TDM" and tokens[i+2] == "Version:":
-					curr_section = ModfileSection.TDM_Version
-					i += 2
-			else:
-				curr_section = toks_lut[tok]
-			#logs.print(">", i, curr_section, tok, " | ", section_text)
+			if i+2 < token_count:
+				if tok == "Mission":
+					if tokens[i+2] == "Title:":
+						map_index = tokens[i+1].to_int()-1
+						i += 2
+				elif tok == "Required":
+					if tokens[i+1] == "TDM" and tokens[i+2] == "Version:":
+						i += 2
+
+			curr_section = toks_lut[tok]
+			#logs.print(">", i, curr_section, tok, " | ", section_text, " | ", map_index)
 			i+=1
 			continue
-		#logs.print("-", i, curr_section, tok, " | ", section_text)
+		#logs.print("-", i, curr_section, tok, " | ", section_text, " | ", map_index)
 		section_text += tok + ' '
 		i += 1
-	commit_section.call(section_text.strip_edges(), curr_section)
+	commit_section.call(section_text.strip_edges(), curr_section, map_index)
 
-	mis.mdata.map_titles.clear()
-	for idx:int in map_titles.size():
-		if idx >= mis.mdata.map_files.size():
-			logs.warning("map titles exceed number of map files: %s/%s" % [idx, mis.mdata.map_files.size()])
-		mis.mdata.map_titles.append(map_titles[idx])
+	logs.print(mis.mdata.map_titles)
+	#if map_titles.size() >= map_count:
+		#logs.warning("map titles exceed number of map files: %s/%s" % [map_titles.size(), map_count])
 
 	mis.store_hash(mis.paths.modfile)
 
@@ -286,6 +291,9 @@ func save_mission(mission:Mission, reload:=false) -> void:
 	if mission.get_dirty_flag(Mission.DirtyFlags.README):
 		save_readme(mission)
 
+	if mission.get_dirty_flag(Mission.DirtyFlags.MAPS):
+		save_maps_file(mission)
+
 	if reload:
 		_soft_reload_mission(mission)
 
@@ -296,10 +304,13 @@ func save_modfile(mis:Mission) -> void:
 	var md := mis.mdata
 	modfile = modfile % [md.title, md.description, md.author, md.version, md.tdm_version]
 
+	var map_count := mis.mdata.map_files.size()
+
 	# TODO: add map titles
-	if mis.mdata.map_titles.size() > 0:
-		for i:int in mis.mdata.map_titles.size():
+	if map_count > 0:
+		for i:int in map_count:
 			var title := mis.mdata.map_titles[i]
+			if not title: continue
 			modfile += "Mission %s Title: %s\n" % [i+1, title]
 
 	Path.write_file(mis.paths.modfile, modfile)

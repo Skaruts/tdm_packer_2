@@ -83,16 +83,36 @@ func set_id(_id:String) -> void:
 #		Maps
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-func add_map_file(string:String) -> bool:
+func add_map_file(string:String, silent:=false) -> bool:
 	if string in mdata.map_files: return false
 	mdata.map_files.append(string)
+	mdata.map_titles.append("")
+	set_dirty_flag(true, DirtyFlags.MAPS, silent)
+	logs.print(mdata.map_files)
 	return true
 
-func remove_map_file(string:String) -> bool:
+
+func remove_map_file(string:String, silent:=false) -> bool:
 	assert(string in mdata.map_files)
+	var idx := mdata.map_files.find(string)
 	mdata.map_files.erase(string)
+	mdata.map_titles.remove_at(idx)
+	set_dirty_flag(true, DirtyFlags.MAPS, silent)
+	set_dirty_flag(true, DirtyFlags.MODFILE, silent)
 	return true
 
+
+func set_map_title(idx:int, string:String, silent:=false) -> bool:
+	if mdata.map_titles[idx] == string: return false
+	mdata.map_titles[idx] = string
+	set_dirty_flag(true, DirtyFlags.MODFILE, silent)
+	return true
+
+
+#func remove_map_title(string:String) -> bool:
+	#assert(string in mdata.map_titles)
+	#mdata.map_titles.erase(string)
+	#return true
 
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
