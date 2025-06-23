@@ -68,6 +68,8 @@ static func _pack_files(mission:Mission) -> ErrorReport:
 	var report := ErrorReport.new(true)
 	var file_count:float = mission.filepaths.size()
 
+	var subst_files:Array[String] = ["readme.txt"]
+
 	for i:float in file_count:
 		if not popups.pack_mission.is_packing():
 			report = ErrorReport.new(false, "aborted")
@@ -76,11 +78,25 @@ static func _pack_files(mission:Mission) -> ErrorReport:
 
 		var fpath:String = mission.filepaths[i]
 		var rel_path := fpath.trim_prefix(mission.paths.root + '/')
-		popups.pack_mission.call_thread_safe("print", "    %s" % [rel_path])
-
+		#popups.pack_mission.call_thread_safe("print", "    %s" % [rel_path])
 		zipper.start_file(rel_path)
-		zipper.write_file(Path.read_file_bytes(fpath))
+
+		var filename := fpath.get_file()
+		if not filename in subst_files:
+			zipper.write_file(Path.read_file_bytes(fpath))
+		else:
+			var content := Path.read_file_string(fpath)
+			content = content.replace(data.TOK_VERSION,     mission.mdata.version)
+			content = content.replace(data.TOK_AUTHOR,      mission.mdata.author)
+			content = content.replace(data.TOK_TITLE,       mission.mdata.title)
+			content = content.replace(data.TOK_MIN_VERSION, mission.mdata.tdm_version)
+			if content.contains(data.TOK_DATETIME):
+				content = content.replace(data.TOK_DATETIME, data.get_date_time_string())
+			logs.print(filename, filename in subst_files, content)
+			zipper.write_file(var_to_bytes(content))
+
 		zipper.close_file()
+
 
 	zipper.close()
 	return report

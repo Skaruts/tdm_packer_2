@@ -14,6 +14,7 @@ extends BasePopup
 @onready var sb_bg_opacity       : SpinBox     = %sb_bg_opacity
 
 @onready var le_pk4_suffix: LineEdit = %le_pk4_suffix
+@onready var le_date_time_format: LineEdit = %le_date_time_format
 
 var temp_config: ConfigData
 
@@ -27,10 +28,11 @@ func _on_ready() -> void:
 	le_tdm.text_changed.connect(_on_le_tdm_text_changed)
 	le_dr.text_changed.connect(_on_le_dr_text_changed)
 	le_tdm_copy.text_changed.connect(_on_le_tdm_copy_text_changed)
+	le_date_time_format.text_changed.connect(_on_le_date_time_format_text_changed)
+
 	btn_browse_tdm.pressed.connect(_on_btn_browse_tdm_pressed)
 	btn_browse_dr.pressed.connect(_on_btn_browse_dr_pressed)
 	btn_browse_tdm_copy.pressed.connect(_on_btn_browse_tdm_copy_pressed)
-
 
 func _on_close_requested() -> void:
 	pass
@@ -190,4 +192,8 @@ func _on_sb_bg_opacity_value_changed(value: float) -> void:
 
 func _on_le_pk_4_suffix_text_changed(new_text: String) -> void:
 	temp_config.packname_suffix = new_text
+	_update_apply_button()
+
+func _on_le_date_time_format_text_changed(new_text:String) -> void:
+	temp_config.date_time_format = new_text
 	_update_apply_button()

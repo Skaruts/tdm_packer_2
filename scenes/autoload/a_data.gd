@@ -20,6 +20,7 @@ const DEFAULT_CONFIG := {
 		show_tree_roots = true,
 		packname_suffix = "_v$version",
 		popup_bg_opacity = 0.5,
+		date_time_format = "d/m/y t",
 	}
 }
 
@@ -57,7 +58,7 @@ const TOK_VERSION     := "$version"
 const TOK_AUTHOR      := "$author"
 const TOK_TITLE       := "$title"
 const TOK_MIN_VERSION := "$min_version"
-const TOK_PACK_DATE   := "$pack_date"
+const TOK_DATETIME    := "$date_time"
 
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
@@ -145,3 +146,15 @@ func update_config(new_config:ConfigData) -> void:
 func is_tdm_path_set()      -> bool: return data.config.tdm_path      != ""
 func is_dr_path_set()       -> bool: return data.config.dr_path       != ""
 func is_tdm_copy_path_set() -> bool: return data.config.tdm_copy_path != ""
+
+
+
+func get_date_time_string() -> String:
+	var dic := Time.get_datetime_dict_from_system()
+	#date_time_format = "d/m/y h:m"
+	var date_time: String = config.date_time_format
+	date_time = date_time.replace('t', "%d:%02d" % [dic.hour, dic.minute])
+	date_time = date_time.replace('d', "%02d"    % dic.day)
+	date_time = date_time.replace('m', "%02d"    % dic.month)
+	date_time = date_time.replace('y', "%d"     % dic.year)
+	return date_time
