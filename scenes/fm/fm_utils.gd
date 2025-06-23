@@ -225,13 +225,16 @@ static func _add_files_to_ignores(root:String, ign_dirs:Set, ign_files:Set, igno
 
 
 static func _add_maps_to_ignores(mission:Mission, ign_dirs:Set, ign_files:Set) -> void:
+	logs.print("_add_maps_to_ignores", Path.dir_exists(mission.paths.maps))
 	if not Path.dir_exists(mission.paths.maps): return
 	var dpaths:Array[String] = Path.get_dirpaths(mission.paths.maps)
 	var fpaths:Array[String] = Path.get_filepaths(mission.paths.maps)
 
 	# every dir inside '/maps' should be ignored
 	for dir:String in dpaths:
-		ign_dirs.add( Path.join(mission.paths.maps, dir) )
+		#ign_dirs.add( Path.join(mission.paths.maps, dir) )
+		ign_dirs.add(dir)
+		logs.print(dir)
 
 	var used_map_names := mission.mdata.map_files
 
