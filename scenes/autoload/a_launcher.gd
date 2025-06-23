@@ -79,12 +79,23 @@ func _run_app_thread(path:String, args:Array[String]) -> void:
 func open_fm_packer_folder() -> void:
 	OS.shell_open(ProjectSettings.globalize_path("res://"))
 
+
 func open_mission_folder() -> void:
 	OS.shell_open(fms.curr_mission.paths.root)
 
-func open_mission_test_folder() -> void:
-	OS.shell_open(fms.curr_mission.paths.test_root)
 
+func open_mission_test_folder() -> void:
+	var mission := fms.curr_mission
+	if not Path.dir_exists(mission.paths.test_root):
+		var err := Path.make_dir(mission.paths.test_root)
+		if err != OK:
+			popups.show_message(
+				"Error",
+				"Failed to create the test folder.\n    '%s'.\nERROR: %s.\n" % [mission.paths.test_root, Path.get_error_text(err)]
+			)
+			return
+
+	OS.shell_open(mission.paths.test_root)
 
 
 
