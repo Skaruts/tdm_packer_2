@@ -554,8 +554,8 @@ func pack_mission() -> void:
 
 func play_mission() -> void:
 	popups.show_confirmation({
-		text="Launch TDM for\n    '%s'?" % curr_mission.mdata.title,
-		ok_text = "Yes",
+		text        = "Launch TDM for\n    '%s'?" % curr_mission.mdata.title,
+		ok_text     = "Yes",
 		cancel_text = "No",
 	})
 	if not await popups.confirmation_dialog.answer:
@@ -568,8 +568,8 @@ func play_mission() -> void:
 
 func edit_mission() -> void:
 	popups.show_confirmation({
-		text="Launch DarkRadiant for\n    '%s'?" % curr_mission.mdata.title,
-		ok_text = "Yes",
+		text        = "Launch DarkRadiant for\n    '%s'?" % curr_mission.mdata.title,
+		ok_text     = "Yes",
 		cancel_text = "No",
 	})
 	if not await popups.confirmation_dialog.answer:
@@ -582,8 +582,8 @@ func edit_mission() -> void:
 
 func test_pack() -> void:
 	popups.show_confirmation({
-		text="Launch TDM test-version for\n    '%s'?" % curr_mission.mdata.title,
-		ok_text = "Yes",
+		text        = "Launch TDM test-version for\n    '%s'?" % curr_mission.mdata.title,
+		ok_text     = "Yes",
 		cancel_text = "No",
 	})
 	if not await popups.confirmation_dialog.answer:
