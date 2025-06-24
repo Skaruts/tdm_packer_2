@@ -37,7 +37,7 @@ func _ready() -> void:
 	timer.wait_time = 1
 	timer.timeout.connect(func() -> void: popup_has_just_closed = false)
 
-	confirmation_dialog.get_label().autowrap_mode = TextServer.AUTOWRAP_ARBITRARY
+	confirmation_dialog.get_label().autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	confirmation_dialog.get_label().max_lines_visible = 10
 
 	message_dialog.visibility_changed.connect(_on_popup_visibility_changed.bind(message_dialog))
