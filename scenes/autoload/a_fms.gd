@@ -178,7 +178,7 @@ func load_map_sequence(mis:Mission) -> void:
 		mis.remove_hash(mis.paths.mapsequence)
 		mis.store_hash(mis.paths.startingmap)
 
-	logs.print("on load", mis.mdata.map_files)
+	#logs.print("on load", mis.mdata.map_files)
 
 
 func _load_mission_files(mis:Mission) -> void:
@@ -269,7 +269,7 @@ func load_modfile(mis:Mission) -> void:
 		i += 1
 	commit_section.call(section_text.strip_edges(), curr_section, map_index)
 
-	logs.print(mis.mdata.map_titles)
+	#logs.print(mis.mdata.map_titles)
 	#if map_titles.size() >= map_count:
 		#logs.warning("map titles exceed number of map files: %s/%s" % [map_titles.size(), map_count])
 
@@ -449,7 +449,7 @@ func add_missions(ids:Array[String]) -> void:
 	if popups.main_progress_bar.aborted:
 		popups.main_progress_bar.set_text("Aborting")
 
-	await get_tree().create_timer(1).timeout
+	await get_tree().create_timer(0.25).timeout
 	popups.main_progress_bar.hide_bar()
 
 
@@ -554,7 +554,7 @@ func pack_mission() -> void:
 
 func play_mission() -> void:
 	popups.show_confirmation({
-		text="Play '%s'?" % curr_mission.mdata.title,
+		text="Launch TDM for\n    '%s'?" % curr_mission.mdata.title,
 		ok_text = "Yes",
 		cancel_text = "No",
 	})
@@ -567,6 +567,14 @@ func play_mission() -> void:
 
 
 func edit_mission() -> void:
+	popups.show_confirmation({
+		text="Launch DarkRadiant for\n    '%s'?" % curr_mission.mdata.title,
+		ok_text = "Yes",
+		cancel_text = "No",
+	})
+	if not await popups.confirmation_dialog.answer:
+		return
+
 	if is_save_timer_counting():
 		save_mission(curr_mission, true)
 	launcher.run_darkradiant()
@@ -574,7 +582,7 @@ func edit_mission() -> void:
 
 func test_pack() -> void:
 	popups.show_confirmation({
-		text="Test '%s'?" % curr_mission.mdata.title,
+		text="Launch TDM test-version for\n    '%s'?" % curr_mission.mdata.title,
 		ok_text = "Yes",
 		cancel_text = "No",
 	})
