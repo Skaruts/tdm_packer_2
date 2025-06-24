@@ -1,9 +1,17 @@
 extends BasePopup
 
 
+const _LOADED_COLOR := Color(0.42, 0.807, 1.0)
+const _ICON_COLOR   := Color(0.0, 1.0, 0.0)
+
+
 var _first_item    : TreeItem
 var _last_item     : TreeItem
 var _selected_maps : Dictionary
+
+# hacky way of communicating directly with the gui_tab_package that invokes this
+var pack_tab : Control
+
 
 @onready var lb_header         : Label       = %lb_header
 @onready var tr_maps           : Tree        = %tr_maps
@@ -24,22 +32,17 @@ func _on_popup() -> void:
 	tr_maps.grab_focus()
 	_build_list()
 
-const _LOADED_COLOR := Color(0.447, 0.447, 0.447)
 
 func _build_list() -> void:
 	var mission := fms.curr_mission
 
-	var num_excluded_maps := 0
 	var map_files := Path.get_filepaths_filtered(mission.paths.maps,
 		func(filename:String) -> bool:
 			return filename.get_extension() == "map"
 	)
 
-	for file:String in mission.ignored_files.items():
-		logs.print(file)
-
 	tr_maps.clear()
-	tr_maps.columns = 1
+	#tr_maps.columns = 1
 
 	var _root := tr_maps.create_item()
 	var item:TreeItem
@@ -55,8 +58,6 @@ func _build_list() -> void:
 		var is_loaded   := map_filename.get_basename() in mission.mdata.map_files
 		var idx  := i % tr_maps.columns
 
-		#logs.print(map_filename, is_loaded, is_included, path in mission.ignored_files, path)
-
 		if idx == 0:
 			item = _root.create_child()
 			for j:int in tr_maps.columns:
@@ -66,27 +67,30 @@ func _build_list() -> void:
 		elif i == map_files.size()-1: _last_item  = item
 
 		item.set_text(idx, map_filename)
-		item.set_icon(idx, data.FILE_ICON)
 		item.set_icon_max_width(idx, 20)
 
-		if not is_included:
-			item.set_custom_color(idx, data.FADED_TEXT_COLOR)
-			item.set_icon_modulate(idx, data.FADED_TEXT_COLOR)
-		elif is_loaded:
-			item.set_custom_color(idx, _LOADED_COLOR)
-			item.set_icon_modulate(idx, _LOADED_COLOR)
-		else:
-			item.set_selectable(idx, true)
-			item.set_metadata(idx, is_included)
+		var icon       : Texture2D
+		var color      : Color
+		var icon_color : Color
 
-			#if not is_included:
-				#num_excluded_maps += 1
-				#item.set_custom_color(idx, data.ERROR_COLOR)
-#
-#
-	#if num_excluded_maps > 0:
-		#lb_warnings.text = "%s folders are missing 'darkmod.txt'" % num_excluded_maps
-		#lb_warnings.show()
+		if not is_included:
+			color      = data.FADED_TEXT_COLOR
+			icon       = data.ICON_MAP
+			icon_color = data.FADED_TEXT_COLOR
+		elif is_loaded:
+			color      = _LOADED_COLOR
+			icon       = data.ICON_MAP_LOADED
+			icon_color = _LOADED_COLOR
+		else:
+			color      = data.TEXT_COLOR
+			item.set_selectable(idx, true)
+			icon       = data.ICON_MAP
+			icon_color = _ICON_COLOR
+
+		item.set_icon(idx, icon)
+		item.set_custom_color(idx, color)
+		item.set_icon_modulate(idx, icon_color)
+		item.set_metadata(idx, is_included)
 
 
 func _on_input(event: InputEvent) -> void:
@@ -110,17 +114,16 @@ func _on_bar_button_pressed(idx:int) -> void:
 
 func _commit_data() -> void:
 	logs.print(_selected_maps)
-	#var maps:Array[String]
-	#for map_name:String in _selected_maps:
-		#maps.append(map_name)
-	#
-	#
-	#logs.info(path)
-	#var map_filename := path.get_basename().get_file()
-	#if _mission.add_map_file(map_filename):
-		#_add_map_tree_item(map_filename)
-		#fms.start_save_timer(true)
-		#tr_map_list.set_selected( _tree_root.get_child(-1), 0 )
+	var maps:Array[String]
+
+	for map_filename:String in _selected_maps:
+		maps.append(map_filename.get_basename())
+
+	for map_name:String in maps:
+		if fms.curr_mission.add_map_file(map_name):
+			pack_tab.add_map(map_name)
+
+	fms.start_save_timer(true)
 
 
 func _on_close() -> void:
@@ -155,18 +158,18 @@ func _select_last_item() -> void:
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 func _on_tr_maps_cell_selected() -> void:
-	#logs.print("_on_tr_maps_cell_selected")
 	_update_button(btn_ok, true)
 
 
 func _validate_selected_maps() -> bool:
 	var to_load := 0
 
-	for mission_name:String in _selected_maps:
-		var is_valid: bool = _selected_maps[mission_name]
+	for map_name:String in _selected_maps:
+		var is_valid: bool = _selected_maps[map_name]
+		logs.print("is_valid", is_valid)
 		if not is_valid:
 			popups.show_confirmation({
-				text = "Folder '%s' has no 'darkmod.txt'.\nCreate a new one?" % mission_name,
+				text = "Folder '%s' has no 'darkmod.txt'.\nCreate a new one?" % map_name,
 			})
 			if not await popups.confirmation_dialog.answer:
 				continue
@@ -176,7 +179,6 @@ func _validate_selected_maps() -> bool:
 
 
 func _on_tr_maps_item_activated() -> void:
-	#logs.print("_on_tr_maps_item_activated")
 	_on_bar_button_pressed(BarButton.OK)
 
 

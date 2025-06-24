@@ -24,19 +24,19 @@ enum EditorIndex {
 @onready var ce_readme      : CodeEdit = %ce_readme
 @onready var ce_pkignore    : CodeEdit = %ce_pkignore
 
-@onready var btn_add_map: Button = %btn_add_map
-@onready var btn_remove_map: Button = %btn_remove_map
+@onready var btn_add_map    : Button = %btn_add_map
+@onready var btn_remove_map : Button = %btn_remove_map
 
-@onready var tree_included_files: Tree = %tree_included_files
-@onready var tree_excluded_files: Tree = %tree_excluded_files
-@onready var label_included_files: Label = %label_included_files
-@onready var label_excluded_files: Label = %label_excluded_files
+@onready var tr_included   : Tree  = %tr_included
+@onready var tr_excluded   : Tree  = %tr_excluded
+@onready var lb_included   : Label = %lb_included
+@onready var lb_excluded   : Label = %lb_excluded
 
 #@onready var map_list: ItemList = %map_list
-@onready var tr_map_list: Tree = %tr_map_list
+@onready var tr_map_list : Tree  = %tr_map_list
 
-@onready var btn_move_up: Button = %btn_move_up
-@onready var btn_move_down: Button = %btn_move_down
+@onready var btn_move_up   : Button = %btn_move_up
+@onready var btn_move_down : Button = %btn_move_down
 
 
 var curr_editor: CodeEdit
@@ -57,7 +57,7 @@ func _add_map_tree_item(filename:String, title:="") -> TreeItem:
 	item.set_text_alignment(1, tree_alignment)
 
 	item.set_text(0, filename)
-	#item.set_icon(0, data.FILE_ICON)
+	#item.set_icon(0, data.ICON_FILE)
 	#item.set_icon_max_width(0, 16)
 
 	item.set_custom_color(1, Color(0.82, 0.698, 0.361))# Color.GOLDENROD)
@@ -122,6 +122,8 @@ func _ready() -> void:
 	btn_move_up.pressed.connect(_on_move_arrow_pressed.bind("move_up"))
 	btn_move_down.pressed.connect(_on_move_arrow_pressed.bind("move_down"))
 	_set_button_states(false)
+
+
 
 
 func _on_move_arrow_pressed(direction:String) -> void:
@@ -195,7 +197,7 @@ func _build_map_list() -> void:
 	var item := tr_map_list.get_selected()
 	var idx:int = item.get_index() if item else -1
 
-	logs.print("_build_map_list")
+	#logs.print("_build_map_list")
 	tr_map_list.clear()
 	_tree_root = tr_map_list.create_item()
 	for i:int in _mission.mdata.map_files.size():
@@ -300,14 +302,19 @@ func _on_line_edit_text_changed(new_text:String, ledit:LineEdit) -> void:
 			fms.start_save_timer(false)
 		le_version:
 			_mission.update_version(new_text, true)
-			update_pack_name()
+			update_tree_root_pack_name()
 			fms.start_save_timer(false)
 		le_tdm_version:
 			_mission.update_tdm_version(new_text, true)
 			fms.start_save_timer(false)
 
 
+func add_map(map_name:String) -> void:
+	_add_map_tree_item(map_name)
+	tr_map_list.set_selected( _tree_root.get_child(-1), 0 )
+
 func _on_btn_add_map_pressed() -> void:
+	popups.add_map.pack_tab = self
 	popups.show_popup(popups.add_map)
 
 	#popups.open_single_file({
@@ -346,14 +353,14 @@ func _on_btn_remove_map_pressed() -> void:
 
 
 func set_show_roots(enabled:bool) -> void:
-	tree_included_files.hide_root = not enabled
-	tree_excluded_files.hide_root = not enabled
+	tr_included.hide_root = not enabled
+	tr_excluded.hide_root = not enabled
 	if enabled:
-		label_included_files.text = "Files"
-		label_excluded_files.text = ""
+		lb_included.text = "Files"
+		lb_excluded.text = ""
 	else:
-		label_included_files.text = _mission.zipname
-		label_excluded_files.text = "Excluded Files"
+		lb_included.text = _mission.zipname
+		lb_excluded.text = "Excluded Files"
 
 
 
@@ -362,29 +369,30 @@ func set_show_roots(enabled:bool) -> void:
 #		Build Trees
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-func update_pack_name() -> void:
-	var root := tree_included_files.get_root()
+func update_tree_root_pack_name() -> void:
+	var root := tr_included.get_root()
 	root.set_text(0, _mission.zipname)
-
 
 
 func _build_trees() -> void:
 	logs.task("Building GUI trees for %s..." % _mission.id)
 
-	tree_included_files.clear()
-	tree_excluded_files.clear()
+	tr_included.set_column_title(0, "%d dirs, %d files" % [_mission.inc_dir_count, _mission.inc_file_count])
+	tr_excluded.set_column_title(0, "%d dirs, %d files" % [_mission.exc_dir_count, _mission.exc_file_count])
 
-	var inc_tree_root := tree_included_files.create_item()
+	tr_included.clear()
+	tr_excluded.clear()
+
+	var inc_tree_root := tr_included.create_item()
 	inc_tree_root.set_text(0, _mission.zipname)
 	inc_tree_root.set_custom_color(0, data.EDITED_FILE_COLOR)
-	#label_included_files.text = _mission.zipname
+	#lb_included.text = _mission.zipname
 
-	var exc_tree_root := tree_excluded_files.create_item()
-	#exc_tree_root.set_text(0, "... /" + _mission.id)
+	var exc_tree_root := tr_excluded.create_item()
 	exc_tree_root.set_text(0, "Excluded Files")
 	exc_tree_root.set_custom_color(0, data.EDITED_FILE_COLOR)
 
-	#var t1 := Time.get_ticks_msec()
+	var t1 := Time.get_ticks_msec()
 
 	_build_inc_tree(_mission.file_tree, inc_tree_root)
 	_build_exc_tree(_mission.file_tree, exc_tree_root)
@@ -393,45 +401,74 @@ func _build_trees() -> void:
 	or not _mission.file_tree.get_child_named("maps").has_included_files():
 		console.warning("%s has no valid maps" % _mission.id)
 
-	#var t2 := Time.get_ticks_msec()
-	#var total_time := "%.5f" % [(t2-t1)/1000]
+	var t2 := Time.get_ticks_msec()
+	var total_time := "%.5f" % [(t2-t1)/1000.0]
+	logs.task("... finished building trees (%s)" % [total_time])
 
-	#logs.task("... finished building trees (%s)" % [total_time])
 
+func _build_inc_tree(parent: FMTreeNode, gui_parent: TreeItem) -> void:
+	for node: FMTreeNode in parent.children:
+		if node.ignored: continue
 
-func _build_inc_tree(mroot:FMTreeNode, gui_root:TreeItem) -> void:
-	for tn:FMTreeNode in mroot.children:
-		if tn.ignored: continue
+		var icon := data.ICON_FOLDER if node.is_dir else data.ICON_FILE
+		var tree_item: TreeItem
 
-		var icon := data.FOLDER_ICON if tn.is_dir else data.FILE_ICON
-		var gui_tree_item:TreeItem
+		var maps_path := _mission.paths.maps
 
-		if tn.is_dir and tn.name == "maps" and not tn.has_included_files():
-			gui_tree_item = _create_node(tree_included_files, tn.name, gui_root, icon, data.ERROR_COLOR)
+		if not node.is_dir:
+			if parent.path != maps_path:
+				tree_item = _create_node(gui_parent, node.name, icon)
+			else:
+				var map_name := node.name.get_basename()
+				if map_name in _mission.mdata.map_files:
+					tree_item = _create_node(gui_parent, node.name, icon)
 		else:
-			gui_tree_item = _create_node(tree_included_files, tn.name, gui_root, icon)
+			if node.path != maps_path:
+				tree_item = _create_node(gui_parent, node.name, icon)
+			elif node.has_included_files():
+				tree_item = _create_node(gui_parent, node.name, icon)
+			else:
+				tree_item = _create_node(gui_parent, node.name, icon, data.ERROR_COLOR)
 
-		_build_inc_tree(tn, gui_tree_item)
+
+		# if not (node.is_dir and node.path != maps_path):
+		# 	tree_item = _create_node(tr_included, node.name, gui_parent, icon)
+		# else:
+		# 	if node.has_included_files():
+		# 		tree_item = _create_node(tr_included, node.name, gui_parent, icon)
+		# 	else:
+		# 		tree_item = _create_node(tr_included, node.name, gui_parent, icon, data.ERROR_COLOR)
+
+		_build_inc_tree(node, tree_item)
 
 
-func _build_exc_tree(mroot:FMTreeNode, gui_root:TreeItem) -> void:
-	for c:FMTreeNode in mroot.children:
-		if c.is_dir:
-			if not c.has_ignored_files():
+func _build_exc_tree(parent:FMTreeNode, gui_parent:TreeItem) -> void:
+	for node: FMTreeNode in parent.children:
+		var maps_path := _mission.paths.maps
+
+		if node.is_dir:
+			if not node.has_ignored_files():
 				continue
-		elif not c.ignored:
+		elif not node.ignored and parent.path != maps_path:
 			continue
 
-		var icon := data.FOLDER_ICON if c.is_dir else data.FILE_ICON
-		var gui_tree_item := _create_node(tree_excluded_files, c.name, gui_root, icon)
-		_build_exc_tree(c, gui_tree_item)
+		var map_sequence := _mission.mdata.map_files
+		var icon := data.ICON_FOLDER if node.is_dir else data.ICON_FILE
+		var tree_item : TreeItem
+		if not (not node.is_dir and parent.path == maps_path):
+			tree_item = _create_node(gui_parent, node.name, icon)
+		else:
+			if node.ignored or not node.name.get_basename() in map_sequence:
+				tree_item = _create_node(gui_parent, node.name, icon)
+
+		_build_exc_tree(node, tree_item)
 
 
-func _create_node(tree:Tree, text:String, root:TreeItem, icon:Texture2D, color:Variant=null) -> TreeItem:
-	var node := tree.create_item(root)
+func _create_node(parent:TreeItem, text:String, icon:Texture2D, color:Variant=null) -> TreeItem:
+	var node := parent.create_child()
 	node.set_text(0, text)
 	if color:
-		node.set_custom_color(0, color as Color)
+		node.set_custom_color(0, color)
 		#node.set_icon_modulate(0, color)
 	node.set_icon(0, icon)
 	node.set_icon_max_width(0, 16)

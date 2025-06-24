@@ -33,24 +33,24 @@ func add_child(node:FMTreeNode) -> void:
 
 
 func has_included_files() -> bool:
+	if not is_dir or ignored: return false
 	for c:FMTreeNode in children:
 		if not c.is_dir:
 			if not c.ignored:
 				return true
-		else:
-			if c.has_included_files():
-				return true
+		elif c.has_included_files():
+			return true
 	return false
 
 
 func has_ignored_files() -> bool:
+	if not is_dir or ignored: return true
 	for c:FMTreeNode in children:
 		if not c.is_dir:
 			if c.ignored:
 				return true
-		else:
-			if c.has_ignored_files():
-				return true
+		elif c.has_ignored_files():
+			return true
 	return false
 
 

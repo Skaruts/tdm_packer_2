@@ -273,28 +273,30 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="label_included_files" type="Label" parent="Pack/HSplitContainer/VBoxContainer"]
+[node name="lb_included" type="Label" parent="Pack/HSplitContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Files"
 
-[node name="tree_included_files" type="Tree" parent="Pack/HSplitContainer/VBoxContainer"]
+[node name="tr_included" type="Tree" parent="Pack/HSplitContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+column_titles_visible = true
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="Pack/HSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="label_excluded_files" type="Label" parent="Pack/HSplitContainer/VBoxContainer2"]
+[node name="lb_excluded" type="Label" parent="Pack/HSplitContainer/VBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Excluded Files"
 
-[node name="tree_excluded_files" type="Tree" parent="Pack/HSplitContainer/VBoxContainer2"]
+[node name="tr_excluded" type="Tree" parent="Pack/HSplitContainer/VBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+column_titles_visible = true

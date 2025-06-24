@@ -2,8 +2,26 @@ class_name FMUtils
 extends Node
 
 
-static var _default_ignored_directories := Set.new(["/.git", "/savegames"])
-static var _default_ignored_files       := Set.new([data.IGNORES_FILENAME, "bak", ".log", ".dat", ".py", ".pyc", ".pk4", ".zip", ".7z", ".rar", ".gitignore", ".gitattributes"])
+static var default_ignored_directories := Set.new([
+	"/.git",
+	"/savegames"
+])
+
+static var default_ignored_files := Set.new([
+	data.IGNORES_FILENAME,
+	".gitignore",
+	".gitattributes",
+	".pyc",
+	".py",
+	".pk4",
+	".zip",
+	".7z",
+	".rar",
+	".log",
+	".dat",
+	"bak",
+])
+
 
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
@@ -24,6 +42,8 @@ static func should_ignore(path:String, filters:Set) -> bool:
 
 static func get_file_hash(path:String) -> String:
 	return Path.get_md5(path)
+
+
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 
@@ -52,7 +72,7 @@ static func pack_mission(mission:Mission) -> void:
 		var t2 := Time.get_ticks_msec()
 		var total_time := "%.2f" % [(t2-t1)/1000.0]
 		popups.pack_mission.call_thread_safe("task", "Finished packing '%s'..." % [mission.zipname])
-		popups.pack_mission.call_thread_safe("info", "%s dirs, %s files, %s seconds" % [mission.dir_count, mission.file_count, total_time])
+		popups.pack_mission.call_thread_safe("info", "%s dirs, %s files, %s seconds" % [mission.inc_dir_count, mission.inc_file_count, total_time])
 	else:
 		popups.pack_mission.call_thread_safe("error", report.error)
 
@@ -66,9 +86,9 @@ static func _pack_files(mission:Mission) -> ErrorReport:
 		return ErrorReport.new(false, "Couldn't create pk4 archive at '%s'" % [pakpath])
 
 	var report := ErrorReport.new(true)
-	var file_count:float = mission.filepaths.size()
-
-	var subst_files:Array[String] = ["readme.txt"]
+	var files  := mission.filepaths
+	var subst_files : Array[String] = ["readme.txt"]
+	var file_count  : float = files.size()
 
 	for i:float in file_count:
 		if not popups.pack_mission.is_packing():
@@ -76,31 +96,29 @@ static func _pack_files(mission:Mission) -> ErrorReport:
 			break
 		popups.pack_mission.call_thread_safe("set_percentage", (i+1)/file_count)
 
-		var fpath:String = mission.filepaths[i]
-		var rel_path := fpath.trim_prefix(mission.paths.root + '/')
-		#popups.pack_mission.call_thread_safe("print", "    %s" % [rel_path])
+		var fullpath:String = files[i]
+		var rel_path := fullpath.trim_prefix(mission.paths.root + '/')
+		popups.pack_mission.call_thread_safe("print", "    %s" % [rel_path])
 		zipper.start_file(rel_path)
 
-		var filename := fpath.get_file()
+		var filename := fullpath.get_file()
 		if not filename in subst_files:
-			zipper.write_file(Path.read_file_bytes(fpath))
+			zipper.write_file(Path.read_file_bytes(fullpath))
 		else:
-			var content := Path.read_file_string(fpath)
+			var content := Path.read_file_string(fullpath)
 			content = content.replace(data.TOK_VERSION,     mission.mdata.version)
 			content = content.replace(data.TOK_AUTHOR,      mission.mdata.author)
 			content = content.replace(data.TOK_TITLE,       mission.mdata.title)
 			content = content.replace(data.TOK_MIN_VERSION, mission.mdata.tdm_version)
 			if content.contains(data.TOK_DATETIME):
 				content = content.replace(data.TOK_DATETIME, data.get_date_time_string())
-			logs.print(filename, filename in subst_files, content)
+			#logs.print(filename, filename in subst_files, content)
 			zipper.write_file(content.to_utf8_buffer())
 
 		zipper.close_file()
 
-
 	zipper.close()
 	return report
-
 
 
 
@@ -112,46 +130,92 @@ static func _pack_files(mission:Mission) -> ErrorReport:
 static func build_file_tree(mission:Mission) -> void:
 	logs.task("Building file tree...")
 
-	mission.dir_count = 0
-	mission.file_count = 0
-	var ign_dirs  := _default_ignored_directories.duplicate()
-	var ign_files := _default_ignored_files.duplicate()
+	mission.inc_dir_count       = 0
+	mission.inc_file_count      = 0
+	mission.exc_dir_count       = 0
+	mission.exc_file_count      = 0
+	mission.file_tree           = FMTreeNode.new(mission.paths.root)
+	mission.ignored_files       = default_ignored_files.duplicate()
+	mission.ignored_directories = default_ignored_directories.duplicate()
+	mission.filepaths.clear()
 
-	init_ignores(mission.mdata.pkignore, ign_dirs, ign_files)
+	init_ignores(mission)
+	_gather_files(mission, mission.file_tree)
 
-	_add_files_to_ignores(mission.paths.root, ign_dirs, ign_files)
-	_add_maps_to_ignores(mission, ign_dirs, ign_files)
-
-	var root := FMTreeNode.new(mission.paths.root)
-	_build_mission_nodes(mission, root, ign_dirs, ign_files)
-
-	mission.file_tree = root
-	mission.filepaths = build_mission_filepaths(mission, root)
-	mission.ignored_files = ign_files
-	mission.ignored_directories = ign_dirs
+	for i: int in range(mission.filepaths.size()-1, -1, -1):
+		var filepath := mission.filepaths[i]
+		if not filepath.contains(mission.paths.maps): continue
+		var basename := filepath.get_file().get_basename()
+		#logs.print(basename, basename in mission.mdata.map_files, filepath)
+		if not basename in mission.mdata.map_files:
+			mission.filepaths.remove_at(i)
+			mission.inc_file_count -= 1
+			mission.exc_file_count += 1
 
 	logs.task("Finished building file tree")
 
 
-static func _build_mission_nodes(mission:Mission, parent:FMTreeNode, ign_dirs:Set, ign_files:Set) -> void:
-	var dpaths:Array[String] = Path.get_dirpaths(parent.path)
-	var fpaths:Array[String] = Path.get_filepaths(parent.path)
+static func init_ignores(mission:Mission) -> void:
+	if mission.mdata.pkignore == "": return
+
+	var list: PackedStringArray = mission.mdata.pkignore.split('\n', false)
+	for line: String in list:
+		if '#' in line: line = line.left(line.find('#'))
+		line = line.strip_edges()
+		if line == "":
+			continue
+
+		if '/' in line:
+			if   line.begins_with('/'):  line = line.substr(1)
+			elif line.ends_with('/'):    line = line.substr(0, line.length()-1)
+
+			if line.length() <= 1:
+				continue
+			mission.ignored_directories.add(line)
+		else:
+			mission.ignored_files.add(line)
 
 
-	for dir:String in dpaths:
-		var dir_node := FMTreeNode.new(dir, parent)
-		dir_node.ignored = parent.ignored \
-						 or should_ignore(dir, ign_dirs) \
-						 or parent.path.ends_with(Path.join(mission.paths.root, "maps"))
+static func _gather_files(mission:Mission, parent:FMTreeNode) -> void:
+	var dirpaths:Array[String]  = Path.get_dirpaths(parent.path)
+	var filepaths:Array[String] = Path.get_filepaths(parent.path)
+
+	if not dirpaths.size() and not filepaths.size():
+		if parent.path == mission.paths.maps: return
+		if not parent.ignored:
+			mission.ignored_files.add(parent.path)
+			parent.ignored = true
+		return
+
+	var ign_files := mission.ignored_files
+	var ign_dirs  := mission.ignored_directories
+
+	for fullpath:String in dirpaths:
+		var rel_path := fullpath.replace(mission.paths.root, '')
+		var dir_node := FMTreeNode.new(fullpath, parent)
 		dir_node.is_dir = true
-		_build_mission_nodes(mission, dir_node, ign_dirs, ign_files)
+		dir_node.ignored = parent.ignored or should_ignore(rel_path, ign_dirs) \
+						or (fullpath != mission.paths.maps and fullpath.contains(mission.paths.maps))
+		if dir_node.ignored:
+			ign_dirs.add(fullpath)
+			mission.exc_dir_count += 1
+		else:
+			mission.inc_dir_count += 1
+		_gather_files(mission, dir_node)
 
-	for file:String in fpaths:
-		var file_node := FMTreeNode.new(file, parent)
-		file_node.ignored = parent.ignored \
-			or should_ignore(file, ign_files)
+	for fullpath:String in filepaths:
+		var rel_path  := fullpath.replace(mission.paths.root, '')
+		var file_node := FMTreeNode.new(fullpath, parent)
+		file_node.ignored = parent.ignored or should_ignore(rel_path, ign_files)
+		if file_node.ignored:
+			ign_files.add(fullpath)
+			mission.exc_file_count += 1
+		else:
+			mission.filepaths.append(fullpath)
+			mission.inc_file_count += 1
 
 
+# TODO: this should be in the tree class, maybe
 static func print_tree_node_recursive(root:FMTreeNode) -> void:
 	for c:FMTreeNode in root.children:
 		if not c.ignored:
@@ -159,87 +223,3 @@ static func print_tree_node_recursive(root:FMTreeNode) -> void:
 
 		if c.children.size():
 			print_tree_node_recursive(c)
-
-
-static func build_mission_filepaths(mission:Mission, root:FMTreeNode) -> Array[String]:
-	var filepaths:Array[String] = []
-
-	for c:FMTreeNode in root.children:
-		if not c.ignored:
-			if not c.is_dir:
-				mission.file_count += 1
-				filepaths.append(c.path)
-			else:
-				mission.dir_count += 1
-
-		if c.children.size():
-			filepaths += build_mission_filepaths(mission, c)
-
-	return filepaths
-
-
-static func init_ignores(pkignore:String, ign_dirs:Set, ign_files:Set) -> void:
-	if pkignore == "": return
-
-	var list:PackedStringArray = pkignore.split('\n', false)
-	for line in list:
-		if '#' in line:
-			line = line.left(line.find('#'))
-
-		line = line.strip_edges()
-		if line == "": continue
-
-		if '/' in line:
-			if line.begins_with('/'):
-				line = line.substr(1)
-			elif line.ends_with('/'):
-				line = line.substr(0, line.length()-1)
-
-			if line == "": continue
-			ign_dirs.add(line)
-		else:
-			ign_files.add(line)
-
-
-
-static func _get_used_map_names(file:String) -> Array[String]:
-	var map_names:Array[String]
-	if Path.file_exists(file):
-		var string := Path.read_file_string(file)
-		map_names = [ string.strip_edges().split('\n', false)[0] ]
-	return map_names
-
-
-static func _add_files_to_ignores(root:String, ign_dirs:Set, ign_files:Set, ignored:=false) -> void:
-	var dpaths:Array[String] = Path.get_dirpaths(root)
-	var fpaths:Array[String] = Path.get_filepaths(root)
-
-	for dir:String in dpaths:
-		var dir_ignored := should_ignore(dir, ign_dirs)
-		_add_files_to_ignores(dir, ign_dirs, ign_files, dir_ignored)
-
-	for filepath:String in fpaths:
-		if ignored or should_ignore(filepath, ign_files):
-			ign_files.add( filepath )
-
-
-
-static func _add_maps_to_ignores(mission:Mission, ign_dirs:Set, ign_files:Set) -> void:
-	if not Path.dir_exists(mission.paths.maps): return
-	var dpaths:Array[String] = Path.get_dirpaths(mission.paths.maps)
-	var fpaths:Array[String] = Path.get_filepaths(mission.paths.maps)
-
-	# every dir inside '/maps' should be ignored
-	for dir:String in dpaths:
-		ign_dirs.add( Path.join(mission.paths.maps, dir) )
-
-	var used_map_names := mission.mdata.map_files
-
-	var fpaths_copy := fpaths.duplicate()
-	for filepath:String in fpaths_copy:
-		var filename := filepath.get_basename().get_file()
-		if filename in used_map_names:
-			fpaths.erase(filepath)
-
-	for filepath:String in fpaths:
-		ign_files.add(filepath)
