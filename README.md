@@ -1,41 +1,43 @@
 # TDM Packer 2
-A GUI tool for managing and packing The Dark Mod missions. It can create the `pk4` for you, automatically excluding any files and folders you specify in a `.pkignore` file, and allow you to easily edit some mission files, run DarkRadiant, and more.
+A GUI tool for The Dark Mod mappers, to help managing and packing fan missions. It can create the `pk4` for you, automatically excluding any files and folders you specify in a `.pkignore` file, and allow you to easily edit some mission files, run DarkRadiant, and more.
 
 
-###### Note: This project uses Godot 4.4.stable. It may not work in older versions.
+###### Note: for users running this from source: this project is using Godot 4.4.stable. It may not work in older versions of Godot.
 
-###### Note: As this is still a very early version with very little testing, you should backup any missions you use this app with, and double-check the included/excluded files when packing missions.
+###### Note: As this is still a very early version with very little testing, you should backup any missions you use this app with, and double-check the included/excluded files, as well as the resulting pk4 contents.
 
-![1_tdmp2_alpha_0 3](https://github.com/user-attachments/assets/c320a674-231e-4364-8d9d-a3b88c42ea4b)
+![tdmp_a04_1](https://github.com/user-attachments/assets/605f244d-877c-4e1b-a797-3ee8ca917699)
 
-![2_tdmp2_alpha_0 3](https://github.com/user-attachments/assets/15950761-7e4d-4611-bdab-ca772f9e2bd1)
+![tdmp_a04_2](https://github.com/user-attachments/assets/a38eda99-a042-437b-b86e-e420138646ff)
 
 
 # Current Features
 
 - portable
-- creates a .pkignore file in your FM folder, which you can edit in order to exclude files from the `pk4`
-- packs your mission into the pk4 at the press of a button
-- provides editors for `darkmod.txt` and `readme.txt`
+- allows specifying which files should be excluded from the `pk4` file, by editing the `pkignore` file
+- packs your mission into the `pk4` at the press of a button
+- allows easy editing of `darkmod.txt` and `readme.txt`
 - automatically creates a `startingmap.txt` or `tdm_mapsequence.txt`, according to how many maps you specify in the map sequence
 - can run DarkRadiant for the selected mission
 - can launch TDM for the selected mission
-- can launch a second installation of TDM for testing your newly packed `pk4` files in isolation
+- can launch a second TDM installation for testing your newly packed `pk4` files in isolation
 
 
 # Usage
 
 The first thing you need to do when launching TDM Packer for the first time, is to set the paths to TDM and DarkRadiant. You can set all the paths in the settings panel, which you can find in the top-left menu -> `Settings` -> `Paths`.
 
-The only path that is mandatory is the TDM path, as it will allow TDM Packer to find your missions folder. The DarkRadiant path is only required if you wish to launch DarkRadiant for the selected mission (by pressing the `Edit` button in the `Missions` panel), and the *"TDM Copy Executable"* path is only required if you wish to launch a separate copy of your TDM instalation to test-run your newly packed pk4 files (by pressing the `Test` button in the `Missions` panel).
+The only path that is mandatory is the TDM path, as it will allow TDM Packer to find the `fms` folder, where all the missions are. The DarkRadiant path is only required if you wish to launch DarkRadiant for the selected mission (by pressing the `Edit` button in the `Missions` panel), and the *"TDM Copy Executable"* path is only required if you wish to launch a separate, fresh installation of TDM to test-run your newly packed missions (by pressing the `Test` button in the `Missions` panel).
 
 Once you have that set up, you can add missions to your list by pressing `Open` in the `Missions` panel. You can then edit the files as you please, as well as add/remove maps from the map sequence list.
 
-Once you have your mission ready to publish, you can press the `Pack` button in the `Missions` panel to create the `pk4`.
+Once you have your mission ready to publish, you can press the `Pack` button in the `Missions` panel to create the `pk4` file.
 
 ### The `.pkignore` file
 
-In the `Files` tab of your missions, you'll find an editable text box for the `.pkignore` file. This is where you can specify what should be excluded from the `pk4` file (by default TDM Packer will pack everything in your FM folder).
+In the `Package -> Pack` tab you'll find an editable text box for the `.pkignore` file. This file is created automatically by TDM Packer in your mission's folder. 
+
+This is where you can specify what should be excluded from the `pk4` file. (By default TDM Packer will pack everything in your FM folder.)
 
 This file works similarly to a `.gitignore` file, but very limited.
 
@@ -43,7 +45,6 @@ This file works similarly to a `.gitignore` file, but very limited.
 # suports comments
 
 /sources     # folders must start or end with a '/'
-/savegames
 prefabs/
 
 # anything else is interpreted as a file filter
@@ -53,7 +54,7 @@ todo
 some_file.txt
 ```
 
-The filtering is case-sensitive. Don't use `*`, as it's not supported. These filters are merely substrings that every directory/file name is tested against: if it has any of these substrings in it, then it's excluded. It's better to include dots for file extensions, though.
+The filtering is case-sensitive. Don't use `*`, as it's not yet supported. These filters are merely substrings that every directory/file path is tested against: if the path has any of these substrings in it, then it's excluded. It's safer to include dots for file extensions.
 
 Some files and folders are automatically excluded:
 - any file with `bak` in it (backup files)
