@@ -129,6 +129,15 @@ func _on_btn_open_mission_pressed() -> void:
 
 
 func _on_btn_close_mission_pressed() -> void:
+	popups.show_confirmation({
+		text        = "Close '%s'?" % fms.curr_mission.id,
+		ok_text     = "Yes",
+		cancel_text = "No",
+	})
+
+	if not await popups.confirmation_dialog.answer:
+		return
+
 	# TODO: maybe ask confirmation?
 	if fms.is_save_timer_counting():
 		fms.stop_timer_and_save()
