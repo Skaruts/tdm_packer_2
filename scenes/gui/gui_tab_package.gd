@@ -78,11 +78,11 @@ func _ready() -> void:
 	tr_map_list.set_column_title_alignment(0, tree_alignment)
 	tr_map_list.set_column_title_alignment(1, tree_alignment)
 
-	tr_map_list.button_clicked.connect(
-		func(item:TreeItem, col:int, id:int, mouse_btn_idx:int) -> void:
-			logs.print(id)
-			pass
-	)
+	#tr_map_list.button_clicked.connect(
+		#func(item:TreeItem, col:int, id:int, mouse_btn_idx:int) -> void:
+			#logs.print(id)
+			#pass
+	#)
 
 	tr_map_list.item_edited.connect(
 		func() -> void:
@@ -339,7 +339,7 @@ func _on_btn_remove_map_pressed() -> void:
 	var idx := item.get_index()
 
 	var filename := item.get_text(0)
-	var title    := item.get_text(1)
+	#var title    := item.get_text(1)
 
 	if _mission.remove_map_file(filename):
 		_tree_root.remove_child(item)

@@ -6,7 +6,7 @@ extends TabContainer
 	#gui.tab_files = self
 
 
-func on_mission_reloaded(force_update:=false) -> void:
+func on_mission_reloaded(_force_update:=false) -> void:
 	pass
 
 func update_pack_name() -> void:

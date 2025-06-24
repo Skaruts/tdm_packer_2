@@ -97,15 +97,11 @@ func _reload_mission(mis:Mission) -> void:
 	FMUtils.build_file_tree(mis)
 	_load_mission_files(mis)
 	gui.workspace_mgr.on_mission_reloaded( get_mission_index(mis) )
-	gui.menu_bar.update_menu()
 
 
 func soft_reload_mission(mis:Mission, force_update:=false) -> void:
 	FMUtils.build_file_tree(mis)
 	gui.workspace_mgr.on_mission_reloaded( get_mission_index(mis), force_update )
-	gui.menu_bar.update_menu()
-
-
 
 
 func load_mission(id: String, create_modfile := false) -> Mission:
@@ -403,7 +399,6 @@ func select_mission(idx:int) -> void:
 	check_mission_filesystem()
 	gui.missions_list.update_buttons()
 	gui.workspace_mgr.select_workspace(get_current_mission_index())
-	gui.menu_bar.update_menu()
 	logs.print("select_mission", idx, curr_mission.id)
 
 
@@ -441,7 +436,6 @@ func add_missions(ids:Array[String]) -> void:
 		sort_missions()
 		save_missions_list()
 		gui.missions_list.update_list()
-		gui.menu_bar.update_menu()
 
 		popups.main_progress_bar.set_text("All missions loaded")
 		popups.main_progress_bar.set_percentage(1)
@@ -482,7 +476,6 @@ func remove_current_mission() -> void:
 
 	gui.missions_list.update_list()
 	gui.workspace_mgr.remove_workspace(last_idx)
-	gui.menu_bar.update_menu()
 
 
 func _check_file_hash(mis:Mission, path:String) -> bool:

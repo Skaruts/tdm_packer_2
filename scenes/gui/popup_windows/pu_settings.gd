@@ -78,7 +78,6 @@ func _commit_data() -> void:
 	data.update_config(temp_config)
 	gui.workspace_mgr.set_show_roots()
 	gui.missions_list.update_buttons()
-	gui.menu_bar.update_menu()
 
 
 func _validate_and_update_colors(line_edit:CustomLineEdit, filepath:String, key:String) -> void:

@@ -58,11 +58,7 @@ func _ready() -> void:
 
 
 func initialize() -> void:
-	update_menu()
-
-
-func update_menu() -> void:
-	var disabled := not fms.curr_mission
+	pass
 
 
 func _on_menu_id_pressed(id:int) -> void:

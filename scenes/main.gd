@@ -55,27 +55,6 @@ func _notification(what: int) -> void:
 				fms.stop_timer_and_save()
 			get_tree().quit()
 		NOTIFICATION_WM_WINDOW_FOCUS_IN:
-			#logs.print("NOTIFICATION_WM_WINDOW_FOCUS_IN", popups.popup_has_just_closed)
+			# if we're here because a dialog window just closed, don't update missions
 			if not popups.popup_has_just_closed:
 				fms.check_mission_filesystem()
-				gui.menu_bar.update_menu()
-
-
-
-#func _check_for_unsaved_missions() -> bool:
-	#for mission in fms.missions:
-		#if not mission.dirty: continue
-#
-		#popups.show_save_quit_confirmation(
-			#mission.id,
-			#"Save before quitting?",
-			#fms.save_mission.bind(mission)
-		#)
-#
-		#if await popups.quit_save_confirmation.popup_closed:
-			#return false
-#
-		## add a delay between multiple save confirmation popups
-		#await get_tree().create_timer(0.1).timeout
-#
-	#return true
