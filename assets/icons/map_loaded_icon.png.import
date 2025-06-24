@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dogb7kfl7mxau"
-path="res://.godot/imported/icons8-file.svg-c73260a2b45e49c18ceaf12a7bd04728.ctex"
+uid="uid://ctpiegbm0nstp"
+path="res://.godot/imported/map_loaded_icon.png-8d55e4fa74590cccb406247c436cdb75.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/icons/icons8-file.svg"
-dest_files=["res://.godot/imported/icons8-file.svg-c73260a2b45e49c18ceaf12a7bd04728.ctex"]
+source_file="res://assets/icons/map_loaded_icon.png"
+dest_files=["res://.godot/imported/map_loaded_icon.png-8d55e4fa74590cccb406247c436cdb75.ctex"]
 
 [params]
 
@@ -32,6 +32,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

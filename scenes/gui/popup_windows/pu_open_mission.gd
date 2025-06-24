@@ -46,9 +46,6 @@ func _on_popup() -> void:
 		var is_valid_mission := Path.file_exists(Path.join(path, data.MODFILE_FILENAME))
 		var is_loaded := fms.is_mission_already_loaded(mission_name)
 
-		if mission_name == "sk_nupcials":
-			logs.print(is_valid_mission, Path.join(path, data.MODFILE_FILENAME))
-
 		if idx == 0:
 			item = _root.create_child()
 			for j:int in tr_missions.columns:
@@ -58,7 +55,7 @@ func _on_popup() -> void:
 		elif i == mission_paths.size()-1: _last_item = item
 
 		item.set_text(idx, mission_name)
-		item.set_icon(idx, data.FOLDER_ICON)
+		item.set_icon(idx, data.ICON_FOLDER)
 		item.set_icon_max_width(idx, 20)
 
 		if is_loaded:
