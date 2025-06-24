@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://bdcwd3fh8e61y"]
 
 [ext_resource type="Script" uid="uid://3di4rd3tiucr" path="res://scenes/gui/popup_windows/pu_settings.gd" id="1_kyeu5"]
-[ext_resource type="Texture2D" uid="uid://dtc2xhj88w4lo" path="res://assets/icons/icons8-folder.svg" id="2_86vlf"]
+[ext_resource type="Texture2D" uid="uid://ccon7rtj7qknv" path="res://assets/icons/folder_icon.png" id="2_86vlf"]
 [ext_resource type="StyleBox" uid="uid://byni8x36qkwsd" path="res://resources/darker_panel.tres" id="2_by5op"]
 [ext_resource type="Script" uid="uid://d10ddpoov81uu" path="res://scenes/gui/custom/gui_custom_line_edit.gd" id="2_furee"]
 

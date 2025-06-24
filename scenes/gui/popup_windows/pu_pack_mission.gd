@@ -19,7 +19,7 @@ func _on_ready() -> void:
 
 
 func _on_popup() -> void:
-	title = "Packing " + fms.curr_mission.mdata.title
+	title = "Packing '%s'  (%s)" % [fms.curr_mission.mdata.title, fms.curr_mission.id]
 	rtl_listing.clear()
 	state = State.IDLE
 	progress_bar.value = 0
@@ -48,7 +48,6 @@ func update_buttons() -> void:
 		btn_ok.disabled   = false
 		btn_ok.focus_mode = Control.FOCUS_ALL
 		btn_cancel.text   = "Done"
-
 
 
 func _on_bar_button_pressed(idx:int) -> void:

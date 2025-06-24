@@ -51,8 +51,10 @@ const MAPSEQUENCE_FILENAME = "tdm_mapsequence.txt"
 const README_FILENAME      = "readme.txt"
 const CURRENT_FM_FILE      = "currentfm.txt"
 
-const FILE_ICON   = preload(nodepaths.FILE_ICON_PATH)
-const FOLDER_ICON = preload(nodepaths.FOLDER_ICON_PATH)
+const ICON_FILE       : Texture2D = preload(nodepaths.ICON_FILE_PATH)
+const ICON_FOLDER     : Texture2D = preload(nodepaths.ICON_FOLDER_PATH)
+const ICON_MAP        : Texture2D = preload(nodepaths.ICON_MAP_PATH)
+const ICON_MAP_LOADED : Texture2D = preload(nodepaths.ICON_MAP_LOADED_PATH)
 
 const TOK_VERSION     := "$version"
 const TOK_AUTHOR      := "$author"

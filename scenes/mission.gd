@@ -6,8 +6,11 @@ var file_tree:FMTreeNode
 var filepaths: Array[String]
 var full_filelist: Array[String]  # used to check for external changes
 var file_hashes:Dictionary
-var file_count:int
-var dir_count:int
+
+var inc_file_count:int
+var inc_dir_count:int
+var exc_file_count:int
+var exc_dir_count:int
 
 var ignored_directories:Set
 var ignored_files:Set

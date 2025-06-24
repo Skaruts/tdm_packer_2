@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://wnofs5lvgk2j"]
 
-[ext_resource type="Texture2D" uid="uid://b32gvaqbwjgag" path="res://assets/icons/icons8-menu (3).svg" id="1_5wile"]
 [ext_resource type="Script" uid="uid://b6ncp5vgg1g2p" path="res://scenes/gui/gui_menu_bar.gd" id="1_vjn1j"]
 [ext_resource type="ButtonGroup" uid="uid://d2npeuvcy0c3h" path="res://resources/main_tabs_button_group.tres" id="2_5upro"]
+[ext_resource type="Texture2D" uid="uid://bl2r0xhi0koy1" path="res://assets/icons/menu_icon.png" id="2_504fd"]
 
 [node name="menu_bar" type="HBoxContainer"]
 anchors_preset = 10
@@ -19,7 +19,7 @@ size_flags_horizontal = 3
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
-icon = ExtResource("1_5wile")
+icon = ExtResource("2_504fd")
 expand_icon = true
 
 [node name="main_tabs" type="HBoxContainer" parent="."]

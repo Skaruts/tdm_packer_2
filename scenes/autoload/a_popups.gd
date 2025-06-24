@@ -19,9 +19,10 @@ var settings_dialog        : Window
 var open_mission           : Window
 var main_progress_bar      : MainProgressBar
 var pack_mission           : Window
+var add_map                : Window
+
 
 var popup_counter := 0
-
 
 # hacky way of not updating things on NOTIFICATION_WM_WINDOW_FOCUS_IN
 # notification whenever a popup window closes (in main '_notification')
@@ -36,7 +37,7 @@ func _ready() -> void:
 	timer.wait_time = 1
 	timer.timeout.connect(func() -> void: popup_has_just_closed = false)
 
-	confirmation_dialog.get_label().autowrap_mode = TextServer.AUTOWRAP_ARBITRARY
+	confirmation_dialog.get_label().autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	confirmation_dialog.get_label().max_lines_visible = 10
 
 	message_dialog.visibility_changed.connect(_on_popup_visibility_changed.bind(message_dialog))
@@ -47,6 +48,7 @@ func _ready() -> void:
 	open_mission.visibility_changed.connect(_on_popup_visibility_changed.bind(open_mission))
 	main_progress_bar.visibility_changed.connect(_on_popup_visibility_changed.bind(main_progress_bar))
 	pack_mission.visibility_changed.connect(_on_popup_visibility_changed.bind(pack_mission))
+	add_map.visibility_changed.connect(_on_popup_visibility_changed.bind(add_map))
 
 
 func _on_popup_visibility_changed(pu:Window) -> void:

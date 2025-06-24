@@ -76,8 +76,8 @@ func remove_workspace(index: int) -> void:
 	if fms.missions.size():
 		logs.print("curr_idx mgr: ", fms.get_current_mission_index())
 		select_workspace(fms.get_current_mission_index())
-	else:
-		select_workspace(0)
+	#else:
+		#select_workspace(0)
 
 
 func _sort_nodes_by_name() -> void:
