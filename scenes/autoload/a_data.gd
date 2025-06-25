@@ -55,6 +55,7 @@ const ICON_FILE       : Texture2D = preload(nodepaths.ICON_FILE_PATH)
 const ICON_FOLDER     : Texture2D = preload(nodepaths.ICON_FOLDER_PATH)
 const ICON_MAP        : Texture2D = preload(nodepaths.ICON_MAP_PATH)
 const ICON_MAP_LOADED : Texture2D = preload(nodepaths.ICON_MAP_LOADED_PATH)
+const ICON_WARNING    : Texture2D = preload(nodepaths.ICON_WARNING_PATH)
 
 const TOK_VERSION     := "$version"
 const TOK_AUTHOR      := "$author"

@@ -46,9 +46,9 @@ var _tree_root:TreeItem
 var tree_alignment := HORIZONTAL_ALIGNMENT_LEFT
 
 
+const _COLOR_MAP_TITLE := Color(0.82, 0.698, 0.361)
 
-
-func _add_map_tree_item(filename:String, title:="") -> TreeItem:
+func _add_map_tree_item(filename:String, title:="", is_excluded:=false) -> TreeItem:
 	var item := _tree_root.create_child()
 	item.set_editable(0, false)
 	item.set_editable(1, true)
@@ -59,8 +59,12 @@ func _add_map_tree_item(filename:String, title:="") -> TreeItem:
 	item.set_text(0, filename)
 	#item.set_icon(0, data.ICON_FILE)
 	#item.set_icon_max_width(0, 16)
+	if is_excluded:
+		item.add_button(0, data.ICON_WARNING, 0, false,
+			"Warning: this map is being excluded from the pk4."
+		)
 
-	item.set_custom_color(1, Color(0.82, 0.698, 0.361))# Color.GOLDENROD)
+	item.set_custom_color(1, _COLOR_MAP_TITLE)
 	item.set_text(1, title)
 
 	return item
@@ -190,9 +194,6 @@ func _set_button_states(enabled:bool) -> void:
 	btn_move_down.focus_mode  = Control.FOCUS_ALL if enabled else Control.FOCUS_NONE
 
 
-
-
-
 func _build_map_list() -> void:
 	var item := tr_map_list.get_selected()
 	var idx:int = item.get_index() if item else -1
@@ -202,11 +203,15 @@ func _build_map_list() -> void:
 	_tree_root = tr_map_list.create_item()
 	for i:int in _mission.mdata.map_files.size():
 		var filename := _mission.mdata.map_files[i]
+		var is_excluded := _mission.ignored_files.contains(
+			Path.join(_mission.paths.maps, filename + ".map")
+		)
 		var title    := "" if _mission.mdata.map_titles.size() <= i else _mission.mdata.map_titles[i]
-		_add_map_tree_item(filename, title)
+		_add_map_tree_item(filename, title, is_excluded)
 
 	if idx > -1:
 		tr_map_list.set_selected( _tree_root.get_child(idx), 0)
+
 
 func on_mission_reloaded(force_update:=false) -> void:
 	if _mission != fms.curr_mission and not force_update:
