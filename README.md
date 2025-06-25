@@ -4,7 +4,7 @@ A GUI tool for The Dark Mod mappers, to help managing and packing fan missions. 
 
 ###### Note: for users running this from source: this project is using Godot 4.4.stable. It may not work in older versions of Godot.
 
-###### Note: As this is still a very early version with very little testing, you should backup any missions you use this app with, and double-check the included/excluded files, as well as the resulting pk4 contents.
+###### Note: As this is still a very early version with very little testing, you should backup any missions you use this app with, and double-check the included/excluded files, as well as the resulting `pk4` contents.
 
 ![tdmp_a04_1](https://github.com/user-attachments/assets/605f244d-877c-4e1b-a797-3ee8ca917699)
 
@@ -62,7 +62,32 @@ Some files and folders are automatically excluded:
 - the `.git` and `savegames` directories.
 
 
+### Token Replacement
 
+TDM Packer provides support for a few preset tokens that you can include in your `readme.txt` file, as well as to automatically append the mission version to the `pk4` filename. When creating the `pk4`, TDM Packer will replace any of these tokens in your readme file with the respective information.
+
+The changes are only made to the file in the `pk4`, not to the original file in your hard drive.
+
+The currently supported tokens are:
+| Token | Result |
+|---|---|
+| $version     |  Gets replaced by the mission `Version` in darkmod.txt  |
+| $author      |  Gets replaced by the `Author` name in darkmod.txt   |
+| $title       |  Gets replaced by the mission `Title` in darkmod.txt   |
+| $min_version |  Gets replaced by the `Required TDM Version` in darkmod.txt   |
+| $date_time   |  Gets replaced with the current time and date at which the `pk4` is being created  |
+
+The `$version` token can be used as a suffix for the `pk4` name. Extra text or symbols can be added to it in `Settings` (you can leave this field blank, if you don't want to use this feature at all).
+
+The date/time format can be set in the Settings, as well. By default is uses `d/m/y t`, where `t` is the current time (hh:mm), and `d`, `m`, `y` are day, month and year. That format results in:
+```
+25/06/2025 22:55
+```
+The `/` and spacing are optional and can be whatever you like. For example, a format like `t  |  m, d - y` would result in:
+```
+22:55  |  06, 25 - 2025
+```
+Words or abreviations for months (e.g., "Jan", "Feb"...) are currently not supported.
 
 
 # Roadmap (hopefully, but no guarantees)
