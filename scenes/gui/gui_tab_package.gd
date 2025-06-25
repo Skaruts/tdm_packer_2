@@ -128,8 +128,6 @@ func _ready() -> void:
 	_set_button_states(false)
 
 
-
-
 func _on_move_arrow_pressed(direction:String) -> void:
 	var item     := tr_map_list.get_selected()
 	assert(item != null)
@@ -143,19 +141,8 @@ func _on_move_arrow_pressed(direction:String) -> void:
 		elif direction == "move_down": tr_map_list.set_selected(new_item, 0)
 
 
-
 func set_mission(mission: Mission) -> void:
 	_mission = mission
-
-	#le_title.clear_undo_history()
-	#le_author.clear_undo_history()
-	#le_version.clear_undo_history()
-	#le_tdm_version.clear_undo_history()
-
-	#le_title.tag_saved_version()
-	#le_author.tag_saved_version()
-	#le_version.tag_saved_version()
-	#le_tdm_version.tag_saved_version()
 
 	le_title.text       = _mission.mdata.title
 	le_author.text      = _mission.mdata.author
@@ -182,8 +169,6 @@ func set_mission(mission: Mission) -> void:
 	set_show_roots(data.config.show_tree_roots)
 
 
-
-
 func _set_button_states(enabled:bool) -> void:
 	btn_remove_map.disabled = not enabled
 	btn_move_up.disabled    = not enabled
@@ -198,7 +183,6 @@ func _build_map_list() -> void:
 	var item := tr_map_list.get_selected()
 	var idx:int = item.get_index() if item else -1
 
-	#logs.print("_build_map_list")
 	tr_map_list.clear()
 	_tree_root = tr_map_list.create_item()
 	for i:int in _mission.mdata.map_files.size():
@@ -229,10 +213,6 @@ func on_mission_reloaded(force_update:=false) -> void:
 	ce_description.tag_saved_version()
 	ce_readme.tag_saved_version()
 	ce_pkignore.tag_saved_version()
-	#le_title.tag_saved_version()
-	#le_author.tag_saved_version()
-	#le_version.tag_saved_version()
-	#le_tdm_version.tag_saved_version()
 
 	_build_trees()
 	_build_map_list()
@@ -247,12 +227,7 @@ func reload_file(filename:String) -> void:
 			le_version.text     = _mission.mdata.version
 			le_tdm_version.text = _mission.mdata.tdm_version
 			ce_description.text = _mission.mdata.description
-
 			ce_description.tag_saved_version()
-			#le_title.tag_saved_version()
-			#le_author.tag_saved_version()
-			#le_version.tag_saved_version()
-			#le_tdm_version.tag_saved_version()
 
 		"readme":
 			logs.print("updating readme")
@@ -322,20 +297,6 @@ func _on_btn_add_map_pressed() -> void:
 	popups.add_map.pack_tab = self
 	popups.show_popup(popups.add_map)
 
-	#popups.open_single_file({
-			#title = "Choose Map",
-			#root_subfolder = _mission.paths.maps,
-			#filters = ["*.map;Map Files"],
-		#},
-		#func(path:String) -> void:
-			#logs.info(path)
-			#var map_filename := path.get_basename().get_file()
-			#if _mission.add_map_file(map_filename):
-				#_add_map_tree_item(map_filename)
-				#fms.start_save_timer(true)
-				#tr_map_list.set_selected( _tree_root.get_child(-1), 0 )
-	#)
-
 
 func _on_btn_remove_map_pressed() -> void:
 	# NOTE: the map list shouldn't allow selecting multiple files
@@ -344,7 +305,6 @@ func _on_btn_remove_map_pressed() -> void:
 	var idx := item.get_index()
 
 	var filename := item.get_text(0)
-	#var title    := item.get_text(1)
 
 	if _mission.remove_map_file(filename):
 		_tree_root.remove_child(item)
@@ -434,15 +394,6 @@ func _build_inc_tree(parent: FMTreeNode, gui_parent: TreeItem) -> void:
 				tree_item = _create_node(gui_parent, node.name, icon)
 			else:
 				tree_item = _create_node(gui_parent, node.name, icon, data.ERROR_COLOR)
-
-
-		# if not (node.is_dir and node.path != maps_path):
-		# 	tree_item = _create_node(tr_included, node.name, gui_parent, icon)
-		# else:
-		# 	if node.has_included_files():
-		# 		tree_item = _create_node(tr_included, node.name, gui_parent, icon)
-		# 	else:
-		# 		tree_item = _create_node(tr_included, node.name, gui_parent, icon, data.ERROR_COLOR)
 
 		_build_inc_tree(node, tree_item)
 
