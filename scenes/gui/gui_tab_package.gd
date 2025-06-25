@@ -201,14 +201,14 @@ func on_mission_reloaded(force_update:=false) -> void:
 	if _mission != fms.curr_mission and not force_update:
 		return
 
-	le_title.text       = _mission.mdata.title
-	le_author.text      = _mission.mdata.author
-	le_version.text     = _mission.mdata.version
-	le_tdm_version.text = _mission.mdata.tdm_version
-
-	ce_description.text = _mission.mdata.description
-	ce_readme.text      = _mission.mdata.readme
-	ce_pkignore.text    = _mission.mdata.pkignore
+	#le_title.text       = _mission.mdata.title
+	#le_author.text      = _mission.mdata.author
+	#le_version.text     = _mission.mdata.version
+	#le_tdm_version.text = _mission.mdata.tdm_version
+#
+	#ce_description.text = _mission.mdata.description
+	#ce_readme.text      = _mission.mdata.readme
+	#ce_pkignore.text    = _mission.mdata.pkignore
 
 	ce_description.tag_saved_version()
 	ce_readme.tag_saved_version()
