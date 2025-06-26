@@ -233,7 +233,7 @@ drag_and_drop_selection_enabled = false
 wrap_mode = 1
 caret_blink = true
 highlight_all_occurrences = true
-line_length_guidelines = Array[int]([80])
+line_length_guidelines = Array[int]([93])
 gutters_draw_line_numbers = true
 auto_brace_completion_enabled = true
 
