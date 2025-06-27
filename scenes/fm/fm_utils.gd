@@ -50,8 +50,8 @@ static func get_file_hash(path:String) -> String:
 #		Packing
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-static func pack_mission(mission:Mission) -> void:
-	popups.pack_mission.call_thread_safe("task", "Packing '%s'..." % [mission.zipname])
+static func pack_mission(output:Object, mission:Mission) -> void:
+	output.call_thread_safe("task", "Packing '%s'..." % [mission.zipname])
 
 	# delete any pk4's that may have been created by the packer
 	# (any whose name begins with the mission id)
@@ -62,22 +62,22 @@ static func pack_mission(mission:Mission) -> void:
 	for old_pak:String in old_paks:
 		var err := Path.delete_file(old_pak)
 		if err != OK:
-			popups.pack_mission.call_thread_safe("error", "(%s) couldn't delete file '%s'" % [Path.get_error_text(err), old_pak])
+			output.call_thread_safe("error", "(%s) couldn't delete file '%s'" % [Path.get_error_text(err), old_pak])
 			return
 
 	var t1 := Time.get_ticks_msec()
-	var report := _pack_files(mission)
+	var report := _pack_files(output, mission)
 
 	if report.ok:
 		var t2 := Time.get_ticks_msec()
 		var total_time := "%.2f" % [(t2-t1)/1000.0]
-		popups.pack_mission.call_thread_safe("task", "Finished packing '%s'..." % [mission.zipname])
-		popups.pack_mission.call_thread_safe("info", "%s dirs, %s files, %s seconds" % [mission.inc_dir_count, mission.inc_file_count, total_time])
+		output.call_thread_safe("task", "Finished packing '%s'..." % [mission.zipname])
+		output.call_thread_safe("info", "%s dirs, %s files, %s seconds" % [mission.inc_dir_count, mission.inc_file_count, total_time])
 	else:
-		popups.pack_mission.call_thread_safe("error", report.error)
+		output.call_thread_safe("error", report.error)
 
 
-static func _pack_files(mission:Mission) -> ErrorReport:
+static func _pack_files(output:Object, mission:Mission) -> ErrorReport:
 	var zipper := ZIPPacker.new()
 	var pakpath := Path.join(mission.paths.root, mission.zipname)
 
@@ -91,14 +91,14 @@ static func _pack_files(mission:Mission) -> ErrorReport:
 	var file_count  : float = files.size()
 
 	for i:float in file_count:
-		if not popups.pack_mission.is_packing():
+		if not output.is_packing():
 			report = ErrorReport.new(false, "aborted")
 			break
-		popups.pack_mission.call_thread_safe("set_percentage", (i+1)/file_count)
+		output.call_thread_safe("set_percentage", (i+1)/file_count)
 
 		var fullpath:String = files[i]
 		var rel_path := fullpath.trim_prefix(mission.paths.root + '/')
-		popups.pack_mission.call_thread_safe("print", "    %s" % [rel_path])
+		output.call_thread_safe("print", "    %s" % [rel_path])
 		zipper.start_file(rel_path)
 
 		var filename := fullpath.get_file()
@@ -223,3 +223,70 @@ static func print_tree_node_recursive(root:FMTreeNode) -> void:
 
 		if c.children.size():
 			print_tree_node_recursive(c)
+
+
+
+
+
+const INVALID_CHARS : Array[String] = [' ',
+	'(', ')', '{', '}', '[', ']', '|', '!', '@', '#', '$', '%', '^', '&',
+	'*', ',', '+', '-', '"', '\'', ':', ';', '?', '<', '>', '`', '~'#, '/'
+]
+
+const INVALID_CAHARS_NO_SPACE : Array[String] = [
+	'(', ')', '{', '}', '[', ']', '|', '!', '@', '#', '$', '%', '^', '&',
+	'*', ',', '+', '-', '"', '\'', ':', ';', '?', '<', '>', '`', '~'
+]
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+
+#        Validate PAths
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+static func validate_paths(output:Object, mission:Mission) -> bool:
+	output.call_thread_safe("task", "Validating paths in '%s'..." % [mission.id])
+
+	var steps: float = mission.filepaths.size() # account for the mission folder itself
+
+	var invalid_paths: Array[String]
+	var mission_folder_valid := true
+
+	output.call_thread_safe("set_percentage", 1.0/steps)
+
+	#output.call_thread_safe("task", "Checking mission folder...")
+	for c:String in INVALID_CHARS:
+		if c in mission.id:
+			mission_folder_valid = false
+			output.call_thread_safe("warning", "Mission folder '%s' contains spaces or unsuported characters" % [mission.id])
+			break
+
+	output.call_thread_safe("set_percentage", 2.0/steps)
+	if mission.id != mission.id.to_lower():
+		mission_folder_valid = false
+		output.call_thread_safe("warning", "Mission folder '%s' contains uppercase characters" % [mission.id])
+
+	if mission_folder_valid:
+		output.call_thread_safe("info", "Mission folder is valid")
+
+	for i:int in mission.filepaths.size():
+		output.call_thread_safe("set_percentage", (i+1)/steps)
+
+		var path:String = mission.filepaths[i]
+		var rel_path := path.replace(mission.paths.root + "/", '')
+
+		for c:String in INVALID_CHARS:
+			if c in rel_path:
+				invalid_paths.append(rel_path)
+				break
+
+	if invalid_paths.size() > 0:
+		output.call_thread_safe("error", "Some paths contain spaces or unsuported characters")
+		for path:String in invalid_paths:
+			output.call_thread_safe("print", "      %s" % path)
+
+	var num_invalid_paths := invalid_paths.size() + (0 if mission_folder_valid else 1)
+	#output.call_thread_safe("task", "Finished validating paths")
+	output.call_thread_safe("info", "%s invalid paths\n" % [num_invalid_paths])
+	if num_invalid_paths > 0:
+		output.call_thread_safe("reminder", "Avoid paths with spaces or any of the unsuported characters:\n    %s" % [" ".join(INVALID_CAHARS_NO_SPACE)])
+
+	return num_invalid_paths == 0

@@ -51,8 +51,7 @@ func _notification(what: int) -> void:
 
 	match what:
 		NOTIFICATION_WM_CLOSE_REQUEST:
-			if fms.is_save_timer_counting():
-				fms.stop_timer_and_save()
+			fms.force_save(false)
 			get_tree().quit()
 		NOTIFICATION_WM_WINDOW_FOCUS_IN:
 			# if we're here because a dialog window just closed, don't update missions

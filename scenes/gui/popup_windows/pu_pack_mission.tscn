@@ -49,7 +49,13 @@ text = "Packing foo.pk4"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+focus_mode = 2
+bbcode_enabled = true
 scroll_following = true
+selection_enabled = true
+
+[node name="text_menu" type="PopupMenu" parent="PanelContainer/VBoxContainer/tabs/VBoxContainer/rtl_listing"]
+unique_name_in_owner = true
 
 [node name="MarginContainer" type="MarginContainer" parent="PanelContainer/VBoxContainer/tabs/VBoxContainer"]
 layout_mode = 2
@@ -64,16 +70,18 @@ layout_mode = 2
 
 [node name="btn_apply" type="Button" parent="PanelContainer/VBoxContainer/button_bar"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 size_flags_horizontal = 6
-text = "Apply"
+tooltip_text = "Checks mission's file paths for problems, but doesn't create the pk4. 
+
+This check is always performed before creating the pk4, so if you want both the check and the pk4, press [color=\"aa8800\"]\"Create pk4\"[/color] instead. "
+text = "Validate Only"
 
 [node name="btn_ok" type="Button" parent="PanelContainer/VBoxContainer/button_bar"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 6
-text = "Start"
+text = "Create pk4"
 
 [node name="btn_cancel" type="Button" parent="PanelContainer/VBoxContainer/button_bar"]
 unique_name_in_owner = true

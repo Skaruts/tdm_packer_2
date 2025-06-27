@@ -128,6 +128,7 @@ func load_mission(id: String, create_modfile := false) -> Mission:
 	FMUtils.build_file_tree(mission)
 
 	console.print("Opened %s" % [id])
+
 	return mission
 
 
@@ -538,11 +539,10 @@ func is_mission_packed(mis:Mission) -> bool:
 	return Path.file_exists(pak_filepath)
 
 
-func pack_mission() -> void:
+func force_save_mission(reload:=true) -> void:
 	if is_save_timer_counting():
-		_should_reload = true
+		_should_reload = reload
 		stop_timer_and_save()
-	await launcher.run_in_local_thread(FMUtils.pack_mission.bind(curr_mission))
 
 
 func play_mission() -> void:

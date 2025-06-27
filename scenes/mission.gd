@@ -57,6 +57,7 @@ var mdata := MissionData.new()
 var id      : String
 var zipname : String
 
+var pack_report : String
 
 
 enum DirtyFlags {
