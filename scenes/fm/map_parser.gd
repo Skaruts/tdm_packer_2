@@ -1,5 +1,5 @@
 class_name MapParser
-extends Node
+extends RefCounted
 
 
 
@@ -8,7 +8,7 @@ extends Node
 #    Classes
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-# enum as dict because gdscript is too stupid to have string enums
+# enum as dict, so it's a string enum
 const Scope : Dictionary[String, String] = {
 	File     = "Scope.File",
 	Entity   = "Scope.Entity",
@@ -24,12 +24,18 @@ class Entity:
 	var classname  : String
 	var name       : String
 	var properties : Dictionary
+
 	var brushes    : Array[Brush]
 	var patches    : Array[Patch]
-	var materials  : Set
+
+	var materials  := Set.new()
+	var models     := Set.new()
+	var particles  := Set.new()
+	var skins      := Set.new()
+	var xdata      := Set.new()
+
 	func _init(_id:int) -> void:
 		id = _id
-		materials = Set.new()
 
 
 class Property:
@@ -58,6 +64,14 @@ class Patch:
 class Map:
 	var entities : Array[Entity]
 
+	var brushes    : Array[Brush]
+	var patches    : Array[Patch]
+
+	var materials  := Set.new()
+	var models     := Set.new()
+	var particles  := Set.new()
+	var skins      := Set.new()
+	var xdata      := Set.new()
 
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
@@ -65,11 +79,9 @@ class Map:
 #    Map Parser
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+var maps         : Dictionary[String, Map]
+
 var scope        := Scope.File
-
-var maps         : Array[Map]
-var entities     : Array[Entity]
-
 var curr_map     : Map
 var curr_ent     : Entity
 var curr_brush   : Brush
@@ -81,6 +93,17 @@ var curr_entity_id     := -1
 
 const _DEBUG_SHOW_SCOPES := false
 const _DEBUG_PRINT_PROPS := false
+const _DEBUG_PRINT_TOKS := 0
+var level := 0
+
+
+func get_all_entities() -> Array[Entity]:
+	var all_entities :Array[Entity]
+	for map:Map in maps.values():
+		all_entities.append_array(map.entities)
+	return all_entities
+
+
 
 
 
@@ -105,23 +128,46 @@ func print_prop(prop_name:String, value:String) -> void:
 	print("       ", prop_name, value)
 
 
-var level := 0
-const _DEBUG_PRINT_TOKS := 0
+
 func print_token(tok:String) -> void:
 	if _DEBUG_PRINT_TOKS == 2:
 		print(str(level) + "   ".repeat(level) + tok)
 	elif _DEBUG_PRINT_TOKS == 1:
 		print("   ".repeat(level) + tok)
 
+func add_asset(type:String, asset:Variant) -> void:
+	match  type:
+		"brush":
+			curr_ent.brushes.append(asset)
+			curr_map.brushes.append(asset)
+		"patch":
+			curr_ent.patches.append(asset)
+			curr_map.patches.append(asset)
+		"material":
+			curr_ent.materials.add(asset)
+			curr_map.materials.add(asset)
+		"model":
+			curr_ent.models.add(asset)
+			curr_map.models.add(asset)
+		"particle":
+			curr_ent.particles.add(asset)
+			curr_map.particles.add(asset)
+		"skin":
+			curr_ent.skins.add(asset)
+			curr_map.skins.add(asset)
+		"xdata":
+			curr_ent.xdata.add(asset)
+			curr_map.xdata.add(asset)
+
+
 
 func parse_token(token:String) -> void:
-
 	match scope:
 		Scope.Entity:
 			#print_scope("Scope.Entity", token)
 			if token.begins_with('"'):
 				if _DEBUG_PRINT_TOKS: print_token(token)
-				curr_prop = token.substr(1, -2)
+				curr_prop = token.get_slice('"', 1)
 				set_scope(Scope.Property)
 			elif token == '{':
 				if _DEBUG_PRINT_TOKS: print_token(token)
@@ -133,8 +179,29 @@ func parse_token(token:String) -> void:
 				if _DEBUG_PRINT_TOKS: print_token(token)
 				curr_map.entities.append(curr_ent)
 				curr_ent = null
-				#print_prop("----------------------", "")
 				set_scope(Scope.File)
+
+		Scope.Property:
+			#print_scope("Scope.Property", token)
+			if token.begins_with('"'):
+				if _DEBUG_PRINT_TOKS: print_token(token)
+				var val := token.get_slice('"', 1)
+				if   curr_prop == "classname":      curr_ent.classname = val
+				elif curr_prop == "name":           curr_ent.name = val
+				elif curr_prop == "skin":           add_asset("skin", val)
+				elif curr_prop == "xdata_contents": add_asset("xdata", val)
+				elif curr_prop == "model":
+					if not val.ends_with(".prt"):
+						if not curr_ent.classname == "func_static" \
+						or curr_ent.name != val:
+							add_asset("model", val)
+					else:
+						add_asset("particle", val)
+
+				print_prop(curr_prop, val)
+				curr_ent.properties[curr_prop] = val
+				curr_prop = ""
+				set_scope(Scope.Entity)
 
 		Scope.Def:
 			#print_scope("Scope.Def", token)
@@ -153,30 +220,18 @@ func parse_token(token:String) -> void:
 				if _DEBUG_PRINT_TOKS: print_token(token)
 				set_scope(Scope.Entity)
 
-		Scope.Property:
-			#print_scope("Scope.Property", token)
-			if token.begins_with('"'):
-				if _DEBUG_PRINT_TOKS: print_token(token)
-				var val := token.substr(1, -2)
-				if   curr_prop == "classname": curr_ent.classname = val
-				elif curr_prop == "name":      curr_ent.name = val
-				print_prop(curr_prop, val)
-				curr_ent.properties[curr_prop] = val
-				curr_prop = ""
-				set_scope(Scope.Entity)
-
 		Scope.BrushDef:
 			if token.begins_with('"'):
 				if _DEBUG_PRINT_TOKS: print_token(token)
 				print_prop("brush texture: ", token)
-				var mat := token.substr(1, -2)
+				var mat := token.get_slice('"', 1)
 				curr_brush.materials.add(mat)
-				curr_ent.materials.add(mat)
+				add_asset("material", mat)
 			elif token == '}':
 				level -= 1
 				# commit brush
 				#if _DEBUG_PRINT_TOKS: print_token(token)
-				curr_ent.brushes.append(curr_brush)
+				add_asset("brush", curr_brush)
 				curr_brush = null
 				set_scope(Scope.Def)
 
@@ -184,97 +239,131 @@ func parse_token(token:String) -> void:
 			if token.begins_with('"'):
 				if _DEBUG_PRINT_TOKS: print_token(token)
 				print_prop("patch texture: ", token)
-				var mat := token.substr(1, -2)
+				var mat := token.get_slice('"', 1)
+				assert(mat != "")
+				#if curr_entity_id < 50:
+					#logs.print("mat - ", mat)
 				curr_patch.material = mat
-				curr_ent.materials.add(mat)
+				add_asset("material", mat)
 			elif token == '}':
 				# commit patch
 				#if _DEBUG_PRINT_TOKS: print_token(token)
 				curr_ent.patches.append(curr_patch)
+				add_asset("patch", curr_patch)
 				curr_patch = null
 				level -= 1
 				set_scope(Scope.Def)
 
 		Scope.File:   # this branch is the most infrequent, keep it last
 			#print_scope("Scope.File", token)
-			assert(level == 0)
+			#assert(level == 0)
 			if token == '{':
 				if _DEBUG_PRINT_TOKS: print_token(token)
 				curr_ent = Entity.new(curr_entity_id)
-				entities.append(curr_ent)
 				level += 1
 				set_scope(Scope.Entity)
 
-	assert(level >= 0)
+	#assert(level >= 0)
 
 
 
-#const _DEBUG_TOKENS := true
+func parse(rep_panel:ReportPanel, map_file:String, map_filename:String) -> Map:
+	rep_panel.call_thread_safe("task", "Parsing '%s'..." % [ map_file.get_file() ])
+	rep_panel.call_thread_safe("set_percentage", 0)
 
-func parse(map_file:String) -> Map:
-	curr_map = Map.new()
-	maps.append(curr_map)
+	scope             = Scope.File
+	curr_map          = null
+	curr_ent          = null
+	curr_brush        = null
+	curr_patch        = null
+	curr_prop         = ""
+	curr_entity_id    = -1
+	curr_primitive_id = -1
+	level             = 0
+	# var max_level := 0
 
-	logs.task("    '%s'..." % [ map_file.get_file() ])
+	# if 'level' ever goes over this, then probably something went wrong
+	const _MAX_LEVEL := 3
+
+	var map := Map.new()
+	curr_map = map
 
 	var t1 := Time.get_ticks_msec()
-	var lines := Path.get_lines(map_file)
-	#var lines := Path.read_file_string(map_file).split('\n', false)
 
+	var lines := Path.get_lines_safe(map_file)
 
-	for line:String in lines:
-		# line = line.replace('\t', '')
+	if lines.size() == 0:
+		rep_panel.call_thread_safe("error", "Coudln't load map %s" % map_file.get_file())
+		return null
+
+	var num_lines: float = lines.size()
+	for i:float in num_lines:
+		var line:String = lines[i]
+
+		if line == "": continue
+		if level < 0 or level > _MAX_LEVEL: break
+
+		rep_panel.call_thread_safe("set_percentage", i/num_lines)
+
 		var line_start := line[0]
-		var tokens : Array[String]
-
+		#logs.print(line)
 		if line_start == '(':
 			assert(scope in [Scope.PatchDef, Scope.BrushDef], line)
 			# when it's brush or patch, skip the faces
 			if "textures" in line:  # brush
-				var qt1 := line.find('"')
-				var qt2 := line.find('"', qt1+1)
-				#tokens = [ line.substr(qt1, qt2-qt1+1) ]
-				parse_token( line.substr(qt1, qt2-qt1+1) )
-			else:                   # patch
+				parse_token( '"%s"' % line.get_slice('"', 1) )
+			else:                       # patch
 				continue
 
 		elif line_start == '"':
 			assert(scope in [Scope.Entity, Scope.PatchDef], line)
-			var qt2 := line.find('"', 1) +1
-			#tokens = [ line.substr(0, qt2), line.substr(qt2+1) ]
-			parse_token(line.substr(0, qt2))
-			parse_token(line.substr(qt2+1))
+			if scope == Scope.Entity:
+				var parts := line.split('"', false)
+				parse_token('"%s"' % parts[0])
+				parse_token('"%s"' % parts[2])
+			else:
+				parse_token('"%s"' % line.get_slice('"', 1))
+
 		elif line_start != '/':
-			#tokens = [ line ]
 			parse_token(line)
+
 		else:  # comments
-			var parts : Array[String] = Array(Array(line.split(' ', false)), TYPE_STRING, "", null)
-			if parts.size() > 2:
-				var curr_id := parts[2].to_int()
-				if parts[1] == "entity":
-					assert(scope == Scope.File, line)
-					curr_entity_id = curr_id
-				elif parts[1] == "primitive":
-					assert(scope == Scope.Entity, line)
-					curr_primitive_id = curr_id
-			continue
+			var parts := line.split(' ', false)
+			if parts.size() < 3: continue
 
-		#for t:String in tokens:
-			#parse_token(t)
+			var curr_id := parts[2].to_int()
+			if parts[1] == "entity":
+				assert(scope == Scope.File, line)
+				curr_entity_id = curr_id
+			elif parts[1] == "primitive":
+				assert(scope == Scope.Entity, line)
+				curr_primitive_id = curr_id
 
+		# if level > max_level:
+		# 	max_level = level
+
+		if level > _MAX_LEVEL:
+			break
+
+
+
+	curr_map = null
 	var t2 := Time.get_ticks_msec()
+
+	if scope != Scope.File or level != 0:
+		rep_panel.call_thread_safe("error", "Failed to load map %s" % map_file.get_file())
+		return null
+
+	maps[map_filename] = map
+
 	logs.info("Map parsed in %.1f secs" % [(t2-t1)/1000.0])
 
-	assert(scope      == Scope.File)
-	assert(curr_prop  == "")
-	assert(curr_ent   == null)
-	assert(curr_brush == null)
-	assert(curr_patch == null)
+	## add the materials under the "texture" properties
+	## that weren't detected during parsing
+	#for e:Entity in map.entities:
+		#if "texture" in e.properties:
+			#e.materials.add(e.properties.texture)
 
-	# add the materials under the "texture" properties
-	# that weren't detected during parsing
-	for e:Entity in curr_map.entities:
-		if "texture" in e.properties:
-			e.materials.add(e.properties.texture)
+	# logs.print("max_level", max_level)
 
-	return curr_map
+	return map
