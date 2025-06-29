@@ -96,16 +96,19 @@ func _parse_entity_def_token() -> bool:
 	match scope:
 		Scope.FILE:
 			if not curr_char in [' ', '\t', '\n', '{', '}']:
-				curr_def_type = _parse_identifier()
+				var identifier = _parse_identifier()
+
 				# if _PRINT_SYMBOLS: print(curr_def_type)
 				if curr_def_type == "":
 					logs.error("error parsing definition type")
 					return false
 
 				if curr_def_type == "entityDef":
+					curr_def_type = identifier
 					_set_scope(Scope.ENTITY_DEF_NAME, 0)
 				else:
-					if _PRINT_SYMBOLS: print("%s (unknown)" % [curr_def_type])
+					curr_def_type = identifier
+					if _PRINT_SYMBOLS: print("%s (unknown)" % [identifier])
 					_set_scope(Scope.UNKNOWN_DEF_NAME, 0)
 
 		Scope.ENTITY_DEF_NAME:
@@ -151,9 +154,23 @@ func _parse_entity_def_token() -> bool:
 
 		# unknown definitions are skipped, as much as possible
 		Scope.UNKNOWN_DEF_NAME:
-			if curr_char == '{':
-				if _PRINT_SYMBOLS: print("{")
-				_set_scope(Scope.UNKNOWN_DEF, 1)
+			if not _PRINT_SYMBOLS:
+				if curr_char == '{':
+					_set_scope(Scope.UNKNOWN_DEF, 1)
+			else:
+				if not curr_char in [' ', '{' ,'\n', '\t']:
+					curr_def_name = _parse_identifier()
+					if curr_def_name != "":
+						if _PRINT_SYMBOLS: print("%s %s" % [curr_def_type, curr_def_name])
+						curr_def = {}
+						defs[curr_def_name] = curr_def
+					else:
+						logs.error("error parsing definition name")
+						return false
+
+				if curr_char == '{':
+					if _PRINT_SYMBOLS: print("{")
+					_set_scope(Scope.UNKNOWN_DEF, 1)
 
 		Scope.UNKNOWN_DEF:
 			if curr_char == '{':
@@ -167,7 +184,6 @@ func _parse_entity_def_token() -> bool:
 				_set_scope(Scope.UNKNOWN_DEF, -1)
 
 	return true
-
 
 
 func _parse_string() -> String:
