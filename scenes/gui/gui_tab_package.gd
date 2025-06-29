@@ -40,7 +40,7 @@ enum EditorIndex {
 
 
 var curr_editor: CodeEdit
-var _mission: Mission
+var mission: Mission
 var _tree_root:TreeItem
 
 var tree_alignment := HORIZONTAL_ALIGNMENT_LEFT
@@ -92,7 +92,7 @@ func _ready() -> void:
 		func() -> void:
 			logs.print("item was edited")
 			var item := tr_map_list.get_edited()
-			if _mission.set_map_title(item.get_index(), item.get_text(1)):
+			if mission.set_map_title(item.get_index(), item.get_text(1)):
 				fms.start_save_timer(false)
 	)
 	tr_map_list.item_selected.connect( _set_button_states.bind(true) )
@@ -133,7 +133,7 @@ func _on_move_arrow_pressed(direction:String) -> void:
 	assert(item != null)
 	var idx      := item.get_index()
 
-	if _mission.move_map(direction, idx):
+	if mission.move_map(direction, idx):
 		fms.start_save_timer(false)
 		_build_map_list()
 		var new_item := _tree_root.get_child(idx-1)
@@ -141,24 +141,24 @@ func _on_move_arrow_pressed(direction:String) -> void:
 		elif direction == "move_down": tr_map_list.set_selected(new_item, 0)
 
 
-func set_mission(mission: Mission) -> void:
-	_mission = mission
+func set_mission(_mission: Mission) -> void:
+	mission = _mission
 
-	le_title.text       = _mission.mdata.title
-	le_author.text      = _mission.mdata.author
-	le_version.text     = _mission.mdata.version
-	le_tdm_version.text = _mission.mdata.tdm_version
+	le_title.text       = mission.mdata.title
+	le_author.text      = mission.mdata.author
+	le_version.text     = mission.mdata.version
+	le_tdm_version.text = mission.mdata.tdm_version
 
-	ce_description.text = _mission.mdata.description
+	ce_description.text = mission.mdata.description
 	ce_description.clear_undo_history()
 	ce_description.tag_saved_version()
 
 	ce_pkignore.syntax_highlighter = ce_pkignore.syntax_highlighter.duplicate()
-	ce_pkignore.text = _mission.mdata.pkignore
+	ce_pkignore.text = mission.mdata.pkignore
 	ce_pkignore.clear_undo_history()
 	ce_pkignore.tag_saved_version()
 
-	ce_readme.text = _mission.mdata.readme
+	ce_readme.text = mission.mdata.readme
 	ce_readme.clear_undo_history()
 	ce_readme.tag_saved_version()
 
@@ -185,12 +185,12 @@ func _build_map_list() -> void:
 
 	tr_map_list.clear()
 	_tree_root = tr_map_list.create_item()
-	for i:int in _mission.mdata.map_files.size():
-		var filename := _mission.mdata.map_files[i]
-		var is_excluded := _mission.ignored_files.contains(
-			Path.join(_mission.paths.maps, filename + ".map")
+	for i:int in mission.mdata.map_files.size():
+		var filename := mission.mdata.map_files[i]
+		var is_excluded := mission.ignored_files.contains(
+			Path.join(mission.paths.maps, filename + ".map")
 		)
-		var title    := "" if _mission.mdata.map_titles.size() <= i else _mission.mdata.map_titles[i]
+		var title    := "" if mission.mdata.map_titles.size() <= i else mission.mdata.map_titles[i]
 		_add_map_tree_item(filename, title, is_excluded)
 
 	if idx > -1:
@@ -198,17 +198,17 @@ func _build_map_list() -> void:
 
 
 func on_mission_reloaded(force_update:=false) -> void:
-	if _mission != fms.curr_mission and not force_update:
+	if mission != fms.curr_mission and not force_update:
 		return
 
-	#le_title.text       = _mission.mdata.title
-	#le_author.text      = _mission.mdata.author
-	#le_version.text     = _mission.mdata.version
-	#le_tdm_version.text = _mission.mdata.tdm_version
+	#le_title.text       = mission.mdata.title
+	#le_author.text      = mission.mdata.author
+	#le_version.text     = mission.mdata.version
+	#le_tdm_version.text = mission.mdata.tdm_version
 #
-	#ce_description.text = _mission.mdata.description
-	#ce_readme.text      = _mission.mdata.readme
-	#ce_pkignore.text    = _mission.mdata.pkignore
+	#ce_description.text = mission.mdata.description
+	#ce_readme.text      = mission.mdata.readme
+	#ce_pkignore.text    = mission.mdata.pkignore
 
 	ce_description.tag_saved_version()
 	ce_readme.tag_saved_version()
@@ -222,24 +222,24 @@ func reload_file(filename:String) -> void:
 	logs.print("reloading file ", filename)
 	match filename:
 		"modfile":
-			le_title.text       = _mission.mdata.title
-			le_author.text      = _mission.mdata.author
-			le_version.text     = _mission.mdata.version
-			le_tdm_version.text = _mission.mdata.tdm_version
-			ce_description.text = _mission.mdata.description
+			le_title.text       = mission.mdata.title
+			le_author.text      = mission.mdata.author
+			le_version.text     = mission.mdata.version
+			le_tdm_version.text = mission.mdata.tdm_version
+			ce_description.text = mission.mdata.description
 			ce_description.tag_saved_version()
 
 		"readme":
 			logs.print("updating readme")
-			ce_readme.text = _mission.mdata.readme
+			ce_readme.text = mission.mdata.readme
 			ce_readme.tag_saved_version()
 
 		"pkignore":
-			ce_pkignore.text = _mission.mdata.pkignore
+			ce_pkignore.text = mission.mdata.pkignore
 			ce_pkignore.tag_saved_version()
 
 		"map_sequence":
-			logs.print(_mission.mdata.map_files)
+			logs.print(mission.mdata.map_files)
 			_build_map_list()
 
 
@@ -259,15 +259,15 @@ func _on_code_editor_text_changed(editor:CodeEdit) -> void:
 	match editor:
 		ce_description:
 			var dirty:bool = ce_description.get_version() != ce_description.get_saved_version()
-			_mission.update_description(ce_description.text, dirty)
+			mission.update_description(ce_description.text, dirty)
 			fms.start_save_timer(false)
 		ce_readme:
 			var dirty:bool = ce_readme.get_version() != ce_readme.get_saved_version()
-			_mission.update_readme(ce_readme.text, dirty)
+			mission.update_readme(ce_readme.text, dirty)
 			fms.start_save_timer(false)
 		ce_pkignore:
 			var dirty:bool = ce_pkignore.get_version() != ce_pkignore.get_saved_version()
-			_mission.update_pkignore(ce_pkignore.text, dirty)
+			mission.update_pkignore(ce_pkignore.text, dirty)
 			fms.start_save_timer(true)
 
 
@@ -275,17 +275,17 @@ func _on_code_editor_text_changed(editor:CodeEdit) -> void:
 func _on_line_edit_text_changed(new_text:String, ledit:LineEdit) -> void:
 	match ledit:
 		le_title:
-			_mission.update_title(new_text, true)
+			mission.update_title(new_text, true)
 			fms.start_save_timer(false)
 		le_author:
-			_mission.update_author(new_text, true)
+			mission.update_author(new_text, true)
 			fms.start_save_timer(false)
 		le_version:
-			_mission.update_version(new_text, true)
+			mission.update_version(new_text, true)
 			update_tree_root_pack_name()
 			fms.start_save_timer(false)
 		le_tdm_version:
-			_mission.update_tdm_version(new_text, true)
+			mission.update_tdm_version(new_text, true)
 			fms.start_save_timer(false)
 
 
@@ -306,7 +306,7 @@ func _on_btn_remove_map_pressed() -> void:
 
 	var filename := item.get_text(0)
 
-	if _mission.remove_map_file(filename):
+	if mission.remove_map_file(filename):
 		_tree_root.remove_child(item)
 		fms.start_save_timer(true)
 
@@ -324,7 +324,7 @@ func set_show_roots(enabled:bool) -> void:
 		lb_included.text = "Files"
 		lb_excluded.text = ""
 	else:
-		lb_included.text = _mission.zipname
+		lb_included.text = mission.zipname
 		lb_excluded.text = "Excluded Files"
 
 
@@ -336,22 +336,22 @@ func set_show_roots(enabled:bool) -> void:
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 func update_tree_root_pack_name() -> void:
 	var root := tr_included.get_root()
-	root.set_text(0, _mission.zipname)
+	root.set_text(0, mission.zipname)
 
 
 func _build_trees() -> void:
-	logs.task("Building GUI trees for %s..." % _mission.id)
+	logs.task("Building GUI trees for %s..." % mission.id)
 
-	tr_included.set_column_title(0, "%d dirs, %d files" % [_mission.inc_dir_count, _mission.inc_file_count])
-	tr_excluded.set_column_title(0, "%d dirs, %d files" % [_mission.exc_dir_count, _mission.exc_file_count])
+	tr_included.set_column_title(0, "%d dirs, %d files" % [mission.inc_dir_count, mission.inc_file_count])
+	tr_excluded.set_column_title(0, "%d dirs, %d files" % [mission.exc_dir_count, mission.exc_file_count])
 
 	tr_included.clear()
 	tr_excluded.clear()
 
 	var inc_tree_root := tr_included.create_item()
-	inc_tree_root.set_text(0, _mission.zipname)
+	inc_tree_root.set_text(0, mission.zipname)
 	inc_tree_root.set_custom_color(0, data.EDITED_FILE_COLOR)
-	#lb_included.text = _mission.zipname
+	#lb_included.text = mission.zipname
 
 	var exc_tree_root := tr_excluded.create_item()
 	exc_tree_root.set_text(0, "Excluded Files")
@@ -359,12 +359,12 @@ func _build_trees() -> void:
 
 	var t1 := Time.get_ticks_msec()
 
-	_build_inc_tree(_mission.file_tree, inc_tree_root)
-	_build_exc_tree(_mission.file_tree, exc_tree_root)
+	_build_inc_tree(mission.file_tree, inc_tree_root)
+	_build_exc_tree(mission.file_tree, exc_tree_root)
 
-	if not Path.dir_exists(_mission.paths.maps) \
-	or not _mission.file_tree.get_child_named("maps").has_included_files():
-		console.warning("%s has no valid maps" % _mission.id)
+	if not Path.dir_exists(mission.paths.maps) \
+	or not mission.file_tree.get_child_named("maps").has_included_files():
+		console.warning("%s has no valid maps" % mission.id)
 
 	var t2 := Time.get_ticks_msec()
 	var total_time := "%.5f" % [(t2-t1)/1000.0]
@@ -378,14 +378,14 @@ func _build_inc_tree(parent: FMTreeNode, gui_parent: TreeItem) -> void:
 		var icon := data.ICON_FOLDER if node.is_dir else data.ICON_FILE
 		var tree_item: TreeItem
 
-		var maps_path := _mission.paths.maps
+		var maps_path := mission.paths.maps
 
 		if not node.is_dir:
 			if parent.path != maps_path:
 				tree_item = _create_node(gui_parent, node.name, icon)
 			else:
 				var map_name := node.name.get_basename()
-				if map_name in _mission.mdata.map_files:
+				if map_name in mission.mdata.map_files:
 					tree_item = _create_node(gui_parent, node.name, icon)
 		else:
 			if node.path != maps_path:
@@ -400,7 +400,7 @@ func _build_inc_tree(parent: FMTreeNode, gui_parent: TreeItem) -> void:
 
 func _build_exc_tree(parent:FMTreeNode, gui_parent:TreeItem) -> void:
 	for node: FMTreeNode in parent.children:
-		var maps_path := _mission.paths.maps
+		var maps_path := mission.paths.maps
 
 		if node.is_dir:
 			if not node.has_ignored_files():
@@ -408,7 +408,7 @@ func _build_exc_tree(parent:FMTreeNode, gui_parent:TreeItem) -> void:
 		elif not node.ignored and parent.path != maps_path:
 			continue
 
-		var map_sequence := _mission.mdata.map_files
+		var map_sequence := mission.mdata.map_files
 		var icon := data.ICON_FOLDER if node.is_dir else data.ICON_FILE
 		var tree_item : TreeItem
 		if not (not node.is_dir and parent.path == maps_path):

@@ -36,7 +36,7 @@ class MissionPaths: # this allows auto-completion and strict typing, unlike dict
 	var mapsequence : String
 
 
-class MissionData extends RefCounted:
+class MissionData:
 	# modfile
 	var title       : String
 	var description : String
@@ -50,15 +50,26 @@ class MissionData extends RefCounted:
 	var map_files   : Array[String]
 
 
+class Defs:
+	var entity  : Dictionary
+	var material : Dictionary
+	var model    : Dictionary
+	var particle : Dictionary
+	var skin     : Dictionary
+	var texture  : Dictionary
+	var xdata    : Dictionary
+
+
 var paths := MissionPaths.new()
 var mdata := MissionData.new()
+var defs  := Defs.new()
 
 
 var id      : String
 var zipname : String
 
 var pack_report : String
-
+var map_parser : MapParser
 
 enum DirtyFlags {
 	PKIGNORE    = 1 << 0,

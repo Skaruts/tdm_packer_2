@@ -1,9 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://bjyqwe3hqlqwx"]
+[gd_scene load_steps=8 format=3 uid="uid://bjyqwe3hqlqwx"]
 
 [ext_resource type="Script" uid="uid://da5n5juxpg61i" path="res://scenes/gui/gui_tab_package.gd" id="1_0pq56"]
 [ext_resource type="CodeHighlighter" uid="uid://baolxejcyhdtf" path="res://resources/syntax_pkignore.tres" id="2_2grlp"]
 [ext_resource type="Texture2D" uid="uid://bsnqlh447ecu4" path="res://assets/icons/up_arrow_16.png" id="2_5wxr6"]
 [ext_resource type="Texture2D" uid="uid://c2l01wm768rqt" path="res://assets/icons/down_arrow_16.png" id="3_f6ykc"]
+[ext_resource type="Script" uid="uid://q87sgtc4l2wr" path="res://scenes/gui/gui_validation_tab.gd" id="5_f6ykc"]
+[ext_resource type="PackedScene" uid="uid://cpafmg8kkx5sj" path="res://scenes/gui/custom/report_panel.tscn" id="6_jjbh8"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_77p0q"]
 
@@ -15,11 +17,12 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-current_tab = 0
+current_tab = 2
 tab_focus_mode = 0
 script = ExtResource("1_0pq56")
 
 [node name="Info" type="HSplitContainer" parent="."]
+visible = false
 layout_mode = 2
 split_offset = 325
 metadata/_tab_index = 0
@@ -300,3 +303,79 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 column_titles_visible = true
+
+[node name="Checks" type="HSplitContainer" parent="."]
+layout_mode = 2
+split_offset = -200
+script = ExtResource("5_f6ykc")
+metadata/_tab_index = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Checks"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HFlowContainer" type="HFlowContainer" parent="Checks/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Checks/VBoxContainer/HFlowContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Map Information"
+
+[node name="btn_parse_maps" type="Button" parent="Checks/VBoxContainer/HFlowContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Parse Maps"
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Checks/VBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 2
+bbcode_enabled = true
+text = "Press [color=\"cc8800\"]Parse Maps[/color] to gather map information."
+context_menu_enabled = true
+selection_enabled = true
+
+[node name="maps_report" parent="Checks/VBoxContainer" instance=ExtResource("6_jjbh8")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Checks"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HFlowContainer" type="HFlowContainer" parent="Checks/VBoxContainer2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Checks/VBoxContainer2/HFlowContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Assets"
+
+[node name="btn_find_unused" type="Button" parent="Checks/VBoxContainer2/HFlowContainer"]
+layout_mode = 2
+text = "Find Unused Assets"
+
+[node name="Label2" type="Label" parent="Checks/VBoxContainer2/HFlowContainer"]
+layout_mode = 2
+text = "Type"
+
+[node name="ob_asset_category" type="OptionButton" parent="Checks/VBoxContainer2/HFlowContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="Checks/VBoxContainer2/HFlowContainer"]
+layout_mode = 2
+text = "Map"
+
+[node name="ob_map_choice" type="OptionButton" parent="Checks/VBoxContainer2/HFlowContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="assets_report" parent="Checks/VBoxContainer2" instance=ExtResource("6_jjbh8")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[connection signal="pressed" from="Checks/VBoxContainer/HFlowContainer/btn_parse_maps" to="Checks" method="_on_btn_parse_maps_pressed"]

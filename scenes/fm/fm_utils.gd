@@ -290,3 +290,130 @@ static func validate_paths(rep_panel:ReportPanel, mission:Mission) -> bool:
 		rep_panel.call_thread_safe("reminder", "Avoid paths with spaces or any of the unsuported characters:\n    %s" % [" ".join(INVALID_CAHARS_NO_SPACE)])
 
 	return num_invalid_paths == 0
+
+
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+
+#        Valdate Map Assets
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+static func gather_definitions(rep_panel:ReportPanel, mission:Mission) -> void:
+	var ent_parser := DefinitionParser.new()
+	var files := FMUtils.get_included_files_in_dir(mission, Path.join(mission.paths.root, "def"), ["*.def"])
+	var ent_defs  := ent_parser.parse(files)
+
+	mission.defs.entity = ent_defs
+
+
+	for k:String in ent_defs:
+		logs.print(ent_defs[k])
+
+
+static func get_included_files_in_dir(mission:Mission, path:String, filters:Array[String]=[]) -> PackedStringArray:
+	var files :PackedStringArray = []
+	for fullpath:String in mission.filepaths:
+		if not path in fullpath: continue
+		var rel_path := fullpath.replace(mission.paths.root + '/', '')
+		if not filters:
+			files.append(fullpath)
+		else:
+			for filter:String in filters:
+				if rel_path.match(filter):
+					files.append(fullpath)
+					break
+	return files
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+#
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+static func find_unused_models(rep_panel:ReportPanel) -> Array[String]:
+	#task("Checking models...")
+	var mission := fms.curr_mission
+	var files := get_included_files_in_dir(mission, Path.join(mission.paths.root, "models"), ["*.ase", "*.lwo"])
+	var unused : Array[String]
+
+	if files.size() > 0:
+		var used := get_property_values(mission, "model")
+		unused = check_unused_files_in_array(files, used)
+
+	if unused.size() > 0:
+		rep_panel.error("Some models are not found in the maps")
+		for file in unused:
+			rep_panel.print("    %s" % file)
+		rep_panel.info( "%d unused models" % unused.size())
+	else:
+		rep_panel.info("No unused models")
+
+	rep_panel.print("")
+
+	return unused
+
+
+
+
+static func get_property_values(mission:Mission, prop_name:String, patterns:Array[String]=[]) -> Array[String]:
+	var props : Array[String] = []
+
+	var all_entities := mission.map_parser.get_all_entities()
+
+	for e:MapParser.Entity in all_entities:
+		if not prop_name in e.properties:
+			continue
+		if not patterns:
+			props.append(e.properties[prop_name])
+		else:
+			var prop_val: String = e.properties[prop_name]
+			for p:String in patterns:
+				if prop_val.match(p):
+					props.append(prop_val)
+					break
+	return props
+
+
+static func check_unused_files_in_dict(files:Dictionary, used:Array[String], valid_unused_defs:Array[String]=[], valid_unused_files:Array[String]=[]) -> Dictionary:
+	var unused: Dictionary
+	for filepath:String in files:
+		if filepath in valid_unused_files: continue
+		var defs:Array[String] = files[filepath]
+		var num_unused := 0
+		for d:String in defs:
+			if d in valid_unused_defs: continue
+			if not d in used:
+				num_unused += 1
+		if num_unused == defs.size():
+			unused[filepath] = defs
+	return unused
+
+
+static func check_unused_files_in_array(files:Array[String], used:Array[String], valid_unused_defs:Array[String]=[], valid_unused_files:Array[String]=[]) -> Array[String]:
+	var unused:Array[String] = []
+	for d:String in files:
+		if d in valid_unused_defs: continue
+		if not d in used:
+			unused.append(d)
+	return unused
