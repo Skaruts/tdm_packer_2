@@ -1,6 +1,6 @@
 class_name Path extends Object
 
-# version 12
+# version 14
 
 # just trying to unify the default API because it's a bit confusing
 # and inconsistent, imo.
@@ -114,15 +114,31 @@ static func read_file_bytes(path:String) -> PackedByteArray:
 static func read_file_string(path:String) -> String:
 	return FileAccess.get_file_as_string(path)
 
-
-static func get_lines(path:String) -> Array[String]:
+# return string with all \r replaced by \n
+static func read_file_string_nl(path:String) -> String:
 	var file := FileAccess.open(path, FileAccess.READ)
-	var lines: Array[String]
-	var length := file.get_length()
-	while file.get_position() < length:
+	if not file:
+		return ""
+	return file.get_as_text(true)
+
+
+
+static func get_lines(path:String) -> PackedStringArray:
+	var file := FileAccess.open(path, FileAccess.READ)
+	var lines: PackedStringArray
+	while file.get_position() < file.get_length():
 		lines.append(file.get_line())
 
 	return lines
+
+
+# This will likely not throw errors if file has invalid utf8 symbols
+static func get_lines_safe(path:String) -> PackedStringArray:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if not file:
+		return []
+	var text := file.get_as_text(true)
+	return text.split('\n', false)
 
 
 static func write_file(path:String, content:String) -> void:
