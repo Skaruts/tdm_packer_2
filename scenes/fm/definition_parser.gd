@@ -1,21 +1,29 @@
 class_name DefinitionParser
 extends RefCounted
 
-# enum as dict, so it's a string enum
-const Scope : Dictionary[String, String] = {
-	FILE              = "Scope.FILE",
-	DEF_PREFIX        = "Scope.DEF_PREFIX",
-	DEF_NAME          = "Scope.DEF_NAME",
-	ENTITY_DEF_NAME   = "Scope.ENTITY_DEF_NAME",
-	ENTITY_DEF        = "Scope.ENTITY_DEF",
-	MODEL_DEF_NAME    = "Scope.MODEL_DEF_NAME",
-	MODEL_DEF         = "Scope.MODEL_DEF",
-	MODEL_DEF_INNER   = "Scope.MODEL_DEF_INNER",
-	UNKNOWN_DEF_NAME  = "Scope.UNKNOWN_DEF_NAME",
-	UNKNOWN_DEF       = "Scope.UNKNOWN_DEF",
-	UNKNOWN_DEF_INNER = "Scope.UNKNOWN_DEF_INNER",
-	PROP_VAL          = "Scope.PROP_VAL",
+
+enum Scope {
+	FILE,
+	DEF_PREFIX,
+
+	DEF_NAME,
+	ENTITY_DEF_NAME,
+	ENTITY_DEF,
+
+	# MODEL_DEF_NAME,
+	# MODEL_DEF,
+	# MODEL_DEF_INNER,
+	SKIN_PARTICLE_XDATA_DEF_NAME,
+
+	UNKNOWN_DEF_NAME,
+
+	SKIP_DEF_NAME,
+	SKIP_DEF,
+	SKIP_DEF_INNER,
+	PROP_VAL,
+	MAX_ITEMS,
 }
+
 
 const _DEBUG_PRINT_SCOPES := false
 const _PRINT_SYMBOLS := false
@@ -23,7 +31,7 @@ var scope_level : int
 
 var idx            : int
 var file_str       : String
-var scope          : String
+var scope          : Scope
 var token          : String
 var curr_char      : String
 var in_comment     : bool
@@ -34,12 +42,26 @@ var curr_def_name  : String
 var curr_prop_name : String
 
 
+var scope_stack: Array[Scope]
 
-func _set_scope(new_scope:String, level_inc:int) -> void:
-	if in_comment: return
+func _push_scope(new_scope:Scope) -> void:
+	assert(not in_comment)
 	scope = new_scope
-	scope_level += level_inc
-	if _DEBUG_PRINT_SCOPES: print(scope)
+	scope_stack.push_back(new_scope)
+	if _DEBUG_PRINT_SCOPES: print("Scope.", Scope.keys()[new_scope])
+
+func _pop_scope() -> void:
+	assert(not in_comment)
+	scope_stack.pop_back()
+	scope = scope_stack[-1]
+	if _DEBUG_PRINT_SCOPES: print("Scope.", Scope.keys()[scope])
+
+
+# func _set_scope(new_scope:Scope, level_inc:int) -> void:
+# 	if in_comment: return
+# 	scope = new_scope
+# 	scope_level += level_inc
+# 	if _DEBUG_PRINT_SCOPES: print("Scope.", Scope.keys()[scope])
 
 
 func parse(files:PackedStringArray) -> Dictionary:
@@ -50,7 +72,6 @@ func parse(files:PackedStringArray) -> Dictionary:
 		if file_str == "":
 			logs.error("couldn't read file '%s'" % path)
 			continue
-
 		idx            = 0
 		curr_char      = ""
 		in_comment     = false
@@ -61,10 +82,11 @@ func parse(files:PackedStringArray) -> Dictionary:
 		defs_by_file[path] = defs
 
 		idx = 0
-		_set_scope(Scope.FILE, 0)
+		scope_stack.clear()
+		_push_scope(Scope.FILE)
 
-		while idx < file_str.length()-1:
-			var next_char := file_str[idx+1]
+		while idx < file_str.length():
+			var next_char := file_str[idx+1] if idx+1 < file_str.length() else ''
 			curr_char = file_str[idx]
 			idx   += 1
 
@@ -96,19 +118,50 @@ func _parse_entity_def_token() -> bool:
 		Scope.FILE:
 			if not curr_char in [' ', '\t', '\n', '{', '}']:
 				var identifier := _parse_identifier()
-
-				# if _PRINT_SYMBOLS: print(curr_def_type)
 				if identifier == "":
 					logs.error("error parsing definition type")
 					return false
 
-				if identifier == "entityDef":
-					curr_def_type = identifier
-					_set_scope(Scope.ENTITY_DEF_NAME, 0)
+				curr_def_type = identifier
+
+				if   identifier == "entityDef": _push_scope(Scope.ENTITY_DEF_NAME)
+				elif identifier == "skin":      _push_scope(Scope.SKIN_PARTICLE_XDATA_DEF_NAME)
+				elif identifier == "particle":  _push_scope(Scope.SKIN_PARTICLE_XDATA_DEF_NAME)
+				elif identifier == "xdata":     _push_scope(Scope.SKIN_PARTICLE_XDATA_DEF_NAME)
+				elif identifier == "model":     _push_scope(Scope.SKIP_DEF_NAME)
+				else:                           _push_scope(Scope.UNKNOWN_DEF_NAME)
+
+		Scope.UNKNOWN_DEF_NAME:
+			if not curr_char in [' ', '{' ,'\n', '\t']:
+				curr_def_name = _parse_identifier()
+				if curr_def_name != "":
+					if _PRINT_SYMBOLS: print("%s %s" % [curr_def_type, curr_def_name])
+					curr_def = {}
+					defs[curr_def_name] = curr_def
+
+			if curr_char == '{':
+				if curr_def_name == "":
+					if _PRINT_SYMBOLS: print("%s" % [curr_def_type])
+					defs[curr_def_type] = true
+				_pop_scope()
+				if _PRINT_SYMBOLS: print("{")
+				_push_scope(Scope.SKIP_DEF)
+
+		Scope.SKIN_PARTICLE_XDATA_DEF_NAME:
+			if not curr_char in [' ', '{' ,'\n', '\t']:
+				curr_def_name = _parse_identifier()
+				if curr_def_name != "":
+					if _PRINT_SYMBOLS: print("%s %s" % [curr_def_type, curr_def_name])
+					defs[curr_def_name] = true
 				else:
-					curr_def_type = identifier
-					if _PRINT_SYMBOLS: print("%s (unknown)" % [identifier])
-					_set_scope(Scope.UNKNOWN_DEF_NAME, 0)
+					logs.error("error parsing definition name")
+					return false
+
+			if curr_char == '{':
+				_pop_scope()
+				if _PRINT_SYMBOLS: print("{")
+				# NOTE: skin defs can be skipped, all I need is the header
+				_push_scope(Scope.SKIP_DEF)
 
 		Scope.ENTITY_DEF_NAME:
 			if not curr_char in [' ', '{' ,'\n', '\t']:
@@ -122,8 +175,9 @@ func _parse_entity_def_token() -> bool:
 					return false
 
 			if curr_char == '{':
+				_pop_scope()
 				if _PRINT_SYMBOLS: print("{")
-				_set_scope(Scope.ENTITY_DEF, 1)
+				_push_scope(Scope.ENTITY_DEF)
 
 		Scope.ENTITY_DEF:
 			if curr_char == '"':
@@ -132,13 +186,12 @@ func _parse_entity_def_token() -> bool:
 					logs.error("error parsing property name")
 					return false
 				if curr_prop_name == "model":
-					#if _PRINT_SYMBOLS: print(curr_prop_name)
-					_set_scope(Scope.PROP_VAL, 0)
+					_push_scope(Scope.PROP_VAL)
 				else:
 					idx = file_str.find('\n', idx)+1
 			elif curr_char == '}':
 				if _PRINT_SYMBOLS: print('}')
-				_set_scope(Scope.FILE, -1)
+				_pop_scope()
 
 		Scope.PROP_VAL:
 			if curr_char == '"':
@@ -149,38 +202,35 @@ func _parse_entity_def_token() -> bool:
 
 				if _PRINT_SYMBOLS: print('    "%s" "%s"' % [curr_prop_name, prop_val])
 				curr_def[curr_prop_name] = prop_val
-				_set_scope(Scope.ENTITY_DEF, -1)
+				_pop_scope()
 
-		# unknown definitions are skipped, as much as possible
-		Scope.UNKNOWN_DEF_NAME:
+		# unknown definitions are set here so they're skipped as much as possible
+		Scope.SKIP_DEF_NAME:
 			if not _PRINT_SYMBOLS:
 				if curr_char == '{':
-					_set_scope(Scope.UNKNOWN_DEF, 1)
+					_pop_scope()
+					_push_scope(Scope.SKIP_DEF)
 			else:
 				if not curr_char in [' ', '{' ,'\n', '\t']:
 					curr_def_name = _parse_identifier()
 					if curr_def_name != "":
-						if _PRINT_SYMBOLS: print("%s %s" % [curr_def_type, curr_def_name])
-						curr_def = {}
-						defs[curr_def_name] = curr_def
-					else:
-						logs.error("error parsing definition name")
-						return false
+						if _PRINT_SYMBOLS: print("%s %s (skipped)" % [curr_def_type, curr_def_name])
 
 				if curr_char == '{':
+					_pop_scope()
 					if _PRINT_SYMBOLS: print("{")
-					_set_scope(Scope.UNKNOWN_DEF, 1)
+					_push_scope(Scope.SKIP_DEF)
 
-		Scope.UNKNOWN_DEF:
+		Scope.SKIP_DEF:
 			if curr_char == '{':
-				_set_scope(Scope.UNKNOWN_DEF_INNER, 1)
+				_push_scope(Scope.SKIP_DEF_INNER)
 			elif curr_char == '}':
 				if _PRINT_SYMBOLS: print('}')
-				_set_scope(Scope.FILE, -1)
+				_pop_scope()
 
-		Scope.UNKNOWN_DEF_INNER:
+		Scope.SKIP_DEF_INNER:
 			if curr_char == '}':
-				_set_scope(Scope.UNKNOWN_DEF, -1)
+				_pop_scope()
 
 	return true
 
