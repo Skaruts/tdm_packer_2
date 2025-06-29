@@ -299,15 +299,58 @@ static func validate_paths(rep_panel:ReportPanel, mission:Mission) -> bool:
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 static func gather_definitions(rep_panel:ReportPanel, mission:Mission) -> void:
+	#  [x]  entities
+	#  [-]  models		 (not sure model defs are needed)
+	#  [x]  materials
+	#  [x]  skins
+	#  [x]  particles
+	#  [x]  xdata
+
+	var t1 := Time.get_ticks_msec()
+
+	var files: PackedStringArray
+
 	var ent_parser := DefinitionParser.new()
-	var files := FMUtils.get_included_files_in_dir(mission, Path.join(mission.paths.root, "def"), ["*.def"])
-	var ent_defs  := ent_parser.parse(files)
+	files = get_included_files_in_dir(mission, Path.join(mission.paths.root, "def"), ["*.def"])
+	mission.defs.entity = ent_parser.parse(files)
+	# for k:String in mission.defs.entity:
+	# 	logs.print(mission.defs.entity[k])
 
-	mission.defs.entity = ent_defs
+	files = get_included_files_in_dir(mission, Path.join(mission.paths.root, "materials"), ["*.mtr"])
+	var mtr_parser := DefinitionParser.new()
+	mission.defs.material = mtr_parser.parse(files)
+	# for path:String in mission.defs.material:
+	# 	logs.print(path)
+	# 	for k:String in mission.defs.material[path]:
+	# 		logs.print("   ", k)
 
+	files = get_included_files_in_dir(mission, Path.join(mission.paths.root, "skins"), ["*.skin"])
+	var skin_parser := DefinitionParser.new()
+	mission.defs.skin = skin_parser.parse(files)
+	# for path:String in mission.defs.skin:
+	# 	logs.print(path)
+	# 	for k:String in mission.defs.skin[path]:
+	# 		logs.print("   ", k)
 
-	for k:String in ent_defs:
-		logs.print(ent_defs[k])
+	files = get_included_files_in_dir(mission, Path.join(mission.paths.root, "particles"), ["*.prt"])
+	var particle_parser := DefinitionParser.new()
+	mission.defs.particle = particle_parser.parse(files)
+	# for path:String in mission.defs.particle:
+	# 	logs.print(path)
+	# 	for k:String in mission.defs.particle[path]:
+	# 		logs.print("   ", k)
+
+	files = get_included_files_in_dir(mission, Path.join(mission.paths.root, "xdata"), ["*.xd"])
+	var xdata_parser := DefinitionParser.new()
+	mission.defs.xdata = xdata_parser.parse(files)
+	#for path:String in mission.defs.xdata:
+		#logs.print(path)
+		#for k:String in mission.defs.xdata[path]:
+			#logs.print("   ", k)
+
+	var t2 := Time.get_ticks_msec()
+	logs.print("%.3f s" % [(t2-t1)/1000.0])
+
 
 
 static func get_included_files_in_dir(mission:Mission, path:String, filters:Array[String]=[]) -> PackedStringArray:
