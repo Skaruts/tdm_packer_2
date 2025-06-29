@@ -150,7 +150,8 @@ func load_map_sequence(mis:Mission) -> void:
 		# TODO: maybe I should read this file by lines too, to prevent problems
 		# with invalid lines
 		var map_filename := Path.read_file_string(mis.paths.startingmap).strip_edges()
-		mis.mdata.map_files.append(map_filename)
+		if map_filename != "":
+			mis.mdata.map_files.append(map_filename)
 		mis.remove_hash(mis.paths.mapsequence)
 		mis.store_hash(mis.paths.startingmap)
 
