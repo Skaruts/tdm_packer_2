@@ -42,8 +42,7 @@ func _set_scope(new_scope:String, level_inc:int) -> void:
 	if _DEBUG_PRINT_SCOPES: print(scope)
 
 
-func parse(mission:Mission) -> Dictionary:
-	var files := FMUtils.get_included_files_in_dir(mission, Path.join(mission.paths.root, "def"), ["*.def"])
+func parse(files:PackedStringArray) -> Dictionary:
 	var defs_by_file: Dictionary
 
 	for path:String in files:
@@ -96,14 +95,14 @@ func _parse_entity_def_token() -> bool:
 	match scope:
 		Scope.FILE:
 			if not curr_char in [' ', '\t', '\n', '{', '}']:
-				var identifier = _parse_identifier()
+				var identifier := _parse_identifier()
 
 				# if _PRINT_SYMBOLS: print(curr_def_type)
-				if curr_def_type == "":
+				if identifier == "":
 					logs.error("error parsing definition type")
 					return false
 
-				if curr_def_type == "entityDef":
+				if identifier == "entityDef":
 					curr_def_type = identifier
 					_set_scope(Scope.ENTITY_DEF_NAME, 0)
 				else:
