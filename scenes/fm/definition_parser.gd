@@ -13,9 +13,9 @@ enum Scope {
 	# MODEL_DEF_NAME,
 	# MODEL_DEF,
 	# MODEL_DEF_INNER,
-	SKIN_PARTICLE_XDATA_DEF_NAME,
+	DICT_SKIP_DEF_NAME,
+	BOOL_SKIP_DEF_NAME,
 
-	UNKNOWN_DEF_NAME,
 
 	SKIP_DEF_NAME,
 	SKIP_DEF,
@@ -63,9 +63,19 @@ func _pop_scope() -> void:
 # 	scope_level += level_inc
 # 	if _DEBUG_PRINT_SCOPES: print("Scope.", Scope.keys()[scope])
 
+enum AssetType {
+	ENTITIES,
+	# MODELS,
+	MATERIALS,
+	SKINS,
+	PARTICLES,
+	XDATA,
+}
+var _asset_type : AssetType
 
-func parse(files:PackedStringArray) -> Dictionary:
+func parse(files:PackedStringArray, asset_type:AssetType) -> Dictionary:
 	var defs_by_file: Dictionary
+	_asset_type = asset_type
 
 	for path:String in files:
 		file_str = Path.read_file_string_nl(path)
@@ -124,14 +134,19 @@ func _parse_entity_def_token() -> bool:
 
 				curr_def_type = identifier
 
-				if   identifier == "entityDef": _push_scope(Scope.ENTITY_DEF_NAME)
-				elif identifier == "skin":      _push_scope(Scope.SKIN_PARTICLE_XDATA_DEF_NAME)
-				elif identifier == "particle":  _push_scope(Scope.SKIN_PARTICLE_XDATA_DEF_NAME)
-				elif identifier == "xdata":     _push_scope(Scope.SKIN_PARTICLE_XDATA_DEF_NAME)
-				elif identifier == "model":     _push_scope(Scope.SKIP_DEF_NAME)
-				else:                           _push_scope(Scope.UNKNOWN_DEF_NAME)
+				match _asset_type:
+					AssetType.ENTITIES:
+						if   identifier == "entityDef": _push_scope(Scope.ENTITY_DEF_NAME)
+						elif identifier == "model":     _push_scope(Scope.SKIP_DEF_NAME)
+						else:                           _push_scope(Scope.DICT_SKIP_DEF_NAME)
+					# AssetType.MODELS:
+						# _push_scope(Scope.UNKNOWN_DEF_NAME)
+					AssetType.MATERIALS: _push_scope(Scope.BOOL_SKIP_DEF_NAME)
+					AssetType.SKINS:     _push_scope(Scope.BOOL_SKIP_DEF_NAME)
+					AssetType.PARTICLES: _push_scope(Scope.BOOL_SKIP_DEF_NAME)
+					AssetType.XDATA:     _push_scope(Scope.BOOL_SKIP_DEF_NAME)
 
-		Scope.UNKNOWN_DEF_NAME:
+		Scope.DICT_SKIP_DEF_NAME:
 			if not curr_char in [' ', '{' ,'\n', '\t']:
 				curr_def_name = _parse_identifier()
 				if curr_def_name != "":
@@ -142,26 +157,32 @@ func _parse_entity_def_token() -> bool:
 			if curr_char == '{':
 				if curr_def_name == "":
 					if _PRINT_SYMBOLS: print("%s" % [curr_def_type])
-					defs[curr_def_type] = true
+					curr_def = {}
+					defs[curr_def_name] = curr_def
 				_pop_scope()
 				if _PRINT_SYMBOLS: print("{")
 				_push_scope(Scope.SKIP_DEF)
+				curr_def_name = ""
+				curr_def_type = ""
 
-		Scope.SKIN_PARTICLE_XDATA_DEF_NAME:
+		Scope.BOOL_SKIP_DEF_NAME:
 			if not curr_char in [' ', '{' ,'\n', '\t']:
+				curr_def_name = ""
 				curr_def_name = _parse_identifier()
 				if curr_def_name != "":
 					if _PRINT_SYMBOLS: print("%s %s" % [curr_def_type, curr_def_name])
-					defs[curr_def_name] = true
-				else:
-					logs.error("error parsing definition name")
-					return false
+					defs[curr_def_type] = true
 
 			if curr_char == '{':
+				if curr_def_name == "":
+					if _PRINT_SYMBOLS: print("%s" % [curr_def_type])
+					defs[curr_def_type] = true
 				_pop_scope()
-				if _PRINT_SYMBOLS: print("{")
-				# NOTE: skin defs can be skipped, all I need is the header
+				if _PRINT_SYMBOLS:
+					print("{")
 				_push_scope(Scope.SKIP_DEF)
+				curr_def_name = ""
+				curr_def_type = ""
 
 		Scope.ENTITY_DEF_NAME:
 			if not curr_char in [' ', '{' ,'\n', '\t']:
@@ -178,6 +199,8 @@ func _parse_entity_def_token() -> bool:
 				_pop_scope()
 				if _PRINT_SYMBOLS: print("{")
 				_push_scope(Scope.ENTITY_DEF)
+				curr_def_name = ""
+				curr_def_type = ""
 
 		Scope.ENTITY_DEF:
 			if curr_char == '"':
@@ -217,9 +240,13 @@ func _parse_entity_def_token() -> bool:
 						if _PRINT_SYMBOLS: print("%s %s (skipped)" % [curr_def_type, curr_def_name])
 
 				if curr_char == '{':
+					if curr_def_name == "":
+						if _PRINT_SYMBOLS: print("%s" % [curr_def_type])
 					_pop_scope()
 					if _PRINT_SYMBOLS: print("{")
 					_push_scope(Scope.SKIP_DEF)
+					curr_def_name = ""
+					curr_def_type = ""
 
 		Scope.SKIP_DEF:
 			if curr_char == '{':

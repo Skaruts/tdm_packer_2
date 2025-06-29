@@ -299,12 +299,12 @@ static func validate_paths(rep_panel:ReportPanel, mission:Mission) -> bool:
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 static func gather_definitions(rep_panel:ReportPanel, mission:Mission) -> void:
-	#  [x]  entities
-	#  [-]  models		 (not sure model defs are needed)
-	#  [x]  materials
-	#  [x]  skins
-	#  [x]  particles
-	#  [x]  xdata
+	#  [x]  entities        0.019
+	#  [-]  models		                 (not sure model defs are needed)
+	#  [x]  materials       0.014
+	#  [x]  skins           0.110
+	#  [x]  particles       0.007
+	#  [x]  xdata           1.108
 
 	var t1 := Time.get_ticks_msec()
 
@@ -312,13 +312,13 @@ static func gather_definitions(rep_panel:ReportPanel, mission:Mission) -> void:
 
 	var ent_parser := DefinitionParser.new()
 	files = get_included_files_in_dir(mission, Path.join(mission.paths.root, "def"), ["*.def"])
-	mission.defs.entity = ent_parser.parse(files)
+	mission.defs.entity = ent_parser.parse(files, DefinitionParser.AssetType.ENTITIES)
 	# for k:String in mission.defs.entity:
 	# 	logs.print(mission.defs.entity[k])
 
 	files = get_included_files_in_dir(mission, Path.join(mission.paths.root, "materials"), ["*.mtr"])
 	var mtr_parser := DefinitionParser.new()
-	mission.defs.material = mtr_parser.parse(files)
+	mission.defs.material = mtr_parser.parse(files, DefinitionParser.AssetType.MATERIALS)
 	# for path:String in mission.defs.material:
 	# 	logs.print(path)
 	# 	for k:String in mission.defs.material[path]:
@@ -326,7 +326,7 @@ static func gather_definitions(rep_panel:ReportPanel, mission:Mission) -> void:
 
 	files = get_included_files_in_dir(mission, Path.join(mission.paths.root, "skins"), ["*.skin"])
 	var skin_parser := DefinitionParser.new()
-	mission.defs.skin = skin_parser.parse(files)
+	mission.defs.skin = skin_parser.parse(files, DefinitionParser.AssetType.SKINS)
 	# for path:String in mission.defs.skin:
 	# 	logs.print(path)
 	# 	for k:String in mission.defs.skin[path]:
@@ -334,7 +334,7 @@ static func gather_definitions(rep_panel:ReportPanel, mission:Mission) -> void:
 
 	files = get_included_files_in_dir(mission, Path.join(mission.paths.root, "particles"), ["*.prt"])
 	var particle_parser := DefinitionParser.new()
-	mission.defs.particle = particle_parser.parse(files)
+	mission.defs.particle = particle_parser.parse(files, DefinitionParser.AssetType.PARTICLES)
 	# for path:String in mission.defs.particle:
 	# 	logs.print(path)
 	# 	for k:String in mission.defs.particle[path]:
@@ -342,7 +342,7 @@ static func gather_definitions(rep_panel:ReportPanel, mission:Mission) -> void:
 
 	files = get_included_files_in_dir(mission, Path.join(mission.paths.root, "xdata"), ["*.xd"])
 	var xdata_parser := DefinitionParser.new()
-	mission.defs.xdata = xdata_parser.parse(files)
+	mission.defs.xdata = xdata_parser.parse(files, DefinitionParser.AssetType.XDATA)
 	#for path:String in mission.defs.xdata:
 		#logs.print(path)
 		#for k:String in mission.defs.xdata[path]:
@@ -350,6 +350,8 @@ static func gather_definitions(rep_panel:ReportPanel, mission:Mission) -> void:
 
 	var t2 := Time.get_ticks_msec()
 	logs.print("%.3f s" % [(t2-t1)/1000.0])
+
+
 
 
 
