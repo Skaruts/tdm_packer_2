@@ -93,6 +93,7 @@ func _on_il_missions_item_clicked(index: int, _at_position: Vector2, mouse_butto
 		return
 
 	fms.select_mission(index)
+	update_buttons()
 
 	if mouse_button_index == 2:
 		pu_missions_menu.position = get_global_mouse_position()
