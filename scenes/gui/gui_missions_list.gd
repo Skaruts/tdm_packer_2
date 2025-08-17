@@ -146,7 +146,7 @@ func _on_btn_close_mission_pressed() -> void:
 	# TODO: maybe ask confirmation?
 	if fms.is_save_timer_counting():
 		fms.stop_timer_and_save()
-	fms.remove_current_mission()
+	fms.remove_mission(fms.curr_mission)
 
 
 func _on_btn_play_mission_pressed() -> void:
