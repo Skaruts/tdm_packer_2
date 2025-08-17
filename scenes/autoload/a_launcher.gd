@@ -156,7 +156,7 @@ func run_tdm_copy() -> void:
 			"Couldn't copy '%s' to the test location '%s'. ERROR: %s.\n" % [mission.zipname, dest_pak_file, Path.get_error_text(copy_err)]
 		)
 		return
-	_run_game("Running TDM test version", data.config.tdm_copy_path, tdm_copy_process_started, tdm_copy_process_ended)
+	_run_game("Running the test instance of TDM", data.config.tdm_copy_path, tdm_copy_process_started, tdm_copy_process_ended)
 
 
 func _run_game(task_name:String, exec_filepath:String, start_signal:Signal, end_signal:Signal) -> void:
@@ -168,7 +168,7 @@ func _run_game(task_name:String, exec_filepath:String, start_signal:Signal, end_
 	if not Path.file_exists(exec_filepath):
 		popups.show_message(
 			"Error launching TDM",
-			"The path to TDM executable is invalid: '%s'. \n" % exec_filepath
+			"The path to the executable is invalid: '%s'. \n" % exec_filepath
 		)
 		return
 
@@ -184,7 +184,7 @@ func _run_game(task_name:String, exec_filepath:String, start_signal:Signal, end_
 		# Packer's directory, and they need to be moved to TDM dir after it
 		# shuts down.
 		pids[pid] = func() -> void:
-			logs.task("Copying TDM logs to TDM directory")
+			logs.task("Moving TDM logs to TDM directory")
 			Path.move_file(
 				Path.join(data.CWD, tdm_log_file1),
 				Path.join(game_dir, tdm_log_file1)

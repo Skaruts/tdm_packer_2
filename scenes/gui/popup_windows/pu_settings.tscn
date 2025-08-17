@@ -33,9 +33,10 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-current_tab = 0
+current_tab = 1
 
 [node name="General" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
@@ -168,7 +169,6 @@ t   - time (h:m)"
 theme_override_colors/font_placeholder_color = Color(0.368627, 0.368627, 0.368627, 1)
 
 [node name="Paths" type="VBoxContainer" parent="PanelContainer/VBoxContainer/tabs"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
@@ -187,6 +187,7 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+tooltip_text = "The path to TDM's executable."
 script = ExtResource("2_furee")
 
 [node name="btn_browse_tdm" type="Button" parent="PanelContainer/VBoxContainer/tabs/Paths/tdm_path/HBoxContainer"]
@@ -216,6 +217,7 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+tooltip_text = "The path to DarkRadiant's executable."
 script = ExtResource("2_furee")
 
 [node name="btn_browse_dr" type="Button" parent="PanelContainer/VBoxContainer/tabs/Paths/dr_path/HBoxContainer"]
@@ -236,7 +238,7 @@ layout_mode = 2
 [node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tabs/Paths/tdm_copy_path"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "TDM Copy Executable (Optional)"
+text = "TDM Test Instance Executable (Optional)"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tabs/Paths/tdm_copy_path"]
 layout_mode = 2
@@ -245,6 +247,7 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+tooltip_text = "The path to the Test Instance of TDM (a fresh copy of TDM that is used for testing pk4 files in isolation)."
 script = ExtResource("2_furee")
 
 [node name="btn_browse_tdm_copy" type="Button" parent="PanelContainer/VBoxContainer/tabs/Paths/tdm_copy_path/HBoxContainer"]
