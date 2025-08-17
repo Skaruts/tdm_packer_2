@@ -68,6 +68,8 @@ func stop_timer_and_save() -> void:
 func load_missions() -> void:
 	console.task("Loading missions.")
 
+	var missing_missions : Array[String]
+
 	var cf := ConfigFile.new()
 	if cf.load(data.MISSIONS_FILE) == OK:
 		#logs.print(cf.get_sections())
@@ -76,7 +78,19 @@ func load_missions() -> void:
 		elif cf.has_section("missions"):
 			logs.print("loading missions")
 			for id:String in cf.get_section_keys("missions"):
-				load_mission(id)
+				if not load_mission(id):
+					missing_missions.append(id)
+
+	if missing_missions.size() > 0:
+		save_missions_list()
+		var message := "Couldn't load the following missions:\n\n"
+		for id:String in missing_missions:
+			message += id + '\n'
+
+		popups.show_message(
+			"Warning",
+			message,
+		)
 
 	if missions.size():
 		sort_missions()
@@ -107,8 +121,12 @@ func soft_reload_mission(mis:Mission, force_update:=false) -> void:
 func load_mission(id: String, create_modfile := false) -> Mission:
 	var mission := Mission.new()
 	mission.id = id
-	#mission.zipname = id + data.config.packname_suffix + ".pk4"
+
 	var fm_path := Path.join(fms_folder, id)
+
+	if not Path.dir_exists(fm_path):
+		console.warning("Couldn't open mission '%s' -- not found" % [id])
+		return null
 
 	mission.set_paths(fm_path)
 	missions.append(mission)
