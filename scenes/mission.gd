@@ -15,6 +15,8 @@ var exc_dir_count:int
 var ignored_directories:Set
 var ignored_files:Set
 
+var missing : bool
+
 class MissionPaths: # this allows auto-completion and strict typing, unlike dictionaries
 	var root        : String
 	var test_root   : String  # root dir of TDM copy for testing pk4s

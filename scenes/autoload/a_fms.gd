@@ -8,6 +8,7 @@ extends Node
 var fms_folder : String  # TODO:
 
 var missions : Array[Mission]
+var missing_missions: Array[String]
 var curr_mission : Mission
 
 var _save_timer := 0.0
@@ -68,8 +69,6 @@ func stop_timer_and_save() -> void:
 func load_missions() -> void:
 	console.task("Loading missions.")
 
-	var missing_missions : Array[String]
-
 	var cf := ConfigFile.new()
 	if cf.load(data.MISSIONS_FILE) == OK:
 		#logs.print(cf.get_sections())
@@ -78,25 +77,20 @@ func load_missions() -> void:
 		elif cf.has_section("missions"):
 			logs.print("loading missions")
 			for id:String in cf.get_section_keys("missions"):
-				if not load_mission(id):
-					missing_missions.append(id)
+				load_mission(id)
 
 	if missing_missions.size() > 0:
 		save_missions_list()
 		var message := "Couldn't load the following missions:\n\n"
 		for id:String in missing_missions:
 			message += id + '\n'
-
-		popups.show_message(
-			"Warning",
-			message,
-		)
+		popups.show_message("Warning", message)
 
 	if missions.size():
 		sort_missions()
 		curr_mission = missions[0]
 
-	console.info("Loaded %s missions." % missions.size())
+	console.info("Loaded %s missions." % (missions.size() - missing_missions.size()))
 
 
 func is_mission_already_loaded(id:String) -> bool:
@@ -124,12 +118,14 @@ func load_mission(id: String, create_modfile := false) -> Mission:
 
 	var fm_path := Path.join(fms_folder, id)
 
-	if not Path.dir_exists(fm_path):
-		console.warning("Couldn't open mission '%s' -- not found" % [id])
-		return null
-
 	mission.set_paths(fm_path)
 	missions.append(mission)
+
+	if not Path.dir_exists(fm_path):
+		mission.missing = true
+		missing_missions.append(id)
+		console.warning("Couldn't open mission '%s' (not found)" % [id])
+		return mission
 
 	if not Path.file_exists(mission.paths.modfile):
 		if create_modfile:
@@ -304,7 +300,7 @@ func save_missions_list() -> void:
 
 
 func save_mission(mission:Mission, reload:=false) -> void:
-	if not mission.dirty: return
+	if not mission.dirty or mission.missing: return
 
 	#console.print("Saving mission", mission.id)
 
@@ -415,10 +411,11 @@ func update_folders() -> void:
 func select_mission(idx:int) -> void:
 	assert(idx >= 0 and idx < missions.size())
 	curr_mission = missions[idx]
-	check_mission_filesystem()
+	logs.print("select_mission", idx, curr_mission.id)
+	if not curr_mission.missing:
+		check_mission_filesystem(curr_mission)
 	gui.missions_list.update_buttons()
 	gui.workspace_mgr.select_workspace(get_current_mission_index())
-	logs.print("select_mission", idx, curr_mission.id)
 
 
 func add_missions(ids:Array[String]) -> void:
@@ -475,23 +472,31 @@ func get_mission_index(mission:Mission) -> int:
 	return missions.find(mission)
 
 
-func remove_current_mission() -> void:
-	console.print("Closed %s" % curr_mission.id)
+func _erase_mission(mis:Mission) -> void:
+	missions.erase(mis)
+	if mis.id in missing_missions:
+		missing_missions.erase(mis.id)
+
+
+func remove_mission(mis:Mission) -> void:
+	console.print("Closed %s" % mis.id)
 
 	var last_idx := get_current_mission_index()
-	var curr_idx: int
-	logs.print("remove_current_mission: ", last_idx, curr_mission.id)
 
-	missions.erase(curr_mission)
+	logs.print("remove_current_mission: ", last_idx, mis.id)
+
+	_erase_mission(mis)
+
 	if missions.size() > 0:
-		curr_idx = clamp(last_idx, 0, missions.size()-1)
-		curr_mission = missions[ curr_idx ]
-		sort_missions()
-		save_missions_list()
+		var idx: int = missions.find(curr_mission)
+		if idx == -1:
+			idx = clamp(last_idx, 0, missions.size()-1)
+		curr_mission = missions[ idx ]
+		#sort_missions()
 	else:
 		curr_mission = null
-		save_missions_list()
 
+	save_missions_list()
 
 	gui.missions_list.update_list()
 	gui.workspace_mgr.remove_workspace(last_idx)
@@ -503,49 +508,101 @@ func _check_file_hash(mis:Mission, path:String) -> bool:
 	return file_hash == mis.file_hashes[path]
 
 
-func check_mission_filesystem() -> bool:
-	if missions.size() == 0: return false
+func check_mission_filesystem(mis:Mission) -> bool:
 	#logs.print("check_mission_filesystem")
-	#var old_list:Array[String] = curr_mission.full_filelist.duplicate()
-	var new_list := Path.get_filepaths_recursive(curr_mission.paths.root)
+	#var old_list:Array[String] = mis.full_filelist.duplicate()
+	var new_list := Path.get_filepaths_recursive(mis.paths.root)
 	var changed_files: Array[String]
 
-	if curr_mission.mdata.map_files.size() <= 1:
-		if not Path.file_exists(curr_mission.paths.startingmap) \
-		or not _check_file_hash(curr_mission, curr_mission.paths.startingmap):
+	if mis.mdata.map_files.size() <= 1:
+		if not Path.file_exists(mis.paths.startingmap) \
+		or not _check_file_hash(mis, mis.paths.startingmap):
 			changed_files.append("map_sequence")
 	else:
-		if not Path.file_exists(curr_mission.paths.mapsequence)\
-		or not _check_file_hash(curr_mission, curr_mission.paths.mapsequence):
+		if not Path.file_exists(mis.paths.mapsequence)\
+		or not _check_file_hash(mis, mis.paths.mapsequence):
 			changed_files.append("map_sequence")
 
-	if not _check_file_hash(curr_mission, curr_mission.paths.modfile):
+	if not _check_file_hash(mis, mis.paths.modfile):
 		logs.print("modfile was changed externally")
 		changed_files.append("modfile")
 
-	if not _check_file_hash(curr_mission, curr_mission.paths.readme):
+	if not _check_file_hash(mis, mis.paths.readme):
 		changed_files.append("readme")
 
-	if not _check_file_hash(curr_mission, curr_mission.paths.pkignore):
+	if not _check_file_hash(mis, mis.paths.pkignore):
 		changed_files.append("pkignore")
 
 
 	if changed_files.size() == 0:
 		return false
 
-	curr_mission.full_filelist = new_list
-	FMUtils.build_file_tree(curr_mission)
+	mis.update_zipname()
+	mis.full_filelist = new_list
+	FMUtils.build_file_tree(mis)
 
 	for file:String in changed_files:
 		if file == "map_sequence":
-			load_map_sequence(curr_mission)
+			load_map_sequence(mis)
 		elif file == "modfile":
-			load_modfile(curr_mission)
+			load_modfile(mis)
 		else:
-			load_file(curr_mission, file)
+			load_file(mis, file)
 		gui.workspace_mgr.get_current_workspace().tab_package.reload_file(file)
 
 	return true
+
+
+func _replace_mission(mis:Mission) -> void:
+	var idx := missions.find(mis)
+	_erase_mission(mis)
+	gui.workspace_mgr.remove_workspace(idx)
+
+	mis = load_mission(mis.id)
+	sort_missions()
+	gui.workspace_mgr.add_workspace(mis)
+
+
+func check_missions_on_focus_in() -> void:
+	var new_missing_missions: Array[String]
+	var missions_changed := false
+
+	var last_idx := missions.find(curr_mission)
+
+	for mission:Mission in missions:
+		if Path.dir_exists(mission.paths.root):
+			if mission.id in missing_missions:
+				missing_missions.erase(mission.id)
+				_replace_mission(mission)
+				missions_changed = true
+			else:
+				check_mission_filesystem(mission)
+		else:
+			mission.missing = true
+			if not mission.id in missing_missions:
+				console.warning("Couldn't find mission '%s' (may be renamed or deleted)" % [mission.id])
+				new_missing_missions.append(mission.id)
+			missions_changed = true
+			missing_missions.append(mission.id)
+
+	if new_missing_missions.size() > 0:
+		var message := "The following missions seem to be missing\n(may have been renamed or deleted):\n\n"
+		for id:String in new_missing_missions:
+			message += id + '\n'
+
+		popups.show_message( "Warning", message )
+
+	if not missions_changed: return
+
+	sort_missions()
+	save_missions_list()
+	curr_mission = missions[last_idx]
+	gui.missions_list.update_list()
+	gui.workspace_mgr.update_workspaces()
+
+
+
+
 
 
 

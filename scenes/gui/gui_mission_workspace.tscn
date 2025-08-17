@@ -6,24 +6,45 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_k80oc"]
 
-[node name="mission_workspace" type="TabContainer"]
+[node name="MarginContainer" type="MarginContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_ii8rx")
+
+[node name="node_mission_workspace" type="TabContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_k80oc")
 current_tab = 0
 tabs_visible = false
-script = ExtResource("1_ii8rx")
 
-[node name="tab_package" parent="." instance=ExtResource("2_dcpu1")]
+[node name="tab_package" parent="node_mission_workspace" instance=ExtResource("2_dcpu1")]
 unique_name_in_owner = true
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="tab_files" parent="." instance=ExtResource("3_rthwn")]
+[node name="tab_files" parent="node_mission_workspace" instance=ExtResource("3_rthwn")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
+
+[node name="node_missing_mission" type="TabContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+current_tab = 0
+tabs_visible = false
+
+[node name="CenterContainer" type="CenterContainer" parent="node_missing_mission"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="Label" type="Label" parent="node_missing_mission/CenterContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.35, 0.35, 1)
+theme_override_font_sizes/font_size = 30
+text = "Missing Mission"

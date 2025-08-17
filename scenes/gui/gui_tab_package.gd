@@ -164,6 +164,8 @@ func set_mission(mission: Mission) -> void:
 
 	_set_button_states(false)
 
+	if _mission.missing: return
+
 	_build_trees()
 	_build_map_list()
 	set_show_roots(data.config.show_tree_roots)
@@ -200,6 +202,8 @@ func _build_map_list() -> void:
 func on_mission_reloaded(force_update:=false) -> void:
 	if _mission != fms.curr_mission and not force_update:
 		return
+
+	if _mission.missing: return
 
 	#le_title.text       = _mission.mdata.title
 	#le_author.text      = _mission.mdata.author
@@ -364,7 +368,7 @@ func _build_trees() -> void:
 
 	if not Path.dir_exists(_mission.paths.maps) \
 	or not _mission.file_tree.get_child_named("maps").has_included_files():
-		console.warning("%s has no valid maps" % _mission.id)
+		console.warning("'%s' has no valid maps" % _mission.id)
 
 	var t2 := Time.get_ticks_msec()
 	var total_time := "%.5f" % [(t2-t1)/1000.0]

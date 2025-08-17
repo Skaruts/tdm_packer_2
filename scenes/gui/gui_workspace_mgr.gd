@@ -19,6 +19,11 @@ func initialize() -> void:
 		_add_workspace_node(mission)
 
 
+func update_workspaces() -> void:
+	for ws:MissionWorkspace in get_children():
+		ws.update_nodes()
+
+
 func _add_workspace_node(mission:Mission) -> MissionWorkspace:
 	var ws: MissionWorkspace = MissionWorkspaceScene.instantiate()
 	add_child(ws)
@@ -74,8 +79,7 @@ func remove_workspace(index: int) -> void:
 	remove_child(ws)
 
 	if fms.missions.size():
-		logs.print("curr_idx mgr: ", fms.get_current_mission_index())
-		select_workspace(fms.get_current_mission_index())
+		select_workspace(clamp(fms.get_current_mission_index(), 0, fms.missions.size()-1))
 	#else:
 		#select_workspace(0)
 

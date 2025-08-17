@@ -54,12 +54,16 @@ func update_list() -> void:
 		var id := m.id
 		var _idx := il_missions.add_item(id)
 
+		if m.missing:
+			il_missions.set_item_custom_fg_color(_idx, data.ERROR_COLOR)
+			il_missions.set_item_icon(_idx, data.ICON_WARNING)
+
 		#if m.file_tree == null:
 			#il_missions.set_item_custom_fg_color(idx, data.ERROR_COLOR)
 			#il_missions.set_item_metadata(idx, "invalid mission")
 
 	if fms.missions.size() > 0:
-		#logs.print("curr_idx: ", fms.get_current_mission_index())
+		logs.print("curr_idx: ", fms.get_current_mission_index(), fms.curr_mission.id)
 		il_missions.select(fms.get_current_mission_index())
 
 	update_buttons()
@@ -70,7 +74,7 @@ func update_buttons() -> void:
 	btn_open_mission.disabled  = not data.is_tdm_path_set()
 	btn_close_mission.disabled = no_missions
 
-	if not no_missions and fms.curr_mission.file_tree != null:
+	if not no_missions and not fms.curr_mission.missing and fms.curr_mission.file_tree != null:
 		btn_play_mission.disabled     = not data.is_tdm_path_set()
 		btn_run_dr.disabled           = not data.is_dr_path_set()
 		btn_pack_mission.disabled     = not data.is_tdm_path_set()

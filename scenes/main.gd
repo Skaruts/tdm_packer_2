@@ -56,4 +56,4 @@ func _notification(what: int) -> void:
 		NOTIFICATION_WM_WINDOW_FOCUS_IN:
 			# if we're here because a dialog window just closed, don't update missions
 			if not popups.popup_has_just_closed:
-				fms.check_mission_filesystem()
+				fms.check_missions_on_focus_in()
