@@ -38,3 +38,7 @@ func update_pack_name() -> void:
 	if _mission.missing: return
 	tab_package.update_pack_name()
 	tab_files.update_pack_name()
+
+
+func switch_main_tab(tab_idx: int) -> void:
+	node_mission_workspace.current_tab = tab_idx

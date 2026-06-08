@@ -40,8 +40,8 @@ func select_workspace(index: int) -> void:
 
 
 func set_main_workspace_tab(idx:int) -> void:
-	for ws:MissionWorkspace in get_children():
-		ws.current_tab = idx
+	for ws: MissionWorkspace in get_children():
+		ws.switch_main_tab(idx)
 
 
 func on_mission_reloaded(idx:int, force_update:=false) -> void:
