@@ -24,7 +24,7 @@ func initialize() -> void:
 		save_missions_list()
 
 	update_folders()
-	load_missions()
+	load_all_missions()
 
 	if missions.size():
 		#select_mission(0) # don't call this here, it's not needed, and it will 'check_mission_filesystem'
@@ -66,7 +66,7 @@ func stop_timer_and_save() -> void:
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 #		Loading
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-func load_missions() -> void:
+func load_all_missions() -> void:
 	console.task("Loading missions.")
 
 	var cf := ConfigFile.new()
@@ -76,8 +76,10 @@ func load_missions() -> void:
 			console.warning("No TDM path set, or TDM path is invalid: '%s'" % data.config.tdm_path)
 		elif cf.has_section("missions"):
 			logs.print("loading missions")
-			for id:String in cf.get_section_keys("missions"):
-				load_mission(id)
+			var keys := cf.get_section_keys("missions")
+			for id: String in keys:
+				var val: Dictionary = cf.get_value("missions", id, {locked=false})
+				load_mission(id, false, val.locked)
 
 	if missing_missions.size() > 0:
 		save_missions_list()
@@ -112,9 +114,10 @@ func soft_reload_mission(mis:Mission, force_update:=false) -> void:
 	gui.workspace_mgr.on_mission_reloaded( get_mission_index(mis), force_update )
 
 
-func load_mission(id: String, create_modfile := false) -> Mission:
+func load_mission(id: String, create_modfile := false, locked := true) -> Mission:
 	var mission := Mission.new()
 	mission.id = id
+	mission.locked = locked
 
 	var fm_path := Path.join(fms_folder, id)
 
@@ -127,12 +130,13 @@ func load_mission(id: String, create_modfile := false) -> Mission:
 		console.warning("Couldn't open mission '%s' (not found)" % [id])
 		return mission
 
-	if not Path.file_exists(mission.paths.modfile):
-		if create_modfile:
-			Path.write_file(mission.paths.modfile, data.DEFAULT_MODFILE)
-		else:
-			logs.error("couldn't find 'darkmod.txt' in '%s'" % fm_path)
-			return mission
+	if not locked:
+		if not Path.file_exists(mission.paths.modfile):
+			if create_modfile:
+				Path.write_file(mission.paths.modfile, data.DEFAULT_MODFILE)
+			else:
+				logs.error("couldn't find 'darkmod.txt' in '%s'" % fm_path)
+				return mission
 
 	mission.full_filelist = Path.get_filepaths_recursive(mission.paths.root)
 
@@ -293,7 +297,8 @@ func load_modfile(mis:Mission) -> void:
 func save_missions_list() -> void:
 	var cf := ConfigFile.new()
 	for m:Mission in missions:
-		cf.set_value("missions", m.id, {}) # mission data is empty for now
+		logs.print(m.locked)
+		cf.set_value("missions", m.id, {locked=m.locked}) # mission data is empty for now
 
 	if cf.save(data.MISSIONS_FILE) != OK:
 		logs.error("Couldn't save missions file at '%s'" % data.MISSIONS_FILE)
@@ -439,6 +444,7 @@ func add_missions(ids:Array[String]) -> void:
 		popups.main_progress_bar.set_text("Loading '%s'" % id)
 
 		var mission := load_mission(id, true)
+
 		curr_mission = mission
 		gui.workspace_mgr.add_workspace(mission)
 
@@ -466,6 +472,7 @@ func add_missions(ids:Array[String]) -> void:
 func get_current_mission_index() -> int:
 	assert(missions.size() > 0)
 	return missions.find(curr_mission)
+
 
 func get_mission_index(mission:Mission) -> int:
 	assert(missions.size() > 0)

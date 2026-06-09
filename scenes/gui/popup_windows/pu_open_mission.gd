@@ -85,8 +85,8 @@ func _on_input(event: InputEvent) -> void:
 
 func _on_bar_button_pressed(idx:int) -> void:
 	if idx != BarButton.CANCEL:
-		if not await _validate_selected_missions():
-			return
+		#if not await _validate_selected_missions():
+			#return
 		_commit_data()
 
 	if idx != BarButton.APPLY:

@@ -16,6 +16,8 @@ var ignored_directories:Set
 var ignored_files:Set
 
 var missing : bool
+var locked : bool
+
 
 class MissionPaths: # this allows auto-completion and strict typing, unlike dictionaries
 	var root        : String
@@ -72,10 +74,11 @@ enum DirtyFlags {
 var dirty := 0
 
 
-
 #func _init(_id:String) -> void:
 	#id = _id
 	#zipname = id + data.config.packname_suffix + ".pk4"
+
+
 func update_zipname() -> bool:
 	var old_zip_name := zipname
 	var cfg_suffix:String = data.config.packname_suffix
@@ -85,12 +88,13 @@ func update_zipname() -> bool:
 	zipname = id + suffix + ".pk4"
 	return old_zip_name != zipname
 
+
+
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 
 #		Maps
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-
 func _swap_array_items(array:Array, idx1:int, idx2:int) -> void:
 	var item1 : Variant = array[idx1]
 	var item2 : Variant = array[idx2]
@@ -113,7 +117,9 @@ func move_map(direction:String, idx:int, silent:=false) -> bool:
 	if moved:
 		set_dirty_flag(true, DirtyFlags.MAPS, silent)
 		set_dirty_flag(true, DirtyFlags.MODFILE, silent)
+
 	return moved
+
 
 func add_map_file(string:String, silent:=false) -> bool:
 	if string in mdata.map_files: return false
@@ -145,6 +151,7 @@ func set_map_title(idx:int, string:String, silent:=false) -> bool:
 	#assert(string in mdata.map_titles)
 	#mdata.map_titles.erase(string)
 	#return true
+
 
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
