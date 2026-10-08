@@ -27,6 +27,7 @@ class Entity:
 	var brushes    : Array[Brush]
 	var patches    : Array[Patch]
 	var materials  : Set
+
 	func _init(_id:int) -> void:
 		id = _id
 		materials = Set.new()
@@ -35,6 +36,7 @@ class Entity:
 class Property:
 	var name  : String
 	var value : String
+
 	func _init(_name:String, _value:String) -> void:
 		name = _name
 		value = _value
@@ -43,6 +45,7 @@ class Property:
 class Brush:
 	var id        : int
 	var materials : Set
+
 	func _init(_id:int) -> void:
 		id = _id
 		materials = Set.new()
@@ -51,6 +54,7 @@ class Brush:
 class Patch:
 	var id       : int
 	var material : String
+
 	func _init(_id:int) -> void:
 		id = _id
 
@@ -81,7 +85,8 @@ var curr_entity_id     := -1
 
 const _DEBUG_SHOW_SCOPES := false
 const _DEBUG_PRINT_PROPS := false
-
+var level := 0
+const _DEBUG_PRINT_TOKS := 0
 
 
 func set_scope(new_scope:String) -> void:
@@ -105,8 +110,7 @@ func print_prop(prop_name:String, value:String) -> void:
 	print("       ", prop_name, value)
 
 
-var level := 0
-const _DEBUG_PRINT_TOKS := 0
+
 func print_token(tok:String) -> void:
 	if _DEBUG_PRINT_TOKS == 2:
 		print(str(level) + "   ".repeat(level) + tok)
@@ -225,7 +229,7 @@ func parse(map_file:String) -> Map:
 	for line:String in lines:
 		# line = line.replace('\t', '')
 		var line_start := line[0]
-		var tokens : Array[String]
+		# var tokens : Array[String]
 
 		if line_start == '(':
 			assert(scope in [Scope.PatchDef, Scope.BrushDef], line)
