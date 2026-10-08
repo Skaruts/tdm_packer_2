@@ -1,9 +1,9 @@
-[gd_scene load_steps=16 format=3 uid="uid://bxhl1rene8xie"]
+[gd_scene load_steps=17 format=3 uid="uid://bxhl1rene8xie"]
 
 [ext_resource type="Script" uid="uid://cn753q050wieh" path="res://scenes/main.gd" id="1_soa3g"]
 [ext_resource type="StyleBox" uid="uid://byni8x36qkwsd" path="res://resources/darker_panel.tres" id="1_tipki"]
-[ext_resource type="PackedScene" uid="uid://wnofs5lvgk2j" path="res://scenes/gui/gui_menu_bar.tscn" id="2_js7kq"]
 [ext_resource type="PackedScene" uid="uid://davxn03cmf2qn" path="res://scenes/gui/gui_missions_list.tscn" id="3_ipwni"]
+[ext_resource type="Texture2D" uid="uid://bl2r0xhi0koy1" path="res://assets/icons/menu_icon.png" id="4_jbj1t"]
 [ext_resource type="Script" uid="uid://djn2qjsdxybfc" path="res://scenes/gui/gui_workspace_mgr.gd" id="4_vywpp"]
 [ext_resource type="PackedScene" uid="uid://cmbv0kqxobxm" path="res://scenes/gui/console.tscn" id="5_fktis"]
 [ext_resource type="PackedScene" uid="uid://bklc6tbbkf5go" path="res://scenes/gui/gui_mission_workspace.tscn" id="6_eb6dy"]
@@ -14,6 +14,8 @@
 [ext_resource type="PackedScene" uid="uid://dd4rsrmnsk1gq" path="res://scenes/gui/popup_windows/pu_main_progress_bar.tscn" id="10_choun"]
 [ext_resource type="PackedScene" uid="uid://bsajbmjhft0oy" path="res://scenes/gui/popup_windows/pu_pack_mission.tscn" id="13_trceg"]
 [ext_resource type="PackedScene" uid="uid://didpmhvfjpihp" path="res://scenes/gui/popup_windows/pu_add_map.tscn" id="15_jkv2x"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_muem4"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_psa6e"]
 
@@ -35,9 +37,50 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="menu_bar" parent="VBoxContainer" instance=ExtResource("2_js7kq")]
+[node name="menu_bar" type="HBoxContainer" parent="VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/menu_bar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="btn_menu" type="MenuButton" parent="VBoxContainer/menu_bar/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+icon = ExtResource("4_jbj1t")
+expand_icon = true
+
+[node name="main_tabs" type="HBoxContainer" parent="VBoxContainer/menu_bar"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="btn_pack_tab" type="Button" parent="VBoxContainer/menu_bar/main_tabs"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_muem4")
+text = "Package"
+flat = true
+
+[node name="VSeparator" type="VSeparator" parent="VBoxContainer/menu_bar/main_tabs"]
+layout_mode = 2
+
+[node name="btn_files_tab" type="Button" parent="VBoxContainer/menu_bar/main_tabs"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_muem4")
+text = "Files"
+flat = true
+
+[node name="--spacer--" type="HBoxContainer" parent="VBoxContainer/menu_bar"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 2
 
 [node name="console_split" type="VSplitContainer" parent="VBoxContainer"]
 unique_name_in_owner = true
@@ -49,6 +92,7 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="missions_list" parent="VBoxContainer/console_split/HSplitContainer" instance=ExtResource("3_ipwni")]
+unique_name_in_owner = true
 layout_mode = 2
 
 [node name="Control" type="Control" parent="VBoxContainer/console_split/HSplitContainer"]
@@ -75,6 +119,7 @@ theme_override_font_sizes/font_size = 25
 text = "No mission"
 
 [node name="workspace_mgr" type="TabContainer" parent="VBoxContainer/console_split/HSplitContainer/Control"]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

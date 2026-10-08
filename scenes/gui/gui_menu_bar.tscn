@@ -1,15 +1,30 @@
-[gd_scene load_steps=4 format=3 uid="uid://wnofs5lvgk2j"]
+[gd_scene load_steps=4 format=3 uid="uid://cpyjume16anr4"]
 
-[ext_resource type="Script" uid="uid://b6ncp5vgg1g2p" path="res://scenes/gui/gui_menu_bar.gd" id="1_vjn1j"]
 [ext_resource type="ButtonGroup" uid="uid://d2npeuvcy0c3h" path="res://resources/main_tabs_button_group.tres" id="2_5upro"]
 [ext_resource type="Texture2D" uid="uid://bl2r0xhi0koy1" path="res://assets/icons/menu_icon.png" id="2_504fd"]
+
+[sub_resource type="GDScript" id="GDScript_lrp1b"]
+script/source = "class_name GuiMenuBar
+extends HBoxContainer
+
+
+func _enter_tree() -> void:
+	gui.menu_bar = self
+
+
+func _ready() -> void:
+	pass
+
+func initialize() -> void:
+	pass
+"
 
 [node name="menu_bar" type="HBoxContainer"]
 anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 33.0
 grow_horizontal = 2
-script = ExtResource("1_vjn1j")
+script = SubResource("GDScript_lrp1b")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
