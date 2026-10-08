@@ -76,7 +76,7 @@ func _on_bar_button_pressed(idx:int) -> void:
 
 func _commit_data() -> void:
 	data.update_config(temp_config)
-	gui.workspace_mgr.set_show_roots()
+	gui.workspace_set_show_roots()
 	gui.update_missions_list_buttons()
 
 

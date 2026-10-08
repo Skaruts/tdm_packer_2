@@ -106,12 +106,12 @@ func _reload_mission(mis:Mission) -> void:
 	FMUtils.load_file(mis, "pkignore")
 	FMUtils.build_file_tree(mis)
 	_load_mission_files(mis)
-	gui.workspace_mgr.on_mission_reloaded( get_mission_index(mis) )
+	gui.on_mission_reloaded( get_mission_index(mis) )
 
 
 func soft_reload_mission(mis:Mission, force_update:=false) -> void:
 	FMUtils.build_file_tree(mis)
-	gui.workspace_mgr.on_mission_reloaded( get_mission_index(mis), force_update )
+	gui.on_mission_reloaded( get_mission_index(mis), force_update )
 
 
 func load_mission(id: String, create_modfile := false, locked := true) -> Mission:
@@ -215,8 +215,8 @@ func select_mission(idx:int) -> void:
 	if not curr_mission.missing:
 		check_mission_filesystem(curr_mission)
 
-	gui.update_missions_list_buttons()
-	gui.workspace_mgr.select_workspace(get_current_mission_index())
+	gui.missions_list_update_buttons()
+	gui.select_workspace(get_current_mission_index())
 
 
 func add_missions(ids:Array[String]) -> void:
@@ -242,7 +242,7 @@ func add_missions(ids:Array[String]) -> void:
 		var mission := load_mission(id, true)
 
 		curr_mission = mission
-		gui.workspace_mgr.add_workspace(mission)
+		gui.add_workspace(mission)
 
 		num_missions_processed += 1
 		logs.print("add mission: ", missions.find(curr_mission), curr_mission.id)
@@ -302,7 +302,7 @@ func remove_mission(mis:Mission) -> void:
 	save_missions_list()
 
 	gui.update_missions_list()
-	gui.workspace_mgr.remove_workspace(last_idx)
+	gui.remove_workspace(last_idx)
 
 
 func _check_file_hash(mis:Mission, path:String) -> bool:
@@ -351,7 +351,7 @@ func check_mission_filesystem(mis:Mission) -> bool:
 			FMUtils.load_modfile(mis)
 		else:
 			FMUtils.load_file(mis, file)
-		gui.workspace_mgr.get_current_workspace().tab_package.reload_file(file)
+		gui.get_current_workspace().tab_package.reload_file(file)
 
 	return true
 
@@ -359,11 +359,11 @@ func check_mission_filesystem(mis:Mission) -> bool:
 func _replace_mission(mis:Mission) -> void:
 	var idx := missions.find(mis)
 	_erase_mission(mis)
-	gui.workspace_mgr.remove_workspace(idx)
+	gui.remove_workspace(idx)
 
 	mis = load_mission(mis.id)
 	sort_missions()
-	gui.workspace_mgr.add_workspace(mis)
+	gui.add_workspace(mis)
 
 
 func check_missions_on_focus_in() -> void:
@@ -401,7 +401,7 @@ func check_missions_on_focus_in() -> void:
 	save_missions_list()
 	curr_mission = missions[last_idx]
 	gui.update_missions_list()
-	gui.workspace_mgr.update_workspaces()
+	gui.update_workspaces()
 
 
 

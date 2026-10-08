@@ -1,11 +1,9 @@
-[gd_scene load_steps=16 format=3 uid="uid://bxhl1rene8xie"]
+[gd_scene load_steps=14 format=3 uid="uid://bxhl1rene8xie"]
 
 [ext_resource type="Script" uid="uid://cn753q050wieh" path="res://scenes/main.gd" id="1_soa3g"]
 [ext_resource type="StyleBox" uid="uid://byni8x36qkwsd" path="res://resources/darker_panel.tres" id="1_tipki"]
 [ext_resource type="Texture2D" uid="uid://bl2r0xhi0koy1" path="res://assets/icons/menu_icon.png" id="4_jbj1t"]
-[ext_resource type="Script" uid="uid://djn2qjsdxybfc" path="res://scenes/gui/gui_workspace_mgr.gd" id="4_vywpp"]
 [ext_resource type="PackedScene" uid="uid://cmbv0kqxobxm" path="res://scenes/gui/console.tscn" id="5_fktis"]
-[ext_resource type="PackedScene" uid="uid://bklc6tbbkf5go" path="res://scenes/gui/gui_mission_workspace.tscn" id="6_eb6dy"]
 [ext_resource type="PackedScene" uid="uid://bdcwd3fh8e61y" path="res://scenes/gui/popup_windows/pu_settings.tscn" id="7_ao82v"]
 [ext_resource type="PackedScene" uid="uid://c5f55dvs1omb5" path="res://scenes/gui/popup_windows/pu_quit_save_confirmation.tscn" id="7_rmgbx"]
 [ext_resource type="Script" uid="uid://bqgy1hssrn6ea" path="res://scenes/gui/popup_windows/pu_confirmation_dialog.gd" id="7_ya4ey"]
@@ -222,8 +220,6 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_psa6e")
 tabs_visible = false
-script = ExtResource("4_vywpp")
-MissionWorkspaceScene = ExtResource("6_eb6dy")
 
 [node name="console" parent="VBoxContainer/console_split" instance=ExtResource("5_fktis")]
 unique_name_in_owner = true

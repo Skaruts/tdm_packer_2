@@ -11,20 +11,20 @@ enum MenuOption {
 @onready var main          : Control = get_tree().root.get_node("main")
 @onready var menu_bar      : Control = main.get_node("%menu_bar")
 @onready var missions_list : Control = main.get_node("%missions_list")
-@onready var workspace_mgr : Control = main.get_node("%workspace_mgr")
+@onready var workspace_mgr : TabContainer = main.get_node("%workspace_mgr")
 
 
 
 func initialize() -> void:
 	init_missions_list()
-	workspace_mgr.initialize()
+	init_workspaces()
 	init_menu_bar()
 
 	var btn_pack_tab: Button = menu_bar.get_node("%btn_pack_tab")
 	var btn_files_tab: Button = menu_bar.get_node("%btn_files_tab")
 
-	btn_pack_tab.pressed.connect(workspace_mgr.set_main_workspace_tab.bind(0))
-	btn_files_tab.pressed.connect(workspace_mgr.set_main_workspace_tab.bind(1))
+	btn_pack_tab.pressed.connect(gui.workspace_set_main_tab.bind(0))
+	btn_files_tab.pressed.connect(gui.workspace_set_main_tab.bind(1))
 
 
 
@@ -128,10 +128,10 @@ func update_missions_list() -> void:
 		logs.print("curr_idx: ", fms.get_current_mission_index(), fms.curr_mission.id)
 		il_missions.select(fms.get_current_mission_index())
 
-	update_missions_list_buttons()
+	missions_list_update_buttons()
 
 
-func update_missions_list_buttons() -> void:
+func missions_list_update_buttons() -> void:
 	var no_missions: bool = fms.missions.size() == 0
 	btn_open_mission.disabled  = not data.is_tdm_path_set()
 	btn_close_mission.disabled = no_missions
@@ -154,7 +154,7 @@ func _on_il_missions_item_clicked(index: int, _at_position: Vector2, mouse_butto
 		return
 
 	fms.select_mission(index)
-	update_missions_list_buttons()
+	missions_list_update_buttons()
 
 	if mouse_button_index == 2:
 		pu_missions_menu.position = missions_list.get_global_mouse_position()
@@ -200,3 +200,119 @@ func _on_btn_pack_mission_pressed() -> void:
 
 func _on_btn_test_pack_pressed() -> void:
 	fms.test_pack()
+
+
+
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+
+#		Mission Workspace Management
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+const MissionWorkspaceScene: PackedScene = preload("res://scenes/gui/gui_mission_workspace.tscn")
+
+var curr_pack_tab := 0
+var curr_files_tab := 0
+
+
+func _add_workspace_node(mission:Mission) -> MissionWorkspace:
+	var ws: MissionWorkspace = MissionWorkspaceScene.instantiate()
+	workspace_mgr.add_child(ws)
+
+	ws.tab_package.current_tab = curr_pack_tab
+	ws.tab_files.current_tab = curr_files_tab
+	ws.tab_package.tab_changed.connect(_on_tab_package_tab_changed)
+	ws.tab_files.tab_changed.connect(_on_tab_files_tab_changed)
+	ws.set_mission(mission)
+	return ws
+
+
+func init_workspaces() -> void:
+	for mission in fms.missions:
+		_add_workspace_node(mission)
+
+
+func update_workspaces() -> void:
+	for ws: MissionWorkspace in workspace_mgr.get_children():
+		ws.update_nodes()
+
+
+func get_current_workspace() -> MissionWorkspace:
+	return workspace_mgr.get_children()[fms.get_current_mission_index()]
+
+
+func add_workspace(mission: Mission) -> void:
+	var ws := _add_workspace_node(mission)
+	#ws.tab_package.select_previous_available() # TODO: this doesn't seem needed??
+	_sort_nodes_by_name()
+	select_workspace(ws.get_index())
+
+
+func remove_workspace(index: int) -> void:
+	var ws := workspace_mgr.get_child(index)
+	ws.queue_free()
+	workspace_mgr.remove_child(ws)
+
+	if fms.missions.size():
+		var curr_idx := fms.get_current_mission_index()
+		select_workspace( clamp(curr_idx, 0, fms.missions.size()-1) )
+	#else:
+		#select_workspace(0)
+
+
+func select_workspace(index: int) -> void:
+	workspace_mgr.current_tab = index
+
+
+func workspace_set_main_tab(idx: int) -> void:
+	for ws: MissionWorkspace in workspace_mgr.get_children():
+		ws.switch_main_tab(idx)
+
+
+func on_mission_reloaded(idx: int, force_update := false) -> void:
+	var ws: MissionWorkspace = workspace_mgr.get_children()[idx]
+	ws.on_mission_reloaded(force_update)
+
+
+func workspace_update_pack_name(idx:int) -> void:
+	var ws: MissionWorkspace = workspace_mgr.get_children()[idx]
+	ws.update_pack_name()
+
+
+#func package_reload_file(filename:String) -> void:
+	#var ws:MissionWorkspace = workspace_mgr.get_children()[fms.get_current_mission_index()]
+	#ws.tab_package.reload_file(filename)
+
+func workspace_set_show_roots() -> void:
+	for ws: MissionWorkspace in workspace_mgr.get_children():
+		ws.tab_package.set_show_roots(data.config.show_tree_roots)
+
+
+
+func _sort_nodes_by_name() -> void:
+	var children := workspace_mgr.get_children()
+	children.sort_custom(func(a: Node, b: Node) -> bool:
+		return a._mission.id.naturalnocasecmp_to(b._mission.id) < 0
+	)
+
+	# TODO: try this loop instead of the other two
+	#for i in children.size():
+		#move_child(children[i], i)
+
+	for node in workspace_mgr.get_children():
+		workspace_mgr.remove_child(node)
+
+	for node in children:
+		workspace_mgr.add_child(node)
+
+
+func _on_tab_package_tab_changed(index: int) -> void:
+	curr_pack_tab = index
+	for ws: MissionWorkspace in workspace_mgr.get_children():
+		ws.tab_package.current_tab = index
+
+
+func _on_tab_files_tab_changed(index: int) -> void:
+	curr_files_tab = index
+	for ws: MissionWorkspace in workspace_mgr.get_children():
+		ws.tab_files.current_tab = index

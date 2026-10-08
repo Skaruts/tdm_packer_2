@@ -136,8 +136,8 @@ func update_config(new_config:ConfigData) -> void:
 		var mis:Mission = fms.missions[i]
 		if mis.update_zipname():
 			#fms.soft_reload_mission(mis, true)
-			#gui.workspace_mgr.update_pack_name( fms.get_mission_index(mis) )
-			gui.workspace_mgr.update_pack_name( i )
+			#gui.update_workspace_pack_name( fms.get_mission_index(mis) )
+			gui.update_workspace_pack_name( i )
 
 
 
