@@ -29,7 +29,6 @@ console="*res://scenes/autoload/a_console.gd"
 logs="*res://scenes/autoload/a_logger.gd"
 launcher="*res://scenes/autoload/a_launcher.gd"
 fms="*res://scenes/autoload/a_fms.gd"
-nodepaths="*res://scenes/autoload/a_nodepaths.gd"
 
 [debug]
 
