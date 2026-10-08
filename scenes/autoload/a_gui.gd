@@ -106,6 +106,10 @@ func init_missions_list() -> void:
 	btn_open_mission.pressed.connect(_on_btn_open_mission_pressed)
 	btn_close_mission.pressed.connect(_on_btn_close_mission_pressed)
 
+	btn_play_mission.pressed.connect(_on_btn_play_mission_pressed)
+	btn_run_dr.pressed.connect(_on_btn_run_dr_pressed)
+	btn_pack_mission.pressed.connect(_on_btn_pack_mission_pressed)
+	btn_test_pack.pressed.connect(_on_btn_test_pack_pressed)
 
 	update_missions_list()
 

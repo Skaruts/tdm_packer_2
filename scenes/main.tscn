@@ -281,8 +281,4 @@ visible = false
 unique_name_in_owner = true
 visible = false
 
-[connection signal="pressed" from="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer/HBoxContainer2/btn_play_mission" to="VBoxContainer/console_split/HSplitContainer/missions_list" method="_on_btn_play_mission_pressed"]
-[connection signal="pressed" from="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer/HBoxContainer2/btn_run_dr" to="VBoxContainer/console_split/HSplitContainer/missions_list" method="_on_btn_run_dr_pressed"]
-[connection signal="pressed" from="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer/HBoxContainer3/btn_pack_mission" to="VBoxContainer/console_split/HSplitContainer/missions_list" method="_on_btn_pack_mission_pressed"]
-[connection signal="pressed" from="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer/HBoxContainer3/btn_test_pack" to="VBoxContainer/console_split/HSplitContainer/missions_list" method="_on_btn_test_pack_pressed"]
 [connection signal="toggled" from="VBoxContainer/console_split/console" to="." method="_on_console_toggled"]
