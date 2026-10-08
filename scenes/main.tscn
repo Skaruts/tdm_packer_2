@@ -1,8 +1,7 @@
-[gd_scene load_steps=17 format=3 uid="uid://bxhl1rene8xie"]
+[gd_scene load_steps=16 format=3 uid="uid://bxhl1rene8xie"]
 
 [ext_resource type="Script" uid="uid://cn753q050wieh" path="res://scenes/main.gd" id="1_soa3g"]
 [ext_resource type="StyleBox" uid="uid://byni8x36qkwsd" path="res://resources/darker_panel.tres" id="1_tipki"]
-[ext_resource type="PackedScene" uid="uid://davxn03cmf2qn" path="res://scenes/gui/gui_missions_list.tscn" id="3_ipwni"]
 [ext_resource type="Texture2D" uid="uid://bl2r0xhi0koy1" path="res://assets/icons/menu_icon.png" id="4_jbj1t"]
 [ext_resource type="Script" uid="uid://djn2qjsdxybfc" path="res://scenes/gui/gui_workspace_mgr.gd" id="4_vywpp"]
 [ext_resource type="PackedScene" uid="uid://cmbv0kqxobxm" path="res://scenes/gui/console.tscn" id="5_fktis"]
@@ -91,9 +90,104 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="missions_list" parent="VBoxContainer/console_split/HSplitContainer" instance=ExtResource("3_ipwni")]
+[node name="missions_list" type="TabContainer" parent="VBoxContainer/console_split/HSplitContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+current_tab = 0
+tabs_visible = false
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/console_split/HSplitContainer/missions_list"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Missions"
+
+[node name="--spacer--" type="Control" parent="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="btn_open_mission" type="Button" parent="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Open a mission for editing. 
+
+(The path to the Dark Mod executable must be set in the settings.)"
+disabled = true
+text = "Open"
+
+[node name="btn_close_mission" type="Button" parent="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Close the selected mission."
+disabled = true
+text = "Close"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer"]
+layout_mode = 2
+
+[node name="btn_play_mission" type="Button" parent="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Launch Darkradiant for this mission. 
+
+The path to the Dark Mod executable must be set in Settings->Paths."
+disabled = true
+text = "Play"
+
+[node name="btn_run_dr" type="Button" parent="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Launch Darkradiant for this mission. 
+
+The path to the DarkRadiant executable must be set in Settings->Paths."
+disabled = true
+text = "Edit"
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer"]
+visible = false
+layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer"]
+layout_mode = 2
+
+[node name="btn_pack_mission" type="Button" parent="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Create the pk4 file for the selected mission.  
+
+The path to the Dark Mod executable must be set in Settings->Paths."
+disabled = true
+text = "Pack"
+
+[node name="btn_test_pack" type="Button" parent="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Launch TDM's test instance with this mission's pk4. 
+
+The mission must already be packed, and the path to the test instance of TDM must be set in Settings->Paths."
+disabled = true
+text = "Test"
+
+[node name="il_missions" type="ItemList" parent="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+allow_rmb_select = true
+
+[node name="missions_popup_menu" type="PopupMenu" parent="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer/il_missions"]
+unique_name_in_owner = true
 
 [node name="Control" type="Control" parent="VBoxContainer/console_split/HSplitContainer"]
 layout_mode = 2
@@ -191,4 +285,8 @@ visible = false
 unique_name_in_owner = true
 visible = false
 
+[connection signal="pressed" from="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer/HBoxContainer2/btn_play_mission" to="VBoxContainer/console_split/HSplitContainer/missions_list" method="_on_btn_play_mission_pressed"]
+[connection signal="pressed" from="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer/HBoxContainer2/btn_run_dr" to="VBoxContainer/console_split/HSplitContainer/missions_list" method="_on_btn_run_dr_pressed"]
+[connection signal="pressed" from="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer/HBoxContainer3/btn_pack_mission" to="VBoxContainer/console_split/HSplitContainer/missions_list" method="_on_btn_pack_mission_pressed"]
+[connection signal="pressed" from="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer/HBoxContainer3/btn_test_pack" to="VBoxContainer/console_split/HSplitContainer/missions_list" method="_on_btn_test_pack_pressed"]
 [connection signal="toggled" from="VBoxContainer/console_split/console" to="." method="_on_console_toggled"]

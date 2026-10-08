@@ -214,7 +214,8 @@ func select_mission(idx:int) -> void:
 	logs.print("select_mission", idx, curr_mission.id)
 	if not curr_mission.missing:
 		check_mission_filesystem(curr_mission)
-	gui.missions_list.update_buttons()
+
+	gui.update_missions_list_buttons()
 	gui.workspace_mgr.select_workspace(get_current_mission_index())
 
 
@@ -252,7 +253,7 @@ func add_missions(ids:Array[String]) -> void:
 		popups.main_progress_bar.set_percentage(0.95)
 		sort_missions()
 		save_missions_list()
-		gui.missions_list.update_list()
+		gui.update_missions_list()
 
 		popups.main_progress_bar.set_text("All missions loaded")
 		popups.main_progress_bar.set_percentage(1)
@@ -300,7 +301,7 @@ func remove_mission(mis:Mission) -> void:
 
 	save_missions_list()
 
-	gui.missions_list.update_list()
+	gui.update_missions_list()
 	gui.workspace_mgr.remove_workspace(last_idx)
 
 
@@ -399,7 +400,7 @@ func check_missions_on_focus_in() -> void:
 	sort_missions()
 	save_missions_list()
 	curr_mission = missions[last_idx]
-	gui.missions_list.update_list()
+	gui.update_missions_list()
 	gui.workspace_mgr.update_workspaces()
 
 

@@ -77,7 +77,7 @@ func _on_bar_button_pressed(idx:int) -> void:
 func _commit_data() -> void:
 	data.update_config(temp_config)
 	gui.workspace_mgr.set_show_roots()
-	gui.missions_list.update_buttons()
+	gui.update_missions_list_buttons()
 
 
 func _validate_and_update_colors(line_edit:CustomLineEdit, filepath:String, key:String) -> void:

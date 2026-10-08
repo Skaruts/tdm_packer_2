@@ -130,7 +130,7 @@ func update_config(new_config:ConfigData) -> void:
 
 	# some stuff needs to know the config changed
 	fms.update_folders()
-	gui.missions_list.update_buttons()
+	gui.update_missions_list_buttons()
 
 	for i:int in fms.missions.size():
 		var mis:Mission = fms.missions[i]
