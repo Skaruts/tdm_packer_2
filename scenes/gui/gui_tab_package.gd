@@ -27,60 +27,35 @@ enum EditorIndex {
 @onready var btn_add_map    : Button = %btn_add_map
 @onready var btn_remove_map : Button = %btn_remove_map
 
-@onready var tr_included   : Tree  = %tr_included
-@onready var tr_excluded   : Tree  = %tr_excluded
-@onready var lb_included   : Label = %lb_included
-@onready var lb_excluded   : Label = %lb_excluded
+@onready var tr_included    : Tree  = %tr_included
+@onready var tr_excluded    : Tree  = %tr_excluded
+@onready var lb_included    : Label = %lb_included
+@onready var lb_excluded    : Label = %lb_excluded
 
-#@onready var map_list: ItemList = %map_list
-@onready var tr_map_list : Tree  = %tr_map_list
+# @onready var map_list       : ItemList = %map_list
+@onready var tr_map_list    : Tree = %tr_map_list
 
-@onready var btn_move_up   : Button = %btn_move_up
-@onready var btn_move_down : Button = %btn_move_down
-
-
-var curr_editor: CodeEdit
-var _mission: Mission
-var _tree_root:TreeItem
-
-var tree_alignment := HORIZONTAL_ALIGNMENT_LEFT
+@onready var btn_move_up    : Button = %btn_move_up
+@onready var btn_move_down  : Button = %btn_move_down
 
 
+var _curr_editor       : CodeEdit
+var _mission           : Mission
+var _tree_root         : TreeItem
+var _tree_alignment    := HORIZONTAL_ALIGNMENT_LEFT
 const _COLOR_MAP_TITLE := Color(0.82, 0.698, 0.361)
-
-func _add_map_tree_item(filename:String, title:="", is_excluded:=false) -> TreeItem:
-	var item := _tree_root.create_child()
-	item.set_editable(0, false)
-	item.set_editable(1, true)
-
-	item.set_text_alignment(0, tree_alignment)
-	item.set_text_alignment(1, tree_alignment)
-
-	item.set_text(0, filename)
-	#item.set_icon(0, data.ICON_FILE)
-	#item.set_icon_max_width(0, 16)
-	if is_excluded:
-		item.add_button(0, data.ICON_WARNING, 0, false,
-			"Warning: this map is being excluded from the pk4."
-		)
-
-	item.set_custom_color(1, _COLOR_MAP_TITLE)
-	item.set_text(1, title)
-
-	return item
 
 
 func _ready() -> void:
 	tr_map_list.columns = 2
 	tr_map_list.hide_root = true
-	tr_map_list.set_column_title(0, "Map")
-	tr_map_list.set_column_title(1, "Title")
-	tr_map_list.set_column_expand(0, true)
-	tr_map_list.set_column_expand(1, true)
+	for i in 2:
+		tr_map_list.set_column_title(i, ["Map", "Title"][i])
+		tr_map_list.set_column_expand(i, true)
+		tr_map_list.set_column_title_alignment(i, _tree_alignment)
+
 	tr_map_list.set_column_expand_ratio(1, 2)
 	#tr_map_list.set_column_custom_minimum_width(0, 150)
-	tr_map_list.set_column_title_alignment(0, tree_alignment)
-	tr_map_list.set_column_title_alignment(1, tree_alignment)
 
 	#tr_map_list.button_clicked.connect(
 		#func(item:TreeItem, col:int, id:int, mouse_btn_idx:int) -> void:
@@ -95,12 +70,15 @@ func _ready() -> void:
 			if _mission.set_map_title(item.get_index(), item.get_text(1)):
 				fms.start_save_timer(false)
 	)
+
 	tr_map_list.item_selected.connect( _set_button_states.bind(true) )
+
 	tr_map_list.empty_clicked.connect(
 		func(_click_position: Vector2, _mouse_button_index: int) -> void:
 			tr_map_list.deselect_all()
 			_set_button_states(false)
 	)
+
 	#tr_map_list.focus_exited.connect(
 		#func() -> void:
 			##await get_tree().create_timer(0.5).timeout
@@ -110,14 +88,14 @@ func _ready() -> void:
 
 	var cedits := [ ce_description, ce_readme, ce_pkignore ]
 	for i in cedits.size():
-		var ed:Variant = cedits[i]
+		var ed: Variant = cedits[i]
 		ed.text_changed.connect(_on_code_editor_text_changed.bind(ed))
 		ed.focus_entered.connect(_on_code_editor_focus_changed.bind(ed, true))
 		ed.focus_exited.connect(_on_code_editor_focus_changed.bind(ed, false))
 
 	var ledits := [ le_title, le_author, le_version, le_tdm_version ]
 	for i in ledits.size():
-		var ed:LineEdit = ledits[i]
+		var ed: LineEdit = ledits[i]
 		#ed.gui_input.connect(_on_ledit_gui_input.bind(i + EditorIndex.Title))
 		ed.text_changed.connect(_on_line_edit_text_changed.bind(ed))
 
@@ -128,15 +106,20 @@ func _ready() -> void:
 	_set_button_states(false)
 
 
-func _on_move_arrow_pressed(direction:String) -> void:
-	var item     := tr_map_list.get_selected()
+
+
+func _on_move_arrow_pressed(direction: String) -> void:
+	var item := tr_map_list.get_selected()
 	assert(item != null)
-	var idx      := item.get_index()
+
+	var idx := item.get_index()
 
 	if _mission.move_map(direction, idx):
 		fms.start_save_timer(false)
 		_build_map_list()
+
 		var new_item := _tree_root.get_child(idx-1)
+		# TODO: this doesn't seem right
 		if   direction == "move_up":   tr_map_list.set_selected(new_item, 0)
 		elif direction == "move_down": tr_map_list.set_selected(new_item, 0)
 
@@ -171,7 +154,7 @@ func set_mission(mission: Mission) -> void:
 	set_show_roots(data.config.show_tree_roots)
 
 
-func _set_button_states(enabled:bool) -> void:
+func _set_button_states(enabled: bool) -> void:
 	btn_remove_map.disabled = not enabled
 	btn_move_up.disabled    = not enabled
 	btn_move_down.disabled  = not enabled
@@ -183,20 +166,44 @@ func _set_button_states(enabled:bool) -> void:
 
 func _build_map_list() -> void:
 	var item := tr_map_list.get_selected()
-	var idx:int = item.get_index() if item else -1
+	var idx: int = item.get_index() if item else -1
 
 	tr_map_list.clear()
 	_tree_root = tr_map_list.create_item()
-	for i:int in _mission.mdata.map_files.size():
+
+	for i: int in _mission.mdata.map_files.size():
 		var filename := _mission.mdata.map_files[i]
 		var is_excluded := _mission.ignored_files.contains(
 			Path.join(_mission.paths.maps, filename + ".map")
 		)
-		var title    := "" if _mission.mdata.map_titles.size() <= i else _mission.mdata.map_titles[i]
+		var title := "" if _mission.mdata.map_titles.size() <= i \
+					 else _mission.mdata.map_titles[i]
 		_add_map_tree_item(filename, title, is_excluded)
 
 	if idx > -1:
 		tr_map_list.set_selected( _tree_root.get_child(idx), 0)
+
+
+func _add_map_tree_item(filename: String, title := "", is_excluded := false) -> TreeItem:
+	var item := _tree_root.create_child()
+	item.set_editable(0, false)
+	item.set_editable(1, true)
+
+	item.set_text_alignment(0, _tree_alignment)
+	item.set_text_alignment(1, _tree_alignment)
+
+	item.set_text(0, filename)
+	#item.set_icon(0, data.ICON_FILE)
+	#item.set_icon_max_width(0, 16)
+	if is_excluded:
+		item.add_button(0, data.ICON_WARNING, 0, false,
+			"Warning: this map is being excluded from the pk4."
+		)
+
+	item.set_custom_color(1, _COLOR_MAP_TITLE)
+	item.set_text(1, title)
+
+	return item
 
 
 func on_mission_reloaded(force_update:=false) -> void:
@@ -248,7 +255,7 @@ func reload_file(filename:String) -> void:
 
 
 func _on_code_editor_focus_changed(editor:CodeEdit, focused:bool) -> void:
-	curr_editor = null
+	_curr_editor = null
 	ce_description.highlight_current_line = false
 	ce_readme.highlight_current_line = false
 	ce_pkignore.highlight_current_line = false
@@ -256,7 +263,7 @@ func _on_code_editor_focus_changed(editor:CodeEdit, focused:bool) -> void:
 	if not focused: return
 
 	editor.highlight_current_line = true
-	curr_editor = editor
+	_curr_editor = editor
 
 
 func _on_code_editor_text_changed(editor:CodeEdit) -> void:
@@ -375,6 +382,19 @@ func _build_trees() -> void:
 	logs.task("... finished building trees (%s)" % [total_time])
 
 
+func _create_node(parent:TreeItem, text:String, icon:Texture2D, color:Variant=null) -> TreeItem:
+	var node := parent.create_child()
+	node.set_text(0, text)
+	if color:
+		node.set_custom_color(0, color)
+		#node.set_icon_modulate(0, color)
+	node.set_icon(0, icon)
+	node.set_icon_max_width(0, 16)
+
+	node.collapsed = true
+	return node
+
+
 func _build_inc_tree(parent: FMTreeNode, gui_parent: TreeItem) -> void:
 	for node: FMTreeNode in parent.children:
 		if node.ignored: continue
@@ -422,16 +442,3 @@ func _build_exc_tree(parent:FMTreeNode, gui_parent:TreeItem) -> void:
 				tree_item = _create_node(gui_parent, node.name, icon)
 
 		_build_exc_tree(node, tree_item)
-
-
-func _create_node(parent:TreeItem, text:String, icon:Texture2D, color:Variant=null) -> TreeItem:
-	var node := parent.create_child()
-	node.set_text(0, text)
-	if color:
-		node.set_custom_color(0, color)
-		#node.set_icon_modulate(0, color)
-	node.set_icon(0, icon)
-	node.set_icon_max_width(0, 16)
-
-	node.collapsed = true
-	return node
