@@ -178,14 +178,19 @@ The mission must already be packed, and the path to the test instance of TDM mus
 disabled = true
 text = "Test"
 
-[node name="il_missions" type="ItemList" parent="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer"]
+[node name="tr_missions" type="Tree" parent="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 allow_rmb_select = true
+hide_folding = true
+hide_root = true
+select_mode = 1
+scroll_horizontal_enabled = false
 
-[node name="missions_popup_menu" type="PopupMenu" parent="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer/il_missions"]
+[node name="missions_popup_menu" type="PopupMenu" parent="VBoxContainer/console_split/HSplitContainer/missions_list/VBoxContainer/tr_missions"]
 unique_name_in_owner = true
+auto_translate_mode = 1
 
 [node name="Control" type="Control" parent="VBoxContainer/console_split/HSplitContainer"]
 layout_mode = 2

@@ -13,6 +13,7 @@ enum MenuOption {
 @onready var missions_list : Control = main.get_node("%missions_list")
 @onready var workspace_mgr : TabContainer = main.get_node("%workspace_mgr")
 
+var _missions_list_root: TreeItem
 
 
 func initialize() -> void:
@@ -25,6 +26,7 @@ func initialize() -> void:
 
 	btn_pack_tab.pressed.connect(gui.workspace_set_main_tab.bind(0))
 	btn_files_tab.pressed.connect(gui.workspace_set_main_tab.bind(1))
+
 
 
 
@@ -85,7 +87,8 @@ enum ListMenuPopup {
 @onready var btn_pack_mission  : Button = main.get_node("%btn_pack_mission")
 @onready var btn_test_pack     : Button = main.get_node("%btn_test_pack")
 
-@onready var il_missions       : ItemList = main.get_node("%il_missions")
+# @onready var il_missions       : ItemList  = main.get_node("%il_missions")
+@onready var tr_missions       : Tree      = main.get_node("%tr_missions")
 @onready var pu_missions_menu  : PopupMenu = main.get_node("%missions_popup_menu")
 
 
@@ -102,7 +105,8 @@ func init_missions_list() -> void:
 	menu.add_item("Close",            ListMenuPopup.CLOSE)
 
 	pu_missions_menu.id_pressed.connect(_on_pu_missions_menu_id_pressed)
-	il_missions.item_clicked.connect(_on_il_missions_item_clicked)
+	# il_missions.item_clicked.connect(_on_il_missions_item_clicked)
+	tr_missions.item_mouse_selected.connect(_on_tr_missions_item_mouse_selected)
 	btn_open_mission.pressed.connect(_on_btn_open_mission_pressed)
 	btn_close_mission.pressed.connect(_on_btn_close_mission_pressed)
 
@@ -111,26 +115,28 @@ func init_missions_list() -> void:
 	btn_pack_mission.pressed.connect(_on_btn_pack_mission_pressed)
 	btn_test_pack.pressed.connect(_on_btn_test_pack_pressed)
 
+	tr_missions.columns = 1
+	tr_missions.hide_root = true
+
 	update_missions_list()
 
 
 func update_missions_list() -> void:
-	il_missions.clear()
-	for m:Mission in fms.missions:
-		var id := m.id
-		var _idx := il_missions.add_item(id)
+	tr_missions.clear()
+	_missions_list_root = tr_missions.create_item()
+
+	for m: Mission in fms.missions:
+		var item := _missions_list_root.create_child()
+		item.set_text(0, m.id)
 
 		if m.missing:
-			il_missions.set_item_custom_fg_color(_idx, data.ERROR_COLOR)
-			il_missions.set_item_icon(_idx, data.ICON_WARNING)
-
-		#if m.file_tree == null:
-			#il_missions.set_item_custom_fg_color(idx, data.ERROR_COLOR)
-			#il_missions.set_item_metadata(idx, "invalid mission")
+			item.set_custom_color(0, data.ERROR_COLOR)
+			# il_missions.set_item_icon(_idx, data.ICON_WARNING)
 
 	if fms.missions.size() > 0:
-		logs.print("curr_idx: ", fms.get_current_mission_index(), fms.curr_mission.id)
-		il_missions.select(fms.get_current_mission_index())
+		var curr_idx := fms.get_current_mission_index()
+		var selected_item := _missions_list_root.get_child(curr_idx)
+		tr_missions.set_selected( selected_item, 0 )
 
 	missions_list_update_buttons()
 
@@ -152,11 +158,11 @@ func missions_list_update_buttons() -> void:
 		btn_test_pack.disabled        = true
 
 
-
-func _on_il_missions_item_clicked(index: int, _at_position: Vector2, mouse_button_index: int) -> void:
+func _on_tr_missions_item_mouse_selected(_mouse_position: Vector2, mouse_button_index: int) -> void:
 	if mouse_button_index > 2:
 		return
 
+	var index := tr_missions.get_selected().get_index()
 	fms.select_mission(index)
 	missions_list_update_buttons()
 
