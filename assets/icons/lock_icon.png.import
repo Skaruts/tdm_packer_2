@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ctpiegbm0nstp"
-path="res://.godot/imported/map_loaded_icon.png-8d55e4fa74590cccb406247c436cdb75.ctex"
+uid="uid://dy0axqekbcims"
+path="res://.godot/imported/lock_icon.png-6cb8926db9a16f503130cb299ebb9690.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/icons/map_loaded_icon.png"
-dest_files=["res://.godot/imported/map_loaded_icon.png-8d55e4fa74590cccb406247c436cdb75.ctex"]
+source_file="res://assets/icons/lock_icon.png"
+dest_files=["res://.godot/imported/lock_icon.png-6cb8926db9a16f503130cb299ebb9690.ctex"]
 
 [params]
 

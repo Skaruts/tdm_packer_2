@@ -24,12 +24,19 @@ const DEFAULT_CONFIG := {
 	}
 }
 
+#const DEFAULT_MODFILE =                          \
+		  #"Title: Beautiful Title\n"              \
+		#+ "Description: Lovely Description\n" \
+		#+ "Author: Amazing Author\n"             \
+		#+ "Version: 1\n"                         \
+		#+ "Required TDM Version: 2.12"
+
 const DEFAULT_MODFILE =                          \
-		  "Title: Beautiful Title\n"              \
-		+ "Description: Lovely Description\n" \
-		+ "Author: Amazing Author\n"             \
-		+ "Version: 1\n"                         \
-		+ "Required TDM Version: 2.12"
+		  "Title:\n"              \
+		+ "Description:\n" \
+		+ "Author:\n"             \
+		+ "Version:\n"                         \
+		+ "Required TDM Version:"
 
 const ERROR_COLOR       = Color(1.0, 0.49, 0.49)
 const WARNING_COLOR     = Color(1, 0.67500007152557, 0.22000002861023)
@@ -44,17 +51,6 @@ var DATA_PATH     := Path.to_global("res://data")
 var SETTINGS_PATH := Path.to_global("res://data/settings.cfg")
 var MISSIONS_FILE := Path.to_global("res://data/missions.dat")
 
-const ICON_FILE_PATH       := "res://assets/icons/file_icon.png"
-const ICON_FOLDER_PATH     := "res://assets/icons/folder_icon.png"
-const ICON_MAP_PATH        := "res://assets/icons/map_icon.png"
-const ICON_MAP_LOADED_PATH := "res://assets/icons/map_loaded_icon.png"
-const ICON_WARNING_PATH    := "res://assets/icons/NodeWarning.svg"
-
-#const WORKSPACE_PATH = "res://scenes/gui/gui_mission_workspace.tscn"
-#const UP_ARROW_16   := preload("res://assets/icons/up_arrow_16.png")
-#const DOWN_ARROW_16 := preload("res://assets/icons/down_arrow_16.png")
-
-
 const IGNORES_FILENAME     = ".pkignore"
 const MODFILE_FILENAME     = "darkmod.txt"
 const STARTINGMAP_FILENAME = "startingmap.txt"
@@ -62,11 +58,16 @@ const MAPSEQUENCE_FILENAME = "tdm_mapsequence.txt"
 const README_FILENAME      = "readme.txt"
 const CURRENT_FM_FILE      = "currentfm.txt"
 
-const ICON_FILE       : Texture2D = preload(ICON_FILE_PATH)
-const ICON_FOLDER     : Texture2D = preload(ICON_FOLDER_PATH)
-const ICON_MAP        : Texture2D = preload(ICON_MAP_PATH)
-const ICON_MAP_LOADED : Texture2D = preload(ICON_MAP_LOADED_PATH)
-const ICON_WARNING    : Texture2D = preload(ICON_WARNING_PATH)
+const ICON_FILE       : Texture2D = preload("res://assets/icons/file_icon.png")
+const ICON_FOLDER     : Texture2D = preload("res://assets/icons/folder_icon.png")
+const ICON_DOT        : Texture2D = preload("res://assets/icons/dot_icon.png")
+const ICON_CHECKMARK  : Texture2D = preload("res://assets/icons/check_mark_icon.png")
+const ICON_WARNING    : Texture2D = preload("res://assets/icons/NodeWarning.svg")
+const ICON_LOCK       : Texture2D = preload("res://assets/icons/lock_icon.png")
+
+#const WORKSPACE_PATH = "res://scenes/gui/gui_mission_workspace.tscn"
+#const UP_ARROW_16   := preload("res://assets/icons/up_arrow_16.png")
+#const DOWN_ARROW_16 := preload("res://assets/icons/down_arrow_16.png")
 
 const TOK_VERSION     := "$version"
 const TOK_AUTHOR      := "$author"
@@ -83,7 +84,7 @@ const TOK_DATETIME    := "$date_time"
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 var app_title := "TDM Packer 2 (%s)" % [VERSION]
 
-var config:ConfigData
+var config: ConfigData
 
 
 

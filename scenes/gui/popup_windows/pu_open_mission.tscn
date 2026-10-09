@@ -46,6 +46,16 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Available Missions"
 
+[node name="Control" type="Control" parent="PanelContainer/VBoxContainer/tabs/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="btn_unlock_fm" type="Button" parent="PanelContainer/VBoxContainer/tabs/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "Make Editable"
+
 [node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/VBoxContainer/tabs/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -61,6 +71,7 @@ focus_neighbor_top = NodePath(".")
 focus_neighbor_right = NodePath(".")
 focus_neighbor_bottom = NodePath(".")
 hide_root = true
+select_mode = 1
 auto_tooltip = false
 
 [node name="lb_warnings" type="Label" parent="PanelContainer/VBoxContainer/tabs/VBoxContainer"]
@@ -94,4 +105,5 @@ text = "Cancel"
 
 [connection signal="cell_selected" from="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer/tr_missions" to="." method="_on_tr_missions_cell_selected"]
 [connection signal="item_activated" from="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer/tr_missions" to="." method="_on_tr_missions_item_activated"]
+[connection signal="item_selected" from="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer/tr_missions" to="." method="_on_tr_missions_item_selected"]
 [connection signal="multi_selected" from="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer/tr_missions" to="." method="_on_tr_missions_multi_selected"]

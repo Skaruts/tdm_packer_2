@@ -127,7 +127,7 @@ static func _pack_files(output:Object, mission:Mission) -> ErrorReport:
 #		File Tree
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-static func build_file_tree(mission:Mission) -> void:
+static func build_file_tree(mission: Mission) -> void:
 	logs.task("Building file tree...")
 
 	mission.inc_dir_count       = 0
@@ -232,7 +232,7 @@ static func print_tree_node_recursive(root:FMTreeNode) -> void:
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 
-#        Validate Paths
+#        Paths
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 const INVALID_CHARS : Array[String] = [' ',
@@ -244,6 +244,28 @@ const INVALID_CAHARS_NO_SPACE : Array[String] = [
 	'(', ')', '{', '}', '[', ']', '|', '!', '@', '#', '$', '%', '^', '&',
 	'*', ',', '+', '-', '"', '\'', ':', ';', '?', '<', '>', '`', '~'
 ]
+
+static func get_mission_folder_list() -> Array[String]:
+	var mission_paths := Path.get_dirpaths(fms.fms_folder)
+
+	var exceptions: Array[String] = ["_missionshots"]
+	for i: int in range(mission_paths.size()-1, -1, -1):
+		for exc in exceptions:
+			if mission_paths[i].ends_with(exc):
+				mission_paths.remove_at(i)
+				break
+
+	return mission_paths
+
+
+static func get_mission_id_list() -> Array[String]:
+	var mission_paths := FMUtils.get_mission_folder_list()
+	var mission_ids: Array[String]
+
+	for path in mission_paths:
+		mission_ids.append(path.get_file())
+
+	return mission_ids
 
 
 static func validate_paths(output:Object, mission:Mission) -> bool:
@@ -316,15 +338,35 @@ enum ModfileSection {
 }
 
 
-static func check_file_and_create(mis:Mission, filename:String, default_content:="") -> void:
+static func check_file_and_create(mis: Mission, filename: String, default_content := "") -> bool:
+	if Path.file_exists(mis.paths.get(filename)): return true
+	if not fms.is_mission_readonly(mis.id):
+		Path.write_file(mis.paths.get(filename), default_content)
+		return true
+	return false
+
+
+static func load_file_strictly(mis: Mission, filename: String) -> void:
+	var file_path: String = mis.paths.get(filename)
+	if Path.file_exists(file_path):
+		var file_content := Path.read_file_string(file_path)
+		mis.mdata.set(filename, file_content)
+		mis.store_hash(file_path)
+
+
+static func load_or_create_file(mis: Mission, filename: String, default_content := "") -> void:
 	if not Path.file_exists(mis.paths.get(filename)):
+		if fms.is_mission_readonly(mis.id):
+			return
 		Path.write_file(mis.paths.get(filename), default_content)
 
-
-static func load_file(mis:Mission, filename:String, default_content:="") -> void:
-	check_file_and_create(mis, filename, default_content)
 	mis.mdata.set(filename, Path.read_file_string(mis.paths.get(filename)))
 	mis.store_hash(mis.paths.get(filename))
+
+static func create_mission_file(mis: Mission, filename: String, default_content := "") -> void:
+	var file_path: String = mis.paths.get(filename)
+	if Path.file_exists(file_path): return
+	Path.write_file(mis.paths.get(filename), default_content)
 
 
 static func save_modfile(mis: Mission) -> void:
@@ -350,7 +392,11 @@ static func save_modfile(mis: Mission) -> void:
 
 
 static func load_modfile(mis: Mission) -> void:
-	check_file_and_create(mis, "modfile", data.DEFAULT_MODFILE)
+	if not Path.file_exists(mis.paths.get("modfile")):
+		if fms.is_mission_readonly(mis.id):
+			return
+		Path.write_file(mis.paths.get("modfile"), data.DEFAULT_MODFILE)
+
 	var file_string := Path.read_file_string(mis.paths.modfile)
 
 	var map_index := -99
@@ -503,7 +549,7 @@ static func load_map_sequence(mis: Mission) -> void:
 			mis.remove_hash(mis.paths.startingmap)
 			mis.store_hash(mis.paths.mapsequence)
 
-	else:
+	elif not fms.is_mission_readonly(mis.id):
 		Path.write_file(mis.paths.startingmap, "")
 		mis.remove_hash(mis.paths.mapsequence)
 		mis.store_hash(mis.paths.startingmap)
