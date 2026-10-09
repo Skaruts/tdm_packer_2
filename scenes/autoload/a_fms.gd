@@ -274,6 +274,9 @@ func get_mission_index(mission:Mission) -> int:
 	assert(missions.size() > 0)
 	return missions.find(mission)
 
+func get_mission_at_index(index: int) -> Mission:
+	assert(missions.size() > 0)
+	return missions[index]
 
 func _erase_mission(mis:Mission) -> void:
 	missions.erase(mis)

@@ -41,10 +41,12 @@ enum EditorIndex {
 
 var _curr_editor       : CodeEdit
 var _mission           : Mission
-var _tree_root         : TreeItem
+var _maps_tree_root         : TreeItem
 var _tree_alignment    := HORIZONTAL_ALIGNMENT_LEFT
 const _COLOR_MAP_TITLE := Color(0.82, 0.698, 0.361)
 
+
+var pk_syntax_highlighter: SyntaxHighlighter
 
 func _ready() -> void:
 	tr_map_list.columns = 2
@@ -71,12 +73,12 @@ func _ready() -> void:
 				fms.start_save_timer(false)
 	)
 
-	tr_map_list.item_selected.connect( _set_button_states.bind(true) )
+	tr_map_list.item_selected.connect( _update_buttons_states )
 
 	tr_map_list.empty_clicked.connect(
 		func(_click_position: Vector2, _mouse_button_index: int) -> void:
 			tr_map_list.deselect_all()
-			_set_button_states(false)
+			_update_buttons_states()
 	)
 
 	#tr_map_list.focus_exited.connect(
@@ -103,7 +105,7 @@ func _ready() -> void:
 	btn_remove_map.pressed.connect(_on_btn_remove_map_pressed)
 	btn_move_up.pressed.connect(_on_move_arrow_pressed.bind("move_up"))
 	btn_move_down.pressed.connect(_on_move_arrow_pressed.bind("move_down"))
-	_set_button_states(false)
+	_update_buttons_states()
 
 
 
@@ -118,7 +120,7 @@ func _on_move_arrow_pressed(direction: String) -> void:
 		fms.start_save_timer(false)
 		_build_map_list()
 
-		var new_item := _tree_root.get_child(idx-1)
+		var new_item := _maps_tree_root.get_child(idx-1)
 		# TODO: this doesn't seem right
 		if   direction == "move_up":   tr_map_list.set_selected(new_item, 0)
 		elif direction == "move_down": tr_map_list.set_selected(new_item, 0)
@@ -136,7 +138,7 @@ func set_mission(mission: Mission) -> void:
 	ce_description.clear_undo_history()
 	ce_description.tag_saved_version()
 
-	ce_pkignore.syntax_highlighter = ce_pkignore.syntax_highlighter.duplicate()
+	pk_syntax_highlighter = ce_pkignore.syntax_highlighter.duplicate()
 	ce_pkignore.text = _mission.mdata.pkignore
 	ce_pkignore.clear_undo_history()
 	ce_pkignore.tag_saved_version()
@@ -145,23 +147,61 @@ func set_mission(mission: Mission) -> void:
 	ce_readme.clear_undo_history()
 	ce_readme.tag_saved_version()
 
-	_set_button_states(false)
+	_update_buttons_states()
 
-	if _mission.missing: return
+	var valid_mission := not _mission.missing and not _mission.locked
+
+	ce_description.editable = valid_mission
+	ce_readme.editable = valid_mission
+	ce_pkignore.editable = valid_mission
+	le_title.editable = valid_mission
+	le_author.editable = valid_mission
+	le_version.editable = valid_mission
+	le_tdm_version.editable = valid_mission
+
+	ce_pkignore.syntax_highlighter = pk_syntax_highlighter if valid_mission else null
+
+	if not valid_mission:
+		tr_included.clear()
+		tr_excluded.clear()
+		if not _mission.missing:
+			_build_map_list()
+			_update_buttons_states()
+		return
 
 	_build_trees()
 	_build_map_list()
 	set_show_roots(data.config.show_tree_roots)
 
 
-func _set_button_states(enabled: bool) -> void:
-	btn_remove_map.disabled = not enabled
-	btn_move_up.disabled    = not enabled
-	btn_move_down.disabled  = not enabled
+func _update_buttons_states() -> void:
+	if not _mission:
+		btn_add_map.disabled = true
+		btn_remove_map.disabled = true
+		btn_move_up.disabled    = true
+		btn_move_down.disabled  = true
 
-	btn_remove_map.focus_mode = Control.FOCUS_ALL if enabled else Control.FOCUS_NONE
-	btn_move_up.focus_mode    = Control.FOCUS_ALL if enabled else Control.FOCUS_NONE
-	btn_move_down.focus_mode  = Control.FOCUS_ALL if enabled else Control.FOCUS_NONE
+		btn_remove_map.focus_mode = Control.FOCUS_NONE
+		btn_move_up.focus_mode    = Control.FOCUS_NONE
+		btn_move_down.focus_mode  = Control.FOCUS_NONE
+	else:
+		var no_maps := true
+		if _maps_tree_root:
+			no_maps = _maps_tree_root.get_child_count() == 0
+
+		var selected := tr_map_list.get_selected()
+		var disabled := no_maps or _mission.missing or _mission.locked or not selected
+
+		btn_add_map.disabled = _mission.missing or _mission.locked
+
+		btn_remove_map.disabled = disabled
+		btn_move_up.disabled    = disabled
+		btn_move_down.disabled  = disabled
+
+		btn_add_map.focus_mode    = Control.FOCUS_NONE if btn_add_map.disabled    else Control.FOCUS_ALL
+		btn_remove_map.focus_mode = Control.FOCUS_NONE if btn_remove_map.disabled else Control.FOCUS_ALL
+		btn_move_up.focus_mode    = Control.FOCUS_NONE if btn_move_up.disabled    else Control.FOCUS_ALL
+		btn_move_down.focus_mode  = Control.FOCUS_NONE if btn_move_down.disabled  else Control.FOCUS_ALL
 
 
 func _build_map_list() -> void:
@@ -169,7 +209,7 @@ func _build_map_list() -> void:
 	var idx: int = item.get_index() if item else -1
 
 	tr_map_list.clear()
-	_tree_root = tr_map_list.create_item()
+	_maps_tree_root = tr_map_list.create_item()
 
 	for i: int in _mission.mdata.map_files.size():
 		var filename := _mission.mdata.map_files[i]
@@ -181,11 +221,11 @@ func _build_map_list() -> void:
 		_add_map_tree_item(filename, title, is_excluded)
 
 	if idx > -1:
-		tr_map_list.set_selected( _tree_root.get_child(idx), 0)
+		tr_map_list.set_selected( _maps_tree_root.get_child(idx), 0)
 
 
 func _add_map_tree_item(filename: String, title := "", is_excluded := false) -> TreeItem:
-	var item := _tree_root.create_child()
+	var item := _maps_tree_root.create_child()
 	item.set_editable(0, false)
 	item.set_editable(1, true)
 
@@ -210,7 +250,9 @@ func on_mission_reloaded(force_update:=false) -> void:
 	if _mission != fms.curr_mission and not force_update:
 		return
 
-	if _mission.missing: return
+	var valid_mission := not _mission.missing and not _mission.locked
+	# if _mission.missing or _mission.locked:
+		# return
 
 	#le_title.text       = _mission.mdata.title
 	#le_author.text      = _mission.mdata.author
@@ -221,12 +263,31 @@ func on_mission_reloaded(force_update:=false) -> void:
 	#ce_readme.text      = _mission.mdata.readme
 	#ce_pkignore.text    = _mission.mdata.pkignore
 
+	ce_description.editable = valid_mission
+	ce_readme.editable = valid_mission
+	ce_pkignore.editable = valid_mission
+	le_title.editable = valid_mission
+	le_author.editable = valid_mission
+	le_version.editable = valid_mission
+	le_tdm_version.editable = valid_mission
+
+	ce_pkignore.syntax_highlighter = pk_syntax_highlighter if valid_mission else null
+
+	if not valid_mission:
+		tr_included.clear()
+		tr_excluded.clear()
+		if not _mission.missing:
+			_build_map_list()
+			_update_buttons_states()
+		return
+
 	ce_description.tag_saved_version()
 	ce_readme.tag_saved_version()
 	ce_pkignore.tag_saved_version()
 
 	_build_trees()
 	_build_map_list()
+	_update_buttons_states()
 
 
 func reload_file(filename:String) -> void:
@@ -302,7 +363,7 @@ func _on_line_edit_text_changed(new_text:String, ledit:LineEdit) -> void:
 
 func add_map(map_name:String) -> void:
 	_add_map_tree_item(map_name)
-	tr_map_list.set_selected( _tree_root.get_child(-1), 0 )
+	tr_map_list.set_selected( _maps_tree_root.get_child(-1), 0 )
 
 func _on_btn_add_map_pressed() -> void:
 	popups.add_map.pack_tab = self
@@ -318,14 +379,12 @@ func _on_btn_remove_map_pressed() -> void:
 	var filename := item.get_text(0)
 
 	if _mission.remove_map_file(filename):
-		_tree_root.remove_child(item)
+		_maps_tree_root.remove_child(item)
 		fms.start_save_timer(true)
 
-	if _tree_root.get_child_count() == 0:
-		_set_button_states(false)
-	else:
-		idx = clamp(idx, 0, _tree_root.get_child_count()-1)
-		tr_map_list.set_selected( _tree_root.get_child(idx), 0 )
+	idx = clamp(idx, 0, _maps_tree_root.get_child_count()-1)
+	tr_map_list.set_selected( _maps_tree_root.get_child(idx), 0 )
+	_update_buttons_states()
 
 
 func set_show_roots(enabled:bool) -> void:
