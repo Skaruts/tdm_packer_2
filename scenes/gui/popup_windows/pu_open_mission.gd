@@ -11,12 +11,17 @@ var _selected_missions : Dictionary
 
 @onready var btn_unlock_fm: Button = %btn_unlock_fm
 
-const fm_lock_tooltip := "Click to toggle editable/read-only. Making a mission editable means TDM Packer\n"          \
-			           + "can create the necessary base base files for the mission. This is not recommended\n"       \
-			           + "for missions made by other authors, as it may cause some issues.\n\n"                      \
-			           + "(E.g., if a mission has no 'startmap.txt' or 'map_sequence.txt', TDM Packer will create\n" \
-			           + "an empty one, which will then prevent TDM from running the mission, as this empty\n"       \
-			           + "file will override the one in the pk4.)"
+const fm_tooltip_more := "Click to toggle editable/read-only. Making a mission editable means TDM Packer\n"          \
+					   + "can create the necessary base base files for the mission. This is not recommended\n"       \
+					   + "for missions made by other authors, as it may cause some issues.\n\n"                      \
+					   + "(E.g., if a mission has no 'startmap.txt' or 'map_sequence.txt', TDM Packer will create\n" \
+					   + "an empty one, which will then prevent TDM from running the mission, as this empty\n"       \
+					   + "file will override the one in the pk4.)"
+
+const lock_tooltip_ro := "This mission is read-only.\n\n" + fm_tooltip_more
+const lock_tooltip_ed := "This mission is editable.\n\n" + fm_tooltip_more
+
+
 
 func _on_ready() -> void:
 	tr_missions.columns = 2
@@ -65,10 +70,10 @@ func _on_popup() -> void:
 		item.set_icon_max_width(idx, 20)
 
 		if is_readonly:
-			item.add_button(idx, data.ICON_CHECKMARK, 0, false, "This mission is readonly\n\n" + fm_lock_tooltip)
+			item.add_button(idx, data.ICON_DOT, 0, false, lock_tooltip_ro)
 			item.set_button_color(idx, 0, Color.DIM_GRAY)
 		else:
-			item.add_button(idx, data.ICON_CHECKMARK, 0, false, "This mission is editable\n\n" + fm_lock_tooltip)
+			item.add_button(idx, data.ICON_CHECKMARK, 0, false, lock_tooltip_ed)
 			item.set_button_color(idx, 0, data.VALID_COLOR)
 
 
@@ -211,7 +216,7 @@ func _on_btn_unlock_fm_pressed() -> void:
 	btn_unlock_fm.text = "Make Readonly" if not readonly else "Make Editable"
 
 	if readonly:
-		# item.add_button(0, data.ICON_CHECKMARK, 0, true, "This mission is readonly")
+		# item.add_button(0, data.ICON_CHECKMARK, 0, true, "This mission is read-only")
 		item.set_button_color(0, 0, Color.DIM_GRAY)
 	else:
 		# item.add_button(0, data.ICON_CHECKMARK, 0, true, "This mission is editable")
@@ -224,8 +229,8 @@ func _on_tr_missions_button_clicked(item: TreeItem, column: int, _btn_id: int, _
 	fms.set_mission_readonly(id, not fms.is_mission_readonly(id))
 
 	if fms.is_mission_readonly(id):
-		item.set_button_tooltip_text(column, 0, "This mission is read-only\n" + fm_lock_tooltip)
+		item.set_button_tooltip_text(column, 0, lock_tooltip_ro)
 		item.set_button_color(column, 0, Color.DIM_GRAY)
 	else:
-		item.set_button_tooltip_text(column, 0, "This mission is editable\n" + fm_lock_tooltip)
+		item.set_button_tooltip_text(column, 0, lock_tooltip_ed)
 		item.set_button_color(column, 0, data.VALID_COLOR)
