@@ -231,6 +231,8 @@ func _on_tr_missions_button_clicked(item: TreeItem, column: int, _btn_id: int, _
 	if fms.is_mission_readonly(id):
 		item.set_button_tooltip_text(column, 0, lock_tooltip_ro)
 		item.set_button_color(column, 0, Color.DIM_GRAY)
+		item.set_button(column, 0, data.ICON_DOT)
 	else:
 		item.set_button_tooltip_text(column, 0, lock_tooltip_ed)
 		item.set_button_color(column, 0, data.VALID_COLOR)
+		item.set_button(column, 0, data.ICON_CHECKMARK)
