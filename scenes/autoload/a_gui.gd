@@ -117,13 +117,13 @@ func init_missions_list() -> void:
 
 	tr_missions.columns = 1
 	tr_missions.hide_root = true
-	tr_missions.button_clicked.connect(
-		func(item: TreeItem, _column: int, id: int, _mouse_button_index: int) -> void:
-			match id:
-				ListButton.LOCK:
-					var mission := fms.get_mission_at_index(item.get_index())
-					mission_set_locked(mission, not mission.locked)
-	)
+	#tr_missions.button_clicked.connect(
+		#func(item: TreeItem, _column: int, id: int, _mouse_button_index: int) -> void:
+			#match id:
+				#ListButton.LOCK:
+					#var mission := fms.get_mission_at_index(item.get_index())
+					#mission_set_locked(mission, not mission.locked)
+	#)
 			#func _on_tr_missions_button_clicked(item: TreeItem, column: int, id: int, mouse_button_index: int) -> void:
 	update_missions_list()
 
@@ -133,11 +133,11 @@ enum ListButton {
 }
 
 
-func mission_set_locked(mission: Mission, enabled: bool) -> void:
-	mission.locked = enabled
-	update_missions_list()
-	missions_list_update_buttons()
-	on_mission_reloaded(fms.get_mission_index(mission), true)
+#func mission_set_locked(mission: Mission, enabled: bool) -> void:
+	#mission.locked = enabled
+	#update_missions_list()
+	#missions_list_update_buttons()
+	#on_mission_reloaded(fms.get_mission_index(mission), true)
 
 
 func update_missions_list() -> void:
@@ -147,20 +147,20 @@ func update_missions_list() -> void:
 	for m: Mission in fms.missions:
 		var item := _missions_list_root.create_child()
 		item.set_text(0, m.id)
-		item.set_custom_color(0, Color.DIM_GRAY if m.locked else Color.WHITE)
+		item.set_custom_color(0, Color.DIM_GRAY if fms.is_mission_readonly(m) else Color.WHITE)
 
-		if m.missing:
+		if fms.is_mission_missing(m):
 			item.set_custom_color(0, data.ERROR_COLOR)
-			# il_missions.set_item_icon(_idx, data.ICON_WARNING)
-			item.add_button(0, data.ICON_LOCK, 0, true, "")
+			# # il_missions.set_item_icon(_idx, data.ICON_WARNING)
+			# item.add_button(0, data.ICON_LOCK, 0, true, "")
 		else:
-			var btn_idx := item.get_button_count(0)
-			item.add_button(0, data.ICON_LOCK, ListButton.LOCK, false,
-				"Click to lock/unlock mission."
-			)
-			item.set_button_color(0, btn_idx, Color.WHITE if m.locked else Color.DIM_GRAY)
-			#item.set_button_color(0, btn_idx, Color.DIM_GRAY)
-
+			# var btn_idx := item.get_button_count(0)
+			# item.add_button(0, data.ICON_LOCK, ListButton.LOCK, false,
+			# 	"Click to lock/unlock mission."
+			# )
+			# item.set_button_color(0, btn_idx, Color.WHITE if fms.is_mission_readonly(m) else Color.DIM_GRAY)
+			# #item.set_button_color(0, btn_idx, Color.DIM_GRAY)
+			pass
 
 	if fms.missions.size() > 0:
 		var curr_idx := fms.get_current_mission_index()
@@ -175,11 +175,16 @@ func missions_list_update_buttons() -> void:
 	btn_open_mission.disabled  = not data.is_tdm_path_set()
 	btn_close_mission.disabled = no_missions
 
-	if not no_missions and not fms.curr_mission.missing and fms.curr_mission.file_tree != null:
+	if not no_missions and not fms.is_mission_missing(fms.curr_mission) \
+	and fms.curr_mission.file_tree != null:
 		btn_play_mission.disabled     = not data.is_tdm_path_set()
-		btn_run_dr.disabled           = not data.is_dr_path_set() or fms.curr_mission.locked
-		btn_pack_mission.disabled     = not data.is_tdm_path_set() or fms.curr_mission.locked
-		btn_test_pack.disabled        = not data.is_tdm_copy_path_set() or not fms.is_mission_packed(fms.curr_mission) or fms.curr_mission.locked
+		btn_run_dr.disabled           = not data.is_dr_path_set()  \
+										 or fms.is_mission_readonly(fms.curr_mission)
+		btn_pack_mission.disabled     = not data.is_tdm_path_set() \
+										 or fms.is_mission_readonly(fms.curr_mission)
+		btn_test_pack.disabled        = not data.is_tdm_copy_path_set() \
+										 or not fms.is_mission_packed(fms.curr_mission) \
+										 or fms.is_mission_readonly(fms.curr_mission)
 	else:
 		btn_play_mission.disabled     = true
 		btn_run_dr.disabled           = true

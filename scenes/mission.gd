@@ -2,21 +2,21 @@ class_name Mission
 extends RefCounted
 
 
-var file_tree:FMTreeNode
-var filepaths: Array[String]
-var full_filelist: Array[String]  # used to check for external changes
-var file_hashes:Dictionary
+var file_tree     : FMTreeNode
+var filepaths     : Array[String]
+var full_filelist : Array[String]  # used to check for external changes
+var file_hashes   : Dictionary
 
-var inc_file_count:int
-var inc_dir_count:int
-var exc_file_count:int
-var exc_dir_count:int
+var inc_file_count : int
+var inc_dir_count  : int
+var exc_file_count : int
+var exc_dir_count  : int
 
-var ignored_directories:Set
-var ignored_files:Set
+var ignored_directories : Set
+var ignored_files       : Set
 
-var missing : bool
-var locked : bool
+# var missing  : bool
+# var readonly : bool
 
 
 class MissionPaths: # this allows auto-completion and strict typing, unlike dictionaries
@@ -81,10 +81,11 @@ var dirty := 0
 
 func update_zipname() -> bool:
 	var old_zip_name := zipname
-	var cfg_suffix:String = data.config.packname_suffix
+	var cfg_suffix: String = data.config.packname_suffix
 	var suffix := ""
 	if cfg_suffix.contains(data.TOK_VERSION):
-		suffix = cfg_suffix.replace(data.TOK_VERSION, mdata.version).replace(' ', '_')
+		suffix = cfg_suffix.replace(data.TOK_VERSION, mdata.version) \
+						   .replace(' ', '_')
 	zipname = id + suffix + ".pk4"
 	return old_zip_name != zipname
 

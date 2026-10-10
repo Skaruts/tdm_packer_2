@@ -77,7 +77,7 @@ const TOK_DATETIME    := "$date_time"
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 var app_title := "TDM Packer 2 (%s)" % [VERSION]
 
-var config:ConfigData
+var config: ConfigData
 
 
 

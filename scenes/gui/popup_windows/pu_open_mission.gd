@@ -17,34 +17,30 @@ func _on_ready() -> void:
 	lb_warnings.set("theme_override_colors/font_color", data.ERROR_COLOR)
 
 
+
+
+
 func _on_popup() -> void:
 	lb_warnings.hide()
 	btn_ok.disabled = true
 	tr_missions.grab_focus()
 
 	var num_invalid_missions := 0
-	var mission_paths := Path.get_dirpaths(fms.fms_folder)
-
-	var exceptions:Array[String] = ["_missionshots"]
-	for i:int in range(mission_paths.size()-1, -1, -1):
-		for exc:String in exceptions:
-			if mission_paths[i].ends_with(exc):
-				mission_paths.remove_at(i)
-				break
+	var mission_paths := FMUtils.get_mission_folder_list()
 
 	tr_missions.clear()
 	tr_missions.columns = 1
 
 	var _root := tr_missions.create_item()
-	var item:TreeItem
+	var item: TreeItem
 
 	for i:int in mission_paths.size():
 		var path := mission_paths[i]
 		var idx  := i % tr_missions.columns
-		var mission_name := path.get_file()
+		var mission_id := path.get_file()
 
 		var is_valid_mission := Path.file_exists(Path.join(path, data.MODFILE_FILENAME))
-		var is_loaded := fms.is_mission_already_loaded(mission_name)
+		var is_loaded := fms.is_mission_already_loaded(mission_id)
 
 		if idx == 0:
 			item = _root.create_child()
@@ -54,7 +50,7 @@ func _on_popup() -> void:
 		if   i == 0:                      _first_item = item
 		elif i == mission_paths.size()-1: _last_item = item
 
-		item.set_text(idx, mission_name)
+		item.set_text(idx, mission_id)
 		item.set_icon(idx, data.ICON_FOLDER)
 		item.set_icon_max_width(idx, 20)
 
@@ -95,8 +91,8 @@ func _on_bar_button_pressed(idx:int) -> void:
 
 func _commit_data() -> void:
 	var missions:Array[String]
-	for mission_name:String in _selected_missions:
-		missions.append(mission_name)
+	for mission_id:String in _selected_missions:
+		missions.append(mission_id)
 	await fms.add_missions(missions)
 
 
@@ -138,11 +134,11 @@ func _on_tr_missions_cell_selected() -> void:
 func _validate_selected_missions() -> bool:
 	var to_load := 0
 
-	for mission_name:String in _selected_missions:
-		var is_valid: bool = _selected_missions[mission_name]
+	for mission_id: String in _selected_missions:
+		var is_valid: bool = _selected_missions[mission_id]
 		if not is_valid:
 			popups.show_confirmation({
-				text = "Folder '%s' has no 'darkmod.txt'.\nCreate a new one?" % mission_name,
+				text = "Folder '%s' has no 'darkmod.txt'.\nCreate a new one?" % mission_id,
 			})
 			if not await popups.confirmation_dialog.answer:
 				continue
