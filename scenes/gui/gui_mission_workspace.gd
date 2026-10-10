@@ -15,8 +15,8 @@ var _mission: Mission
 
 
 func update_nodes() -> void:
-	node_mission_workspace.visible = not fms.is_mission_missing(_mission)
-	node_missing_mission.visible = fms.is_mission_missing(_mission)
+	node_mission_workspace.visible = not fms.is_mission_missing(_mission.id)
+	node_missing_mission.visible = fms.is_mission_missing(_mission.id)
 
 
 func set_mission(m:Mission) -> void:
@@ -28,14 +28,14 @@ func set_mission(m:Mission) -> void:
 
 func on_mission_reloaded(force_update:=false) -> void:
 	update_nodes()
-	if fms.is_mission_missing(_mission): return
+	if fms.is_mission_missing(_mission.id): return
 	tab_package.on_mission_reloaded(force_update)
 	tab_files.on_mission_reloaded(force_update)
 
 
 
 func update_pack_name() -> void:
-	if fms.is_mission_missing(_mission): return
+	if fms.is_mission_missing(_mission.id): return
 	tab_package.update_pack_name()
 	tab_files.update_pack_name()
 

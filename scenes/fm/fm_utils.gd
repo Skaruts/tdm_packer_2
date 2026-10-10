@@ -340,7 +340,7 @@ enum ModfileSection {
 
 static func check_file_and_create(mis: Mission, filename: String, default_content := "") -> bool:
 	if Path.file_exists(mis.paths.get(filename)): return true
-	if not fms.is_mission_readonly(mis):
+	if not fms.is_mission_readonly(mis.id):
 		Path.write_file(mis.paths.get(filename), default_content)
 		return true
 	return false
@@ -356,7 +356,7 @@ static func load_file_strictly(mis: Mission, filename: String) -> void:
 
 static func load_or_create_file(mis: Mission, filename: String, default_content := "") -> void:
 	if not check_file_and_create(mis, filename, default_content)\
-	or fms.is_mission_readonly(mis): return
+	or fms.is_mission_readonly(mis.id): return
 	mis.mdata.set(filename, Path.read_file_string(mis.paths.get(filename)))
 	mis.store_hash(mis.paths.get(filename))
 
@@ -390,10 +390,10 @@ static func save_modfile(mis: Mission) -> void:
 
 static func load_modfile(mis: Mission) -> void:
 	if not check_file_and_create(mis, "modfile", data.DEFAULT_MODFILE)\
-	or fms.is_mission_readonly(mis):
+	or fms.is_mission_readonly(mis.id):
 		return
 
-	logs.print(mis.id, fms.is_mission_readonly(mis))
+	logs.print(mis.id, fms.is_mission_readonly(mis.id))
 
 	var file_string := Path.read_file_string(mis.paths.modfile)
 
@@ -547,7 +547,7 @@ static func load_map_sequence(mis: Mission) -> void:
 			mis.remove_hash(mis.paths.startingmap)
 			mis.store_hash(mis.paths.mapsequence)
 
-	elif not fms.is_mission_readonly(mis):
+	elif not fms.is_mission_readonly(mis.id):
 		Path.write_file(mis.paths.startingmap, "")
 		mis.remove_hash(mis.paths.mapsequence)
 		mis.store_hash(mis.paths.startingmap)

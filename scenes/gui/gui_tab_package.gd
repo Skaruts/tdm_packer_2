@@ -150,8 +150,8 @@ func set_mission(mission: Mission) -> void:
 	_update_buttons_states()
 
 
-	var valid_mission := not fms.is_mission_missing(_mission) \
-						 and not fms.is_mission_readonly(_mission)
+	var valid_mission := not fms.is_mission_missing(_mission.id) \
+						 and not fms.is_mission_readonly(_mission.id)
 
 	ce_description.editable = valid_mission
 	ce_readme.editable = valid_mission
@@ -166,7 +166,7 @@ func set_mission(mission: Mission) -> void:
 	if not valid_mission:
 		tr_included.clear()
 		tr_excluded.clear()
-		if not fms.is_mission_missing(_mission):
+		if not fms.is_mission_missing(_mission.id):
 			_build_map_list()
 			_update_buttons_states()
 		return
@@ -192,11 +192,11 @@ func _update_buttons_states() -> void:
 			no_maps = _maps_tree_root.get_child_count() == 0
 
 		var selected := tr_map_list.get_selected()
-		var disabled := no_maps or fms.is_mission_missing(_mission) \
-					 or fms.is_mission_readonly(_mission) or not selected
+		var disabled := no_maps or fms.is_mission_missing(_mission.id) \
+					 or fms.is_mission_readonly(_mission.id) or not selected
 
-		btn_add_map.disabled = fms.is_mission_missing(_mission) \
-							or fms.is_mission_readonly(_mission)
+		btn_add_map.disabled = fms.is_mission_missing(_mission.id) \
+							or fms.is_mission_readonly(_mission.id)
 
 		btn_remove_map.disabled = disabled
 		btn_move_up.disabled    = disabled
@@ -254,8 +254,8 @@ func on_mission_reloaded(force_update:=false) -> void:
 	if _mission != fms.curr_mission and not force_update:
 		return
 
-	var valid_mission := not fms.is_mission_missing(_mission) \
-						 and not fms.is_mission_readonly(_mission)
+	var valid_mission := not fms.is_mission_missing(_mission.id) \
+						 and not fms.is_mission_readonly(_mission.id)
 
 	# if fms.is_mission_missing(_mission) or _mission.locked:
 		# return
@@ -282,7 +282,7 @@ func on_mission_reloaded(force_update:=false) -> void:
 	if not valid_mission:
 		tr_included.clear()
 		tr_excluded.clear()
-		if not fms.is_mission_missing(_mission):
+		if not fms.is_mission_missing(_mission.id):
 			_build_map_list()
 			_update_buttons_states()
 		return

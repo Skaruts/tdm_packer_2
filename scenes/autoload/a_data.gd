@@ -54,7 +54,7 @@ const CURRENT_FM_FILE      = "currentfm.txt"
 const ICON_FILE       : Texture2D = preload("res://assets/icons/file_icon.png")
 const ICON_FOLDER     : Texture2D = preload("res://assets/icons/folder_icon.png")
 const ICON_MAP        : Texture2D = preload("res://assets/icons/map_icon.png")
-const ICON_MAP_LOADED : Texture2D = preload("res://assets/icons/map_loaded_icon.png")
+const ICON_CHECKMARK  : Texture2D = preload("res://assets/icons/check_mark_icon.png")
 const ICON_WARNING    : Texture2D = preload("res://assets/icons/NodeWarning.svg")
 const ICON_LOCK       : Texture2D = preload("res://assets/icons/lock_icon.png")
 

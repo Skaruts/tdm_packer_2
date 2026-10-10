@@ -147,9 +147,9 @@ func update_missions_list() -> void:
 	for m: Mission in fms.missions:
 		var item := _missions_list_root.create_child()
 		item.set_text(0, m.id)
-		item.set_custom_color(0, Color.DIM_GRAY if fms.is_mission_readonly(m) else Color.WHITE)
+		item.set_custom_color(0, Color.DIM_GRAY if fms.is_mission_readonly(m.id) else Color.WHITE)
 
-		if fms.is_mission_missing(m):
+		if fms.is_mission_missing(m.id):
 			item.set_custom_color(0, data.ERROR_COLOR)
 			# # il_missions.set_item_icon(_idx, data.ICON_WARNING)
 			# item.add_button(0, data.ICON_LOCK, 0, true, "")
@@ -175,16 +175,16 @@ func missions_list_update_buttons() -> void:
 	btn_open_mission.disabled  = not data.is_tdm_path_set()
 	btn_close_mission.disabled = no_missions
 
-	if not no_missions and not fms.is_mission_missing(fms.curr_mission) \
+	if not no_missions and not fms.is_mission_missing(fms.curr_mission.id) \
 	and fms.curr_mission.file_tree != null:
 		btn_play_mission.disabled     = not data.is_tdm_path_set()
 		btn_run_dr.disabled           = not data.is_dr_path_set()  \
-										 or fms.is_mission_readonly(fms.curr_mission)
+										 or fms.is_mission_readonly(fms.curr_mission.id)
 		btn_pack_mission.disabled     = not data.is_tdm_path_set() \
-										 or fms.is_mission_readonly(fms.curr_mission)
+										 or fms.is_mission_readonly(fms.curr_mission.id)
 		btn_test_pack.disabled        = not data.is_tdm_copy_path_set() \
 										 or not fms.is_mission_packed(fms.curr_mission) \
-										 or fms.is_mission_readonly(fms.curr_mission)
+										 or fms.is_mission_readonly(fms.curr_mission.id)
 	else:
 		btn_play_mission.disabled     = true
 		btn_run_dr.disabled           = true

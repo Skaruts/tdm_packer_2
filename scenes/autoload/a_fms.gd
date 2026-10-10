@@ -202,17 +202,29 @@ func _load_mission_files(mis: Mission) -> void:
 
 
 
-func is_mission_missing(mis: Mission) -> bool:
-	var md: Dictionary = mission_datas.get_value("missions", mis.id, null)
+func is_mission_missing(id: String) -> bool:
+	var md: Dictionary = mission_datas.get_value("missions", id, null)
 	assert(md != null)
 	return md.missing
 
 
-func is_mission_readonly(mis: Mission) -> bool:
-	var md: Dictionary = mission_datas.get_value("missions", mis.id, null)
+func is_mission_readonly(id: String) -> bool:
+	var md: Dictionary = mission_datas.get_value("missions", id, null)
 	assert(md != null)
 	return md.readonly
 
+
+func set_mission_opened(id: String, opened: bool) -> void:
+	var md: Dictionary = mission_datas.get_value("missions", id, null)
+	assert(md != null)
+	md.opened = opened
+
+
+func set_mission_readonly(id: String, readonly: bool) -> void:
+	var md: Dictionary = mission_datas.get_value("missions", id, null)
+	assert(md != null)
+	md.readonly = readonly
+	# _reload_mission( get_mission_with_id(id) )
 
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
@@ -275,7 +287,7 @@ func select_mission(idx: int) -> void:
 	assert(idx >= 0 and idx < missions.size())
 	curr_mission = missions[idx]
 	logs.print("select_mission", idx, curr_mission.id)
-	if not is_mission_missing(curr_mission):
+	if not is_mission_missing(curr_mission.id):
 		check_mission_filesystem(curr_mission)
 
 	gui.missions_list_update_buttons()
@@ -304,6 +316,7 @@ func add_missions(ids: Array[String]) -> void:
 
 		var mission := load_mission(id)
 		missions.append(mission)
+		set_mission_opened(mission.id, true)
 
 		curr_mission = mission
 		gui.add_workspace(mission)
@@ -350,13 +363,13 @@ func _erase_mission(mis:Mission) -> void:
 	# 	missing_missions.erase(mis.id)
 
 
-func remove_mission(mis:Mission) -> void:
+func remove_mission(mis: Mission) -> void:
 	console.print("Closed %s" % mis.id)
 
 	var last_idx := get_current_mission_index()
-
 	logs.print("remove_current_mission: ", last_idx, mis.id)
 
+	set_mission_opened(mis.id, false)
 	_erase_mission(mis)
 
 	if missions.size() > 0:
@@ -374,7 +387,7 @@ func remove_mission(mis:Mission) -> void:
 	gui.remove_workspace(last_idx)
 
 
-func _check_file_hash(mis:Mission, path:String) -> bool:
+func _check_file_hash(mis: Mission, path: String) -> bool:
 	if path not in mis.file_hashes: return false
 	var file_hash := FMUtils.get_file_hash(path)
 	return file_hash == mis.file_hashes[path]
@@ -447,6 +460,13 @@ func get_mission_with_id(id: String) -> Mission:
 
 
 func check_missions_on_focus_in() -> void:
+	var missing_missions: Dictionary[String, bool]
+	for id in mission_datas.get_section_keys("missions"):
+		var md: Dictionary = mission_datas.get_value("missions", id, null)
+		assert(md != null)
+		if md.missing:
+			missing_missions[id] = true
+
 	update_mission_data()
 
 	var non_missing_count := 0
@@ -458,10 +478,10 @@ func check_missions_on_focus_in() -> void:
 		if not md.opened: continue
 
 		var mis: Mission = get_mission_with_id(id)
-		if md.missing and not mis.missing:  # just went missing
+		if md.missing and not id in missing_missions:  # just went missing
 			#mis.missing = true
 			new_missing_missions.append(mis)
-		elif not md.missing and mis.missing:  # no longer missing
+		elif not md.missing and id in missing_missions:  # no longer missing
 			#mis.missing = false
 			_replace_mission(mis)
 			non_missing_count += 1
