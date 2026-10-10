@@ -129,9 +129,12 @@ func _get_curr_dir(le:LineEdit, config_key:String) -> String:
 
 
 func _on_btn_browse_tdm_pressed() -> void:
+	var filters := _get_executable_filters()
+
 	popups.open_single_file({
 			title = "Locate TDM executable",
 			current_dir = _get_curr_dir(le_tdm, "tdm_path"),
+			filters = filters,
 		},
 		func(path:String) -> void:
 			logs.print(path)
@@ -141,9 +144,12 @@ func _on_btn_browse_tdm_pressed() -> void:
 
 
 func _on_btn_browse_dr_pressed() -> void:
+	var filters := _get_executable_filters()
+
 	popups.open_single_file({
 			title = "Locate DarkRadiant executable",
 			current_dir = _get_curr_dir(le_dr, "dr_path"),
+			filters = filters,
 		},
 		func(path:String) -> void:
 			logs.print(path)
@@ -152,10 +158,20 @@ func _on_btn_browse_dr_pressed() -> void:
 	)
 
 
+func _get_executable_filters() -> Array:
+	match OS.get_name():
+		"Windows": return ["*.exe; Executable Files"]
+		"macOS": return ["*.dmg, *.app; Executable Files"]
+		"Linux": return []
+	return []
+
 func _on_btn_browse_tdm_copy_pressed() -> void:
+	var filters := _get_executable_filters()
+
 	popups.open_single_file({
 			title = "Locate TDM copy executable",
 			current_dir = _get_curr_dir(le_tdm_copy, "tdm_copy_path"),
+			filters = filters,
 		},
 		func(path:String) -> void:
 			logs.print(path)
