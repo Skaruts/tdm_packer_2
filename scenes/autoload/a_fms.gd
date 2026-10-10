@@ -172,8 +172,6 @@ func soft_reload_mission(mis: Mission, force_update := false) -> void:
 func load_mission(id: String) -> Mission:
 	var mission := Mission.new()
 	mission.id = id
-	# mission.readonly = md.readonly
-	# mission.missing  = md.missing
 
 	var fm_path := Path.join(fms_folder, id)
 	mission.set_paths(fm_path)
@@ -482,34 +480,12 @@ func check_missions_on_focus_in() -> void:
 
 		var mis: Mission = get_mission_with_id(id)
 		if md.missing and not id in missing_missions:  # just went missing
-			#mis.missing = true
 			new_missing_missions.append(mis)
 		elif not md.missing and id in missing_missions:  # no longer missing
-			#mis.missing = false
 			_replace_mission(mis)
 			non_missing_count += 1
 
-
-
-	# var missions_changed := false
-
 	var last_idx := missions.find(curr_mission)
-
-	# for mission: Mission in missions:
-	# 	if Path.dir_exists(mission.paths.root):
-	# 		if mission.id in missing_missions:
-	# 			missing_missions.erase(mission.id)
-	# 			_replace_mission(mission)
-	# 			missions_changed = true
-	# 		else:
-	# 			check_mission_filesystem(mission)
-	# 	else:
-	# 		mission.missing = true
-	# 		if not mission.id in missing_missions:
-	# 			console.warning("Couldn't find mission '%s' (may be renamed or deleted)" % [mission.id])
-	# 			new_missing_missions.append(mission.id)
-	# 		missions_changed = true
-	# 		missing_missions.append(mission.id)
 
 	if new_missing_missions.size() > 0:
 		var message := "The following missions seem to be missing\n(may have been renamed or deleted):\n\n"
@@ -518,7 +494,6 @@ func check_missions_on_focus_in() -> void:
 
 		popups.show_message( "Warning", message )
 
-	# if not missions_changed: return
 	if new_missing_missions.size() > 0 or non_missing_count > 0:
 		sort_missions()
 		# save_missions_data()

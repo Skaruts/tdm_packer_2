@@ -117,27 +117,8 @@ func init_missions_list() -> void:
 
 	tr_missions.columns = 1
 	tr_missions.hide_root = true
-	#tr_missions.button_clicked.connect(
-		#func(item: TreeItem, _column: int, id: int, _mouse_button_index: int) -> void:
-			#match id:
-				#ListButton.LOCK:
-					#var mission := fms.get_mission_at_index(item.get_index())
-					#mission_set_locked(mission, not mission.locked)
-	#)
-			#func _on_tr_missions_button_clicked(item: TreeItem, column: int, id: int, mouse_button_index: int) -> void:
+
 	update_missions_list()
-
-
-enum ListButton {
-	LOCK,
-}
-
-
-#func mission_set_locked(mission: Mission, enabled: bool) -> void:
-	#mission.locked = enabled
-	#update_missions_list()
-	#missions_list_update_buttons()
-	#on_mission_reloaded(fms.get_mission_index(mission), true)
 
 
 func update_missions_list() -> void:
@@ -151,16 +132,6 @@ func update_missions_list() -> void:
 
 		if fms.is_mission_missing(m.id):
 			item.set_custom_color(0, data.ERROR_COLOR)
-			# # il_missions.set_item_icon(_idx, data.ICON_WARNING)
-			# item.add_button(0, data.ICON_LOCK, 0, true, "")
-		else:
-			# var btn_idx := item.get_button_count(0)
-			# item.add_button(0, data.ICON_LOCK, ListButton.LOCK, false,
-			# 	"Click to lock/unlock mission."
-			# )
-			# item.set_button_color(0, btn_idx, Color.WHITE if fms.is_mission_readonly(m) else Color.DIM_GRAY)
-			# #item.set_button_color(0, btn_idx, Color.DIM_GRAY)
-			pass
 
 	if fms.missions.size() > 0:
 		var curr_idx := fms.get_current_mission_index()

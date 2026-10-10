@@ -271,9 +271,6 @@ func on_mission_reloaded(force_update:=false) -> void:
 	var valid_mission := not fms.is_mission_missing(_mission.id) \
 						 and not fms.is_mission_readonly(_mission.id)
 
-	# if fms.is_mission_missing(_mission) or _mission.locked:
-		# return
-
 	#le_title.text       = _mission.mdata.title
 	#le_author.text      = _mission.mdata.author
 	#le_version.text     = _mission.mdata.version
