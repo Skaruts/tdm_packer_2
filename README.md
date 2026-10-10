@@ -2,7 +2,7 @@
 A GUI tool for The Dark Mod mappers, to help managing and packing fan missions. It can create the `pk4` for you, automatically excluding any files and folders you specify in a `.pkignore` file, and allow you to easily edit some mission files, run DarkRadiant, and more.
 
 
-###### Note: for users running this from source: this project is using Godot 4.4.stable. It may not work in older versions of Godot.
+###### Note: for users running this from source: this project is using Godot 4.4.1.stable. It may work on any 4.4.x version, but not in older versions of Godot. (I'll keep using this version for the foreseable future.)
 
 ###### Note: As this is still a very early version with very little testing, you should backup any missions you use this app with, and double-check the included/excluded files, as well as the resulting `pk4` contents.
 
