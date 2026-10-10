@@ -227,6 +227,7 @@ func set_mission_readonly(id: String, readonly: bool) -> void:
 	# _reload_mission( get_mission_with_id(id) )
 	gui.update_workspaces()
 	gui.update_missions_list()
+	gui.on_mission_reloaded( get_mission_index(curr_mission) )
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 #		Saving
@@ -250,7 +251,8 @@ func _create_base_files(mis: Mission) -> void:
 
 
 func save_mission(mission: Mission, reload := false) -> void:
-	if not mission.dirty or mission.missing or mission.readonly:
+	if not mission.dirty or fms.is_mission_missing(mission.id) \
+	or fms.is_mission_readonly(mission.id):
 		return
 
 	# if not _base_files_exist():

@@ -213,39 +213,53 @@ func _build_map_list() -> void:
 	var idx: int = item.get_index() if item else -1
 
 	tr_map_list.clear()
+
+	if _mission.mdata.map_files.size() == 0:
+		return
+
 	_maps_tree_root = tr_map_list.create_item()
+
+	var disabled := fms.is_mission_readonly(_mission.id)
 
 	for i: int in _mission.mdata.map_files.size():
 		var filename := _mission.mdata.map_files[i]
+		if filename == "": continue
 		var is_excluded := _mission.ignored_files.contains(
 			Path.join(_mission.paths.maps, filename + ".map")
 		)
 		var title := "" if _mission.mdata.map_titles.size() <= i \
 					 else _mission.mdata.map_titles[i]
-		_add_map_tree_item(filename, title, is_excluded)
+		_add_map_tree_item(filename, title, is_excluded, disabled)
 
 	if idx > -1:
 		tr_map_list.set_selected( _maps_tree_root.get_child(idx), 0)
 
 
-func _add_map_tree_item(filename: String, title := "", is_excluded := false) -> TreeItem:
+func _add_map_tree_item(filename: String, title := "", is_excluded := false,
+						disabled := false) -> TreeItem:
 	var item := _maps_tree_root.create_child()
 	item.set_editable(0, false)
-	item.set_editable(1, true)
+	item.set_editable(1, not disabled)
 
 	item.set_text_alignment(0, _tree_alignment)
 	item.set_text_alignment(1, _tree_alignment)
 
 	item.set_text(0, filename)
+
+	if disabled:
+		item.set_custom_color(0, data.FADED_TEXT_COLOR)
+		item.set_selectable(0, false)
+		item.set_selectable(1, false)
+
 	#item.set_icon(0, data.ICON_FILE)
 	#item.set_icon_max_width(0, 16)
 	if is_excluded:
-		item.add_button(0, data.ICON_WARNING, 0, false,
+		item.add_button(0, data.ICON_WARNING, 0, true,
 			"Warning: this map is being excluded from the pk4."
 		)
 
-	item.set_custom_color(1, _COLOR_MAP_TITLE)
 	item.set_text(1, title)
+	item.set_custom_color(1, _COLOR_MAP_TITLE if not disabled else data.FADED_TEXT_COLOR)
 
 	return item
 
@@ -285,11 +299,11 @@ func on_mission_reloaded(force_update:=false) -> void:
 		if not fms.is_mission_missing(_mission.id):
 			_build_map_list()
 			_update_buttons_states()
-		return
 
-	ce_description.tag_saved_version()
-	ce_readme.tag_saved_version()
-	ce_pkignore.tag_saved_version()
+	if valid_mission:
+		ce_description.tag_saved_version()
+		ce_readme.tag_saved_version()
+		ce_pkignore.tag_saved_version()
 
 	_build_trees()
 	_build_map_list()

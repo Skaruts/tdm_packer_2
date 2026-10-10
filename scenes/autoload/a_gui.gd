@@ -178,8 +178,8 @@ func missions_list_update_buttons() -> void:
 	if not no_missions and not fms.is_mission_missing(fms.curr_mission.id) \
 	and fms.curr_mission.file_tree != null:
 		btn_play_mission.disabled     = not data.is_tdm_path_set()
-		btn_run_dr.disabled           = not data.is_dr_path_set()  \
-										 or fms.is_mission_readonly(fms.curr_mission.id)
+		btn_run_dr.disabled           = not data.is_dr_path_set()
+
 		btn_pack_mission.disabled     = not data.is_tdm_path_set() \
 										 or fms.is_mission_readonly(fms.curr_mission.id)
 		btn_test_pack.disabled        = not data.is_tdm_copy_path_set() \

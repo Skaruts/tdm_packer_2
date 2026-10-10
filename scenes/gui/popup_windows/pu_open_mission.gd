@@ -11,6 +11,12 @@ var _selected_missions : Dictionary
 
 @onready var btn_unlock_fm: Button = %btn_unlock_fm
 
+const fm_lock_tooltip := "Click to toggle editable/read-only. Making a mission editable means TDM Packer\n"          \
+			           + "can create the necessary base base files for the mission. This is not recommended\n"       \
+			           + "for missions made by other authors, as it may cause some issues.\n\n"                      \
+			           + "(E.g., if a mission has no 'startmap.txt' or 'map_sequence.txt', TDM Packer will create\n" \
+			           + "an empty one, which will then prevent TDM from running the mission, as this empty\n"       \
+			           + "file will override the one in the pk4.)"
 
 func _on_ready() -> void:
 	tr_missions.columns = 2
@@ -29,7 +35,7 @@ func _on_popup() -> void:
 	btn_ok.disabled = true
 	tr_missions.grab_focus()
 
-	var num_invalid_missions := 0
+	# var num_invalid_missions := 0
 	var mission_paths := FMUtils.get_mission_folder_list()
 
 	tr_missions.clear()
@@ -42,7 +48,7 @@ func _on_popup() -> void:
 		var mission_id := path.get_file()
 		var item: TreeItem
 
-		var is_valid_mission := Path.file_exists(Path.join(path, data.MODFILE_FILENAME))
+		# var is_valid_mission := Path.file_exists(Path.join(path, data.MODFILE_FILENAME))
 		var is_loaded := fms.is_mission_already_loaded(mission_id)
 		var is_readonly := fms.is_mission_readonly(mission_id)
 
@@ -58,12 +64,11 @@ func _on_popup() -> void:
 		item.set_icon(idx, data.ICON_FOLDER)
 		item.set_icon_max_width(idx, 20)
 
-
 		if is_readonly:
-			item.add_button(idx, data.ICON_CHECKMARK, 0, false, "This mission is readonly")
+			item.add_button(idx, data.ICON_CHECKMARK, 0, false, "This mission is readonly\n\n" + fm_lock_tooltip)
 			item.set_button_color(idx, 0, Color.DIM_GRAY)
 		else:
-			item.add_button(idx, data.ICON_CHECKMARK, 0, false, "This mission is editable")
+			item.add_button(idx, data.ICON_CHECKMARK, 0, false, "This mission is editable\n\n" + fm_lock_tooltip)
 			item.set_button_color(idx, 0, data.VALID_COLOR)
 
 
@@ -72,17 +77,17 @@ func _on_popup() -> void:
 			item.set_custom_color(idx, data.FADED_TEXT_COLOR)
 		else:
 			item.set_selectable(idx, true)
-			item.set_metadata(idx, is_valid_mission)
+			item.set_metadata(idx, true) #is_valid_mission)
 
-			if not is_valid_mission:
-				num_invalid_missions += 1
-				item.set_custom_color(idx, data.ERROR_COLOR)
+			# if not is_valid_mission:
+			# 	num_invalid_missions += 1
+			# 	item.set_custom_color(idx, data.ERROR_COLOR)
 
 
 
-	if num_invalid_missions > 0:
-		lb_warnings.text = "%s folders are missing 'darkmod.txt'" % num_invalid_missions
-		lb_warnings.show()
+	# if num_invalid_missions > 0:
+	# 	lb_warnings.text = "%s folders are missing 'darkmod.txt'" % num_invalid_missions
+	# 	lb_warnings.show()
 
 
 func _on_input(event: InputEvent) -> void:
@@ -219,8 +224,8 @@ func _on_tr_missions_button_clicked(item: TreeItem, column: int, _btn_id: int, _
 	fms.set_mission_readonly(id, not fms.is_mission_readonly(id))
 
 	if fms.is_mission_readonly(id):
-		item.set_button_tooltip_text(column, 0, "This mission is read-only")
+		item.set_button_tooltip_text(column, 0, "This mission is read-only\n" + fm_lock_tooltip)
 		item.set_button_color(column, 0, Color.DIM_GRAY)
 	else:
-		item.set_button_tooltip_text(column, 0, "This mission is editable")
+		item.set_button_tooltip_text(column, 0, "This mission is editable\n" + fm_lock_tooltip)
 		item.set_button_color(column, 0, data.VALID_COLOR)

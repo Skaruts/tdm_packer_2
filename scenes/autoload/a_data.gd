@@ -24,12 +24,19 @@ const DEFAULT_CONFIG := {
 	}
 }
 
+#const DEFAULT_MODFILE =                          \
+		  #"Title: Beautiful Title\n"              \
+		#+ "Description: Lovely Description\n" \
+		#+ "Author: Amazing Author\n"             \
+		#+ "Version: 1\n"                         \
+		#+ "Required TDM Version: 2.12"
+
 const DEFAULT_MODFILE =                          \
-		  "Title: Beautiful Title\n"              \
-		+ "Description: Lovely Description\n" \
-		+ "Author: Amazing Author\n"             \
-		+ "Version: 1\n"                         \
-		+ "Required TDM Version: 2.12"
+		  "Title:\n"              \
+		+ "Description:\n" \
+		+ "Author:\n"             \
+		+ "Version:\n"                         \
+		+ "Required TDM Version:"
 
 const ERROR_COLOR       = Color(1.0, 0.49, 0.49)
 const WARNING_COLOR     = Color(1, 0.67500007152557, 0.22000002861023)

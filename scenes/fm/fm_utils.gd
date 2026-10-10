@@ -251,7 +251,7 @@ static func get_mission_folder_list() -> Array[String]:
 	var exceptions: Array[String] = ["_missionshots"]
 	for i: int in range(mission_paths.size()-1, -1, -1):
 		for exc in exceptions:
-			if mission_paths[i] == exc:
+			if mission_paths[i].ends_with(exc):
 				mission_paths.remove_at(i)
 				break
 
