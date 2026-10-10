@@ -169,7 +169,7 @@ func set_mission(mission: Mission) -> void:
 		if not fms.is_mission_missing(_mission.id):
 			_build_map_list()
 			_update_buttons_states()
-		return
+
 
 	_build_trees()
 	_build_map_list()
@@ -435,8 +435,9 @@ func _build_trees() -> void:
 
 	var t1 := Time.get_ticks_msec()
 
-	_build_inc_tree(_mission.file_tree, inc_tree_root)
-	_build_exc_tree(_mission.file_tree, exc_tree_root)
+	var disabled := fms.is_mission_readonly(_mission.id)
+	_build_inc_tree(_mission.file_tree, inc_tree_root, disabled)
+	_build_exc_tree(_mission.file_tree, exc_tree_root, disabled)
 
 	if not Path.dir_exists(_mission.paths.maps) \
 	or not _mission.file_tree.get_child_named("maps").has_included_files():
@@ -447,20 +448,27 @@ func _build_trees() -> void:
 	logs.task("... finished building trees (%s)" % [total_time])
 
 
-func _create_node(parent:TreeItem, text:String, icon:Texture2D, color:Variant=null) -> TreeItem:
+func _create_node(parent: TreeItem, text: String, icon: Texture2D, disabled := false, color: Variant = null) -> TreeItem:
 	var node := parent.create_child()
 	node.set_text(0, text)
+
 	if color:
 		node.set_custom_color(0, color)
 		#node.set_icon_modulate(0, color)
+
 	node.set_icon(0, icon)
 	node.set_icon_max_width(0, 16)
+
+	if disabled:
+		node.set_selectable(0, false)
+		node.set_custom_color(0, data.FADED_TEXT_COLOR)
 
 	node.collapsed = true
 	return node
 
 
-func _build_inc_tree(parent: FMTreeNode, gui_parent: TreeItem) -> void:
+func _build_inc_tree(parent: FMTreeNode, gui_parent: TreeItem, disabled := false) -> void:
+
 	for node: FMTreeNode in parent.children:
 		if node.ignored: continue
 
@@ -471,23 +479,23 @@ func _build_inc_tree(parent: FMTreeNode, gui_parent: TreeItem) -> void:
 
 		if not node.is_dir:
 			if parent.path != maps_path:
-				tree_item = _create_node(gui_parent, node.name, icon)
+				tree_item = _create_node(gui_parent, node.name, icon, disabled)
 			else:
 				var map_name := node.name.get_basename()
 				if map_name in _mission.mdata.map_files:
-					tree_item = _create_node(gui_parent, node.name, icon)
+					tree_item = _create_node(gui_parent, node.name, icon, disabled)
 		else:
 			if node.path != maps_path:
-				tree_item = _create_node(gui_parent, node.name, icon)
+				tree_item = _create_node(gui_parent, node.name, icon, disabled)
 			elif node.has_included_files():
-				tree_item = _create_node(gui_parent, node.name, icon)
+				tree_item = _create_node(gui_parent, node.name, icon, disabled)
 			else:
-				tree_item = _create_node(gui_parent, node.name, icon, data.ERROR_COLOR)
+				tree_item = _create_node(gui_parent, node.name, icon, disabled, data.ERROR_COLOR)
 
-		_build_inc_tree(node, tree_item)
+		_build_inc_tree(node, tree_item, disabled)
 
 
-func _build_exc_tree(parent:FMTreeNode, gui_parent:TreeItem) -> void:
+func _build_exc_tree(parent: FMTreeNode, gui_parent: TreeItem, disabled := false) -> void:
 	for node: FMTreeNode in parent.children:
 		var maps_path := _mission.paths.maps
 
@@ -501,9 +509,9 @@ func _build_exc_tree(parent:FMTreeNode, gui_parent:TreeItem) -> void:
 		var icon := data.ICON_FOLDER if node.is_dir else data.ICON_FILE
 		var tree_item : TreeItem
 		if not (not node.is_dir and parent.path == maps_path):
-			tree_item = _create_node(gui_parent, node.name, icon)
+			tree_item = _create_node(gui_parent, node.name, icon, disabled)
 		else:
 			if node.ignored or not node.name.get_basename() in map_sequence:
-				tree_item = _create_node(gui_parent, node.name, icon)
+				tree_item = _create_node(gui_parent, node.name, icon, disabled)
 
-		_build_exc_tree(node, tree_item)
+		_build_exc_tree(node, tree_item, disabled)

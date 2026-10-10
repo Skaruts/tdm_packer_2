@@ -127,7 +127,7 @@ static func _pack_files(output:Object, mission:Mission) -> ErrorReport:
 #		File Tree
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-static func build_file_tree(mission:Mission) -> void:
+static func build_file_tree(mission: Mission) -> void:
 	logs.task("Building file tree...")
 
 	mission.inc_dir_count       = 0
@@ -355,8 +355,11 @@ static func load_file_strictly(mis: Mission, filename: String) -> void:
 
 
 static func load_or_create_file(mis: Mission, filename: String, default_content := "") -> void:
-	if not check_file_and_create(mis, filename, default_content)\
-	or fms.is_mission_readonly(mis.id): return
+	if not Path.file_exists(mis.paths.get(filename)):
+		if fms.is_mission_readonly(mis.id):
+			return
+		Path.write_file(mis.paths.get(filename), default_content)
+
 	mis.mdata.set(filename, Path.read_file_string(mis.paths.get(filename)))
 	mis.store_hash(mis.paths.get(filename))
 
@@ -389,11 +392,10 @@ static func save_modfile(mis: Mission) -> void:
 
 
 static func load_modfile(mis: Mission) -> void:
-	if not check_file_and_create(mis, "modfile", data.DEFAULT_MODFILE)\
-	or fms.is_mission_readonly(mis.id):
-		return
-
-	logs.print(mis.id, fms.is_mission_readonly(mis.id))
+	if not Path.file_exists(mis.paths.get("modfile")):
+		if fms.is_mission_readonly(mis.id):
+			return
+		Path.write_file(mis.paths.get("modfile"), data.DEFAULT_MODFILE)
 
 	var file_string := Path.read_file_string(mis.paths.modfile)
 

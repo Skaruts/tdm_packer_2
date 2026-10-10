@@ -225,7 +225,8 @@ func set_mission_readonly(id: String, readonly: bool) -> void:
 	assert(md != null)
 	md.readonly = readonly
 	# _reload_mission( get_mission_with_id(id) )
-
+	gui.update_workspaces()
+	gui.update_missions_list()
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 #		Saving
