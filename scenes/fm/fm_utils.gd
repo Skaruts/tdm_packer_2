@@ -528,14 +528,17 @@ static func load_map_sequence(mis: Mission) -> void:
 	if Path.file_exists(mis.paths.startingmap):
 		# TODO: maybe I should read this file by lines too, to prevent problems
 		# with invalid lines
-		var map_filename := Path.read_file_string(mis.paths.startingmap).strip_edges()
-		mis.mdata.map_files.append(map_filename)
-		mis.remove_hash(mis.paths.mapsequence)
-		mis.store_hash(mis.paths.startingmap)
+		var map_filename := Path.read_file_string(mis.paths.startingmap) \
+							.strip_edges()
+		if map_filename != "":
+			mis.mdata.map_files.append(map_filename)
+			mis.remove_hash(mis.paths.mapsequence)
+			mis.store_hash(mis.paths.startingmap)
 
 	elif Path.file_exists(mis.paths.mapsequence):
 		if Path.file_exists(mis.paths.mapsequence):
-			var lines := Path.read_file_string(mis.paths.mapsequence).split('\n')
+			var lines := Path.read_file_string(mis.paths.mapsequence)\
+						 .split('\n')
 
 			for line:String in lines:
 				# TODO: detect comments and ignore (may need a proper parser)
@@ -554,4 +557,4 @@ static func load_map_sequence(mis: Mission) -> void:
 		mis.remove_hash(mis.paths.mapsequence)
 		mis.store_hash(mis.paths.startingmap)
 
-	#logs.print("on load", mis.mdata.map_files)
+	# logs.print("on load", mis.id, mis.mdata.map_files)

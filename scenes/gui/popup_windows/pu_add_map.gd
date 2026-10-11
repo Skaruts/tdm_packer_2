@@ -113,13 +113,13 @@ func _on_bar_button_pressed(idx:int) -> void:
 
 
 func _commit_data() -> void:
-	logs.print(_selected_maps)
-	var maps:Array[String]
+	var maps: Array[String]
 
-	for map_filename:String in _selected_maps:
+	for map_filename: String in _selected_maps:
 		maps.append(map_filename.get_basename())
 
-	for map_name:String in maps:
+	for map_name: String in maps:
+		assert(map_name != "")
 		if fms.curr_mission.add_map_file(map_name):
 			pack_tab.add_map(map_name)
 
