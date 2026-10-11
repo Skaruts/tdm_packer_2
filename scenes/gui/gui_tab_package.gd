@@ -213,11 +213,10 @@ func _build_map_list() -> void:
 	var idx: int = item.get_index() if item else -1
 
 	tr_map_list.clear()
+	_maps_tree_root = tr_map_list.create_item()
 
 	if _mission.mdata.map_files.size() == 0:
 		return
-
-	_maps_tree_root = tr_map_list.create_item()
 
 	var disabled := fms.is_mission_readonly(_mission.id)
 
