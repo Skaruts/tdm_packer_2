@@ -25,8 +25,8 @@ const lock_tooltip_ed := "This mission is editable.\n\n" + fm_tooltip_more
 
 func _on_ready() -> void:
 	tr_missions.columns = 2
-	# tr_missions.select_mode = Tree.SELECT_MULTI
-	tr_missions.select_mode = Tree.SELECT_ROW
+	 #tr_missions.select_mode = Tree.SELECT_MULTI
+	tr_missions.select_mode = Tree.SELECT_SINGLE
 	lb_warnings.set("theme_override_colors/font_color", data.ERROR_COLOR)
 
 	btn_unlock_fm.pressed.connect(_on_btn_unlock_fm_pressed)
@@ -44,14 +44,14 @@ func _on_popup() -> void:
 	var mission_paths := FMUtils.get_mission_folder_list()
 
 	tr_missions.clear()
-	tr_missions.columns = 1
+	tr_missions.columns = 2
 	var _root := tr_missions.create_item()
+	var item: TreeItem
 
 	for i: int in mission_paths.size():
 		var path := mission_paths[i]
 		var idx  := i % tr_missions.columns
 		var mission_id := path.get_file()
-		var item: TreeItem
 
 		# var is_valid_mission := Path.file_exists(Path.join(path, data.MODFILE_FILENAME))
 		var is_loaded := fms.is_mission_already_loaded(mission_id)
@@ -59,8 +59,8 @@ func _on_popup() -> void:
 
 		if idx == 0:
 			item = _root.create_child()
-			for j:int in tr_missions.columns:
-				item.set_selectable(j, false)
+			# for j: int in tr_missions.columns:
+			# 	item.set_selectable(j, false)
 
 		if   i == 0:                      _first_item = item
 		elif i == mission_paths.size()-1: _last_item = item
@@ -80,8 +80,9 @@ func _on_popup() -> void:
 		if is_loaded:
 			# item.set_custom_color(idx, data.VALID_COLOR)
 			item.set_custom_color(idx, data.FADED_TEXT_COLOR)
+			item.set_selectable(idx, false)
 		else:
-			item.set_selectable(idx, true)
+			# item.set_selectable(idx, true)
 			item.set_metadata(idx, true) #is_valid_mission)
 
 			# if not is_valid_mission:
@@ -115,9 +116,12 @@ func _on_bar_button_pressed(idx:int) -> void:
 
 
 func _commit_data() -> void:
-	var missions:Array[String]
-	for mission_id:String in _selected_missions:
+	var missions: Array[String]
+
+	for mission_id: String in _selected_missions:
+		if mission_id == "": continue
 		missions.append(mission_id)
+
 	await fms.add_missions(missions)
 
 
@@ -171,11 +175,18 @@ func _validate_selected_missions() -> bool:
 
 
 func _on_tr_missions_item_activated() -> void:
-	#logs.print("_on_tr_missions_item_activated")
+	logs.print("_on_tr_missions_item_activated")
+	var item := tr_missions.get_selected()
+	if not item: return
+	var col := tr_missions.get_selected_column()
+	var item_text: String = item.get_text(col)
+	if item_text == "": return
+	logs.print(item_text)
 	_on_bar_button_pressed(BarButton.OK)
 
 
 func _on_tr_missions_multi_selected(item: TreeItem, column: int, selected: bool) -> void:
+	logs.print("_on_tr_missions_multi_selected")
 	var item_text: String = item.get_text(column)
 	if selected:
 		if not item_text in _selected_missions:
@@ -183,24 +194,34 @@ func _on_tr_missions_multi_selected(item: TreeItem, column: int, selected: bool)
 	else:
 		_selected_missions.erase(item_text)
 
-func _on_tr_missions_cell_selected() -> void:
-	logs.print("_on_tr_missions_cell_selected")
-	btn_ok.disabled = false
+# func _on_tr_missions_cell_selected() -> void:
+# 	logs.print("_on_tr_missions_cell_selected")
+# 	btn_ok.disabled = false
 
 func _on_tr_missions_item_selected() -> void:
 	logs.print("_on_tr_missions_item_selected")
 	btn_ok.disabled = false
+
+
 	var item := tr_missions.get_selected()
-	var item_text: String = item.get_text(0)
+	var col := tr_missions.get_selected_column()
+	var item_text: String = item.get_text(col)
 
 	if not item_text in _selected_missions:
-		_selected_missions[item_text] = item.get_metadata(0)
-	else:
-		_selected_missions.erase(item_text)
+		_selected_missions.clear()
+		_selected_missions[item_text] = item.get_metadata(col)
+	# else:
+	# 	_selected_missions.erase(item_text)
+	# 	tr_missions.deselect_all()
+
+	if item_text == "":
+		btn_ok.disabled = true
+
+	logs.print(_selected_missions)
+
 
 # func _update_btn_unlock_fm() -> void:
 # 	var is_readonly := fms
-
 
 
 func _on_btn_unlock_fm_pressed() -> void:

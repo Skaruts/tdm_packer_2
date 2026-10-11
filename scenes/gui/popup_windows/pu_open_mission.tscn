@@ -6,7 +6,7 @@
 [node name="open_mission" type="Window"]
 title = "Open Mission"
 initial_position = 2
-size = Vector2i(500, 600)
+size = Vector2i(650, 500)
 script = ExtResource("1_0g3l0")
 
 [node name="Panel" type="Panel" parent="."]
@@ -70,6 +70,7 @@ focus_neighbor_left = NodePath(".")
 focus_neighbor_top = NodePath(".")
 focus_neighbor_right = NodePath(".")
 focus_neighbor_bottom = NodePath(".")
+allow_reselect = true
 hide_root = true
 select_mode = 1
 auto_tooltip = false
@@ -103,7 +104,6 @@ layout_mode = 2
 size_flags_horizontal = 6
 text = "Cancel"
 
-[connection signal="cell_selected" from="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer/tr_missions" to="." method="_on_tr_missions_cell_selected"]
 [connection signal="item_activated" from="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer/tr_missions" to="." method="_on_tr_missions_item_activated"]
 [connection signal="item_selected" from="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer/tr_missions" to="." method="_on_tr_missions_item_selected"]
 [connection signal="multi_selected" from="PanelContainer/VBoxContainer/tabs/VBoxContainer/ScrollContainer/tr_missions" to="." method="_on_tr_missions_multi_selected"]
