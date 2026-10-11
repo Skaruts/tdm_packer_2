@@ -125,13 +125,19 @@ func update_missions_list() -> void:
 	tr_missions.clear()
 	_missions_list_root = tr_missions.create_item()
 
-	for m: Mission in fms.missions:
-		var item := _missions_list_root.create_child()
-		item.set_text(0, m.id)
-		item.set_custom_color(0, Color.DIM_GRAY if fms.is_mission_readonly(m.id) else Color.WHITE)
+	for mis: Mission in fms.missions:
+		fms.check_mission_warnings(mis)
 
-		if fms.is_mission_missing(m.id):
+		var item := _missions_list_root.create_child()
+		item.set_text(0, mis.id)
+		item.set_custom_color(0, Color.DIM_GRAY if fms.is_mission_readonly(mis.id) else Color.WHITE)
+
+		if fms.is_mission_missing(mis.id):
 			item.set_custom_color(0, data.ERROR_COLOR)
+
+		if mis.warnings.size() > 0:
+			var warns := fms.get_mission_warnings_string(mis)
+			item.add_button(0, data.ICON_WARNING, 0, true, warns)
 
 	if fms.missions.size() > 0:
 		var curr_idx := fms.get_current_mission_index()

@@ -14,7 +14,7 @@ var exc_dir_count  : int
 
 var ignored_directories : Set
 var ignored_files       : Set
-
+var warnings            : Dictionary[fms.MissionWarning, String]
 # var missing  : bool
 # var readonly : bool
 

@@ -234,6 +234,7 @@ func _build_map_list() -> void:
 		tr_map_list.set_selected( _maps_tree_root.get_child(idx), 0)
 
 
+
 func _add_map_tree_item(filename: String, title := "", is_excluded := false,
 						disabled := false) -> TreeItem:
 	var item := _maps_tree_root.create_child()
@@ -377,13 +378,16 @@ func _on_line_edit_text_changed(new_text:String, ledit:LineEdit) -> void:
 			fms.start_save_timer(false)
 
 
-func add_map(map_name:String) -> void:
+func add_map(map_name: String) -> void:
 	_add_map_tree_item(map_name)
 	tr_map_list.set_selected( _maps_tree_root.get_child(-1), 0 )
+	gui.update_missions_list()
+
 
 func _on_btn_add_map_pressed() -> void:
 	popups.add_map.pack_tab = self
 	popups.show_popup(popups.add_map)
+	gui.update_missions_list()
 
 
 func _on_btn_remove_map_pressed() -> void:
@@ -399,8 +403,11 @@ func _on_btn_remove_map_pressed() -> void:
 		fms.start_save_timer(true)
 
 	idx = clamp(idx, 0, _maps_tree_root.get_child_count()-1)
-	tr_map_list.set_selected( _maps_tree_root.get_child(idx), 0 )
+	if _maps_tree_root.get_child_count() > 0:
+		tr_map_list.set_selected( _maps_tree_root.get_child(idx), 0 )
 	_update_buttons_states()
+
+	gui.update_missions_list()
 
 
 func set_show_roots(enabled:bool) -> void:

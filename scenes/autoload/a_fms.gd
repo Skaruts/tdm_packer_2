@@ -1,10 +1,17 @@
 extends Node
 # autoloaded script
 
+enum MissionWarning {
+	MISSION_MISSING,
+	NO_MAP_SEQUENCE,
+	MAP_IS_EXCLUDED,
+	ALL_FILES_EXCLUDED,
+}
+
+var warning_strings: Array[String] = []
+
 
 # TODO: maybe 'fms_folder' shouldn't exist (multiple sources of truth)
-
-
 var fms_folder : String  # TODO:
 
 var missions : Array[Mission]
@@ -37,6 +44,14 @@ func initialize() -> void:
 func _ready() -> void:
 	set_process(false)
 
+	warning_strings.resize( MissionWarning.size() )
+	warning_strings[MissionWarning.MISSION_MISSING]    = "mission folder not found"
+	warning_strings[MissionWarning.NO_MAP_SEQUENCE]    = "map sequence contains no maps"
+	warning_strings[MissionWarning.MAP_IS_EXCLUDED]    = "map sequence contains maps excluded from the pk4"
+	# TODO
+	# warning_strings[MissionWarning.ALL_FILES_EXCLUDED] = "all mission files are excluded from the pk4"
+
+
 
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
@@ -62,7 +77,49 @@ func is_save_timer_counting() -> bool:
 func stop_timer_and_save() -> void:
 	set_process(false)
 	save_mission(_mission_to_save, _should_reload)
+	check_mission_warnings(_mission_to_save)
 	_should_reload = false
+
+
+
+func check_mission_warnings(mis: Mission) -> void:
+
+	mis.warnings.clear()
+
+	# check if mission is missing
+	# TODO
+
+	# check if it has at least one map in the map sequence
+	# if not Path.dir_exists(mis.paths.maps) \
+	# or not mis.file_tree.get_child_named("maps").has_included_files():
+	# 	mis.warnings[MissionWarning.NO_MAP_SEQUENCE] = warning_strings[MissionWarning.NO_MAP_SEQUENCE]
+
+	if mis.mdata.map_files.size() == 0:
+		mis.warnings[MissionWarning.NO_MAP_SEQUENCE] = warning_strings[MissionWarning.NO_MAP_SEQUENCE]
+
+
+	# check if any of the maps in the map sequence are excluded from the pk4
+	for i: int in mis.mdata.map_files.size():
+		var filename := mis.mdata.map_files[i]
+		if filename == "": continue
+		var is_excluded := mis.ignored_files.contains(
+				Path.join(mis.paths.maps, filename + ".map")
+			)
+
+		if is_excluded:
+			mis.warnings[MissionWarning.MAP_IS_EXCLUDED] = warning_strings[MissionWarning.MAP_IS_EXCLUDED]
+
+
+
+func get_mission_warnings_string(mis: Mission) -> String:
+	var text := "Warnings:\n"
+	for key in mis.warnings:
+		var warn := mis.warnings[key]
+		text += "\t- " + warn + "\n"
+
+	return text
+
+
 
 
 
@@ -190,6 +247,8 @@ func load_mission(id: String) -> Mission:
 	else:
 		console.warning("Couldn't open mission '%s' (not found)" % [id])
 
+	check_mission_warnings(mission)
+
 	return mission
 
 
@@ -222,10 +281,14 @@ func set_mission_readonly(id: String, readonly: bool) -> void:
 	var md: Dictionary = mission_datas.get_value("missions", id, null)
 	assert(md != null)
 	md.readonly = readonly
+	save_missions_data()
+
+	var mis: Mission = get_mission_with_id(id)
 	# _reload_mission( get_mission_with_id(id) )
+
 	gui.update_workspaces()
+	gui.on_mission_reloaded( get_mission_index(mis) )
 	gui.update_missions_list()
-	gui.on_mission_reloaded( get_mission_index(curr_mission) )
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 #		Saving
