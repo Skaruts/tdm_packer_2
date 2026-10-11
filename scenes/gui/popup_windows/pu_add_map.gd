@@ -75,16 +75,16 @@ func _build_list() -> void:
 
 		if not is_included:
 			color      = data.FADED_TEXT_COLOR
-			icon       = data.ICON_MAP
+			icon       = data.ICON_DOT
 			icon_color = data.FADED_TEXT_COLOR
 		elif is_loaded:
 			color      = _LOADED_COLOR
-			icon       = data.ICON_MAP_LOADED
+			icon       = data.ICON_CHECKMARK
 			icon_color = _LOADED_COLOR
 		else:
 			color      = data.TEXT_COLOR
 			item.set_selectable(idx, true)
-			icon       = data.ICON_MAP
+			icon       = data.ICON_DOT
 			icon_color = _ICON_COLOR
 
 		item.set_icon(idx, icon)
