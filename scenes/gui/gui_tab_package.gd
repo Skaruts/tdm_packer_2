@@ -433,7 +433,7 @@ func update_tree_root_pack_name() -> void:
 
 
 func _build_trees() -> void:
-	logs.task("Building GUI trees for %s..." % _mission.id)
+	# logs.task("Building GUI trees for %s..." % _mission.id)
 
 	tr_included.set_column_title(0, "%d dirs, %d files" % [_mission.inc_dir_count, _mission.inc_file_count])
 	tr_excluded.set_column_title(0, "%d dirs, %d files" % [_mission.exc_dir_count, _mission.exc_file_count])
@@ -450,7 +450,7 @@ func _build_trees() -> void:
 	exc_tree_root.set_text(0, "Excluded Files")
 	exc_tree_root.set_custom_color(0, data.EDITED_FILE_COLOR)
 
-	var t1 := Time.get_ticks_msec()
+	# var t1 := Time.get_ticks_msec()
 
 	var disabled := fms.is_mission_readonly(_mission.id)
 	_build_inc_tree(_mission.file_tree, inc_tree_root, disabled)
@@ -460,9 +460,9 @@ func _build_trees() -> void:
 	or not _mission.file_tree.get_child_named("maps").has_included_files():
 		console.warning("'%s' has no valid maps" % _mission.id)
 
-	var t2 := Time.get_ticks_msec()
-	var total_time := "%.5f" % [(t2-t1)/1000.0]
-	logs.task("... finished building trees (%s)" % [total_time])
+	# var t2 := Time.get_ticks_msec()
+	# var total_time := "%.5f" % [(t2-t1)/1000.0]
+	# logs.task("... finished building trees (%s)" % [total_time])
 
 
 func _create_node(parent: TreeItem, text: String, icon: Texture2D, disabled := false, color: Variant = null) -> TreeItem:

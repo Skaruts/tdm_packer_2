@@ -332,6 +332,9 @@ func save_mission(mission: Mission, reload := false) -> void:
 	if mission.get_dirty_flag(Mission.DirtyFlags.MAPS):
 		FMUtils.save_maps_file(mission)
 
+	if mission.get_dirty_flag(Mission.DirtyFlags.FILES):
+		FMUtils.save_edited_files(mission)
+
 	#logs.print("saving mission", reload)
 	if reload:
 		soft_reload_mission(mission)
@@ -451,10 +454,7 @@ func remove_mission(mis: Mission) -> void:
 	gui.remove_workspace(last_idx)
 
 
-func _check_file_hash(mis: Mission, path: String) -> bool:
-	if path not in mis.file_hashes: return false
-	var file_hash := FMUtils.get_file_hash(path)
-	return file_hash == mis.file_hashes[path]
+
 
 
 func check_mission_filesystem(mis: Mission) -> bool:
@@ -465,22 +465,25 @@ func check_mission_filesystem(mis: Mission) -> bool:
 
 	if mis.mdata.map_files.size() <= 1:
 		if not Path.file_exists(mis.paths.startingmap) \
-		or not _check_file_hash(mis, mis.paths.startingmap):
+		or not FMUtils.check_file_hash(mis, mis.paths.startingmap):
 			changed_files.append("map_sequence")
 	else:
 		if not Path.file_exists(mis.paths.mapsequence)\
-		or not _check_file_hash(mis, mis.paths.mapsequence):
+		or not FMUtils.check_file_hash(mis, mis.paths.mapsequence):
 			changed_files.append("map_sequence")
 
-	if not _check_file_hash(mis, mis.paths.modfile):
+	if not FMUtils.check_file_hash(mis, mis.paths.modfile):
 		logs.print("modfile was changed externally")
 		changed_files.append("modfile")
 
-	if not _check_file_hash(mis, mis.paths.readme):
+	if not FMUtils.check_file_hash(mis, mis.paths.readme):
 		changed_files.append("readme")
 
-	if not _check_file_hash(mis, mis.paths.pkignore):
+	if not FMUtils.check_file_hash(mis, mis.paths.pkignore):
 		changed_files.append("pkignore")
+
+	if not FMUtils.check_edited_files_changed(mis):
+		changed_files.append("edited_files")
 
 
 	if changed_files.size() == 0:
@@ -495,6 +498,8 @@ func check_mission_filesystem(mis: Mission) -> bool:
 			FMUtils.load_map_sequence(mis)
 		elif file == "modfile":
 			FMUtils.load_modfile(mis)
+		elif file == "edited_files":
+			FMUtils.load_edited_files(mis)
 		else:
 			FMUtils.load_or_create_file(mis, file)
 		gui.get_current_workspace().tab_package.reload_file(file)
@@ -561,8 +566,13 @@ func check_missions_on_focus_in() -> void:
 		sort_missions()
 		# save_missions_data()
 		curr_mission = missions[last_idx]
-		gui.update_missions_list()
-		gui.update_workspaces()
+
+	for m in missions:
+		FMUtils.build_file_tree(m)
+		gui.on_mission_reloaded( get_mission_index(m), false )
+
+	gui.update_missions_list()
+	gui.update_workspaces()
 
 
 

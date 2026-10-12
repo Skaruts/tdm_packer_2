@@ -15,8 +15,8 @@ var exc_dir_count  : int
 var ignored_directories : Set
 var ignored_files       : Set
 var warnings            : Dictionary[fms.MissionWarning, String]
-# var missing  : bool
-# var readonly : bool
+
+
 
 
 class MissionPaths: # this allows auto-completion and strict typing, unlike dictionaries
@@ -42,16 +42,17 @@ class MissionPaths: # this allows auto-completion and strict typing, unlike dict
 
 class MissionData extends RefCounted:
 	# modfile
-	var title       : String
-	var description : String
-	var author      : String
-	var version     : String
-	var tdm_version : String
-	var map_titles  : Array[String]
+	var title        : String
+	var description  : String
+	var author       : String
+	var version      : String
+	var tdm_version  : String
+	var map_titles   : Array[String]
 	# other
-	var pkignore    : String
-	var readme      : String
-	var map_files   : Array[String]
+	var pkignore     : String
+	var readme       : String
+	var map_files    : Array[String]
+	var edited_files : Dictionary[String, String] # file path, file content
 
 
 var paths := MissionPaths.new()
@@ -60,7 +61,6 @@ var mdata := MissionData.new()
 
 var id      : String
 var zipname : String
-
 var pack_report : String
 
 
@@ -69,7 +69,7 @@ enum DirtyFlags {
 	MODFILE     = 1 << 1,
 	MAPS        = 1 << 2,
 	README      = 1 << 3,
-	#FILES       = 1 << 4,
+	FILES       = 1 << 4,
 }
 var dirty := 0
 
@@ -187,16 +187,16 @@ func set_paths(path:String) -> void:
 #		Files
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-func store_hash(filepath:String) -> void:
+func store_hash(filepath: String) -> void:
 	file_hashes[filepath] = FMUtils.get_file_hash(filepath)
 
 
-func remove_hash(filepath:String) -> void:
+func remove_hash(filepath: String) -> void:
 	if filepath in file_hashes:
 		file_hashes.erase(filepath)
 
 
-func set_dirty_flag(file_dirty:bool, flag:DirtyFlags, _silent:=false) -> void:
+func set_dirty_flag(file_dirty: bool, flag: DirtyFlags, _silent := false) -> void:
 	#var old_dirty := dirty
 	if file_dirty: dirty |= flag
 	else:          dirty &= ~flag

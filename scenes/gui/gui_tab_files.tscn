@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://cch1qviuewj5"]
+[gd_scene load_steps=4 format=3 uid="uid://cch1qviuewj5"]
 
 [ext_resource type="Script" uid="uid://c4u5jw8aj2wwo" path="res://scenes/gui/gui_tab_files.gd" id="1_lvyyf"]
+[ext_resource type="PackedScene" uid="uid://xkay5o7nv1du" path="res://scenes/gui/text_file_editor.tscn" id="2_rbsxu"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7trsy"]
 
 [node name="tab_files" type="TabContainer"]
 anchors_preset = 15
@@ -14,11 +17,35 @@ current_tab = 0
 tabs_visible = false
 script = ExtResource("1_lvyyf")
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="HSplitContainer" type="HSplitContainer" parent="."]
 layout_mode = 2
+split_offset = 200
 metadata/_tab_index = 0
 
-[node name="Label" type="Label" parent="CenterContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HSplitContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 40
-text = "TODO"
+theme_override_constants/separation = -1
+
+[node name="Label" type="Label" parent="HSplitContainer/VBoxContainer"]
+layout_mode = 2
+text = "Files"
+
+[node name="tr_files" type="Tree" parent="HSplitContainer/VBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+select_mode = 1
+auto_tooltip = false
+
+[node name="TabContainer" type="TabContainer" parent="HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_7trsy")
+current_tab = 0
+tabs_visible = false
+
+[node name="text_file_editor" parent="HSplitContainer/TabContainer" instance=ExtResource("2_rbsxu")]
+layout_mode = 2
+
+[editable path="HSplitContainer/TabContainer/text_file_editor"]

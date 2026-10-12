@@ -15,7 +15,7 @@ var is_dir:bool
 
 
 
-func _init(_path:String, _parent:Variant=null) -> void:
+func _init(_path: String, _parent: Variant=null) -> void:
 	path = _path
 	name = _path.get_file()
 
@@ -27,14 +27,14 @@ func _init(_path:String, _parent:Variant=null) -> void:
 		rel_path = name
 
 
-func add_child(node:FMTreeNode) -> void:
+func add_child(node: FMTreeNode) -> void:
 	if not node in children:
 		children.append(node)
 
 
 func has_included_files() -> bool:
 	if not is_dir or ignored: return false
-	for c:FMTreeNode in children:
+	for c: FMTreeNode in children:
 		if not c.is_dir:
 			if not c.ignored:
 				return true
@@ -45,7 +45,7 @@ func has_included_files() -> bool:
 
 func has_ignored_files() -> bool:
 	if not is_dir or ignored: return true
-	for c:FMTreeNode in children:
+	for c: FMTreeNode in children:
 		if not c.is_dir:
 			if c.ignored:
 				return true
@@ -55,11 +55,24 @@ func has_ignored_files() -> bool:
 
 
 @warning_ignore("shadowed_variable")
-func get_child_named(name:String) -> Variant:
-	for c:FMTreeNode in children:
+func get_child_named(name: String) -> Variant:
+	for c: FMTreeNode in children:
 		if c.name == name:
 			return c
-		var node:FMTreeNode = c.get_child_named(name)
+		var node: FMTreeNode = c.get_child_named(name)
 		if node: return node as FMTreeNode
 
 	return null
+
+
+func has_edited_files(mis: Mission) -> bool:
+	assert(is_dir)
+
+	for c: FMTreeNode in children:
+		if not c.is_dir:
+			if c.path in mis.mdata.edited_files:
+				return true
+		elif c.has_edited_files(mis):
+			return true
+
+	return false

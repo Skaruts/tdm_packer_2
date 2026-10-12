@@ -44,6 +44,34 @@ static func get_file_hash(path:String) -> String:
 	return Path.get_md5(path)
 
 
+static func check_file_hash(mis: Mission, path: String) -> bool:
+	if path not in mis.file_hashes: return false
+	return Path.get_md5(path) == mis.file_hashes[path]
+
+
+static func load_edited_files(mis: Mission) -> void:
+	var missing_files: Array[String]
+	for filepath: String in mis.mdata.edited_files:
+		if not Path.file_exists(filepath):
+			missing_files.append(filepath)
+			continue
+
+		mis.mdata.edited_files[filepath] = Path.read_file_string(filepath)
+		mis.store_hash(filepath)
+
+
+static func save_edited_files(mis: Mission) -> void:
+	for filepath: String in mis.mdata.edited_files:
+		if not check_file_hash(mis, filepath):
+			var content: String = mis.mdata.edited_files[filepath]
+			Path.write_file(filepath, content)
+
+
+static func check_edited_files_changed(mis: Mission) -> bool:
+	for filepath: String in mis.mdata.edited_files:
+		if not check_file_hash(mis, filepath):
+			return true
+	return false
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 
@@ -128,7 +156,7 @@ static func _pack_files(output:Object, mission:Mission) -> ErrorReport:
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 static func build_file_tree(mission: Mission) -> void:
-	logs.task("Building file tree...")
+	# logs.task("Building file tree...")
 
 	mission.inc_dir_count       = 0
 	mission.inc_file_count      = 0
@@ -152,7 +180,7 @@ static func build_file_tree(mission: Mission) -> void:
 			mission.inc_file_count -= 1
 			mission.exc_file_count += 1
 
-	logs.task("Finished building file tree")
+	# logs.task("Finished building file tree")
 
 
 static func init_ignores(mission:Mission) -> void:
@@ -362,6 +390,7 @@ static func load_or_create_file(mis: Mission, filename: String, default_content 
 
 	mis.mdata.set(filename, Path.read_file_string(mis.paths.get(filename)))
 	mis.store_hash(mis.paths.get(filename))
+
 
 static func create_mission_file(mis: Mission, filename: String, default_content := "") -> void:
 	var file_path: String = mis.paths.get(filename)
