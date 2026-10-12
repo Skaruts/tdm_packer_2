@@ -196,6 +196,15 @@ func remove_hash(filepath: String) -> void:
 		file_hashes.erase(filepath)
 
 
+func add_edited_file(path: String) -> void:
+	var content := Path.read_file_string(path)
+	mdata.edited_files[path] = content
+	store_hash(path)
+
+func remove_edited_file(path: String) -> void:
+	mdata.edited_files.erase(path)
+	remove_hash(path)
+
 func set_dirty_flag(file_dirty: bool, flag: DirtyFlags, _silent := false) -> void:
 	#var old_dirty := dirty
 	if file_dirty: dirty |= flag

@@ -1,22 +1,101 @@
 class_name GuiTabFiles
 extends TabContainer
 
+
+const TextFileEditorScene := preload("res://scenes/gui/text_file_editor.tscn")
+
+
+@onready var tc_editors: TabContainer = %tc_editors
 @onready var tr_files: Tree = $HSplitContainer/VBoxContainer/tr_files
 
-#func _enter_tree() -> void:
-	#gui.tab_files = self
 
-var _mission: Mission
+var _mission : Mission
+var editors  : Dictionary[String, TextFileEditor]
+# var dummy_editor: TextFileEditor
 
-func on_mission_reloaded(_force_update:=false) -> void:
-	# update the syntax highlighters if mission is readonly or not
+var syntax_highlighters: Array[SyntaxHighlighter]
 
-	# if valid_mission
-	# 	tag saved versions of all open text editors
-	# 	update button states
+var curr_tab_hovered_idx: int = 0
 
-	_reload_tree()
-	pass
+func _ready() -> void:
+	# dummy_editor = tc_editors.get_child(0)
+	tr_files.item_activated.connect(_on_tr_files_item_activated)
+
+	var tab_bar := tc_editors.get_tab_bar()
+	tab_bar.tab_close_display_policy = TabBar.CLOSE_BUTTON_SHOW_ALWAYS
+	tab_bar.max_tab_width = 150
+
+	tab_bar.tab_close_pressed.connect(_on_tab_bar_tab_close_pressed)
+	tab_bar.tab_hovered.connect(
+		func(idx: int) -> void:
+			curr_tab_hovered_idx = idx
+	)
+	tab_bar.gui_input.connect(
+		func(event: InputEvent) -> void:
+			if event is InputEventMouseButton \
+			and event.button_index == 3\
+			and event.pressed:
+				_on_tab_bar_tab_close_pressed(curr_tab_hovered_idx)
+	)
+
+
+
+func _on_tab_bar_tab_close_pressed(tab_idx: int) -> void:
+	var tab := tc_editors.get_child(tab_idx)
+	var node: FMTreeNode = tab.get_meta("node")
+	_remove_editor(tab)
+
+	# if editors.size() == 0:
+	# 	tc_editors.add_child(dummy_editor)
+
+	fms.remove_edited_file_from_mission(_mission, node.path)
+
+
+func _on_tr_files_item_activated() -> void:
+	var item := tr_files.get_selected()
+	var node: FMTreeNode = item.get_metadata(0)
+	if node.is_dir: return
+
+	if node.path in editors:
+		var idx := -1
+		for i in tc_editors.get_child_count():
+			var tab: Control = tc_editors.get_child(i)
+			if tab.name == node.name.replace('.', '_'):
+				idx = i
+				break
+
+		if idx >= 0:
+			tc_editors.current_tab = idx
+
+		return
+
+	# if tc_editors.get_child(0) == dummy_editor:
+	# 	tc_editors.remove_child(dummy_editor)
+
+	fms.add_edited_file_to_mission(_mission, node.path)
+	_add_editor(node)
+	_update_editor(node.path, _mission.mdata.edited_files[node.path])
+
+	tc_editors.current_tab = tc_editors.get_child_count() - 1
+
+
+
+func on_mission_reloaded(_force_update := false) -> void:
+	# TODO: update the syntax highlighters if mission is readonly or not
+
+	var is_missing := fms.is_mission_missing(_mission.id)
+	var is_readonly := fms.is_mission_readonly(_mission.id)
+	var valid_mission := not is_missing and not is_readonly
+
+	for ed: TextFileEditor in editors.values():
+		if valid_mission:
+			ed.tag_code_editor()
+		ed.update_button_states()
+
+	if not is_missing:
+		_reload_tree()
+		_reload_tabs(_mission.file_tree)
+
 
 # func update_pack_name() -> void:
 # 	pass
@@ -43,12 +122,49 @@ func set_mission(mission: Mission) -> void:
 
 	# ce_pkignore.syntax_highlighter = pk_syntax_highlighter if valid_mission else null
 
-	if not valid_mission:
-		tr_files.clear()
+	# if not valid_mission:
+	# 	tr_files.clear()
 		# if not fms.is_mission_missing(_mission.id):
 		# 	_update_buttons_states()
+		# return
 
 	_reload_tree()
+	# _reload_tabs()
+
+	_reload_tabs(_mission.file_tree)
+	# for c: FMTreeNode in _mission.file_tree.children:
+
+
+func _add_editor(node: FMTreeNode) -> void:
+	if node.path in editors: return
+	var ed: TextFileEditor = TextFileEditorScene.instantiate()
+	tc_editors.add_child(ed)
+	editors[node.path] = ed
+	ed.name = node.name
+	ed.set_meta("node", node)
+
+func _update_editor(path: String, text: String) -> void:
+	editors[path].update_text(text)
+
+func _remove_editor(tab: Control) -> void:
+	var node: FMTreeNode = tab.get_meta("node")
+	editors.erase(node.path)
+	tab.queue_free()
+	tc_editors.remove_child(tab)
+	assert(editors.size() == tc_editors.get_child_count())
+
+
+
+func _reload_tabs(parent: FMTreeNode) -> void:
+	for node: FMTreeNode in parent.children:
+		if not node.is_dir:
+			if node.path in _mission.mdata.edited_files:
+				fms.add_edited_file_to_mission(_mission, node.path)
+
+				_add_editor(node)
+				_update_editor(node.path, _mission.mdata.edited_files[node.path])
+		else:
+			_reload_tabs(node)
 
 
 
@@ -68,7 +184,7 @@ const ALLOWED_FILES := [
 	"txt", "md", "bat", "py", "gitignore", "log",
 	"xd", "gui", "script", "def", "mtr", "prt", "skin", "xd",
 
-	# "tga", "png", "jpg", "jpeg",    # TODO
+	# "tga", "png", "jpg", "jpeg",    # TODO maybe
 ]
 
 const RESTRICTED_FILES := [
@@ -96,6 +212,7 @@ func _dir_has_valid_files(node: FMTreeNode) -> bool:
 
 	return false
 
+
 func _build_file_tree(parent: FMTreeNode, gui_parent: TreeItem, disabled := false) -> void:
 	for node: FMTreeNode in parent.children:
 		if node.ignored: continue
@@ -106,34 +223,35 @@ func _build_file_tree(parent: FMTreeNode, gui_parent: TreeItem, disabled := fals
 		if not node.is_dir:
 			if _is_valid_file(node):
 				if node.path in _mission.mdata.edited_files:
-					tree_item = _create_node(gui_parent, node.name, icon, disabled, data.VALID_COLOR)
+					tree_item = _create_node(gui_parent, node, icon, disabled, data.VALID_COLOR)
 				else:
-					tree_item = _create_node(gui_parent, node.name, icon, disabled)
+					tree_item = _create_node(gui_parent, node, icon, disabled)
 		elif _dir_has_valid_files(node):
 			if node.has_edited_files(_mission):
-				tree_item = _create_node(gui_parent, node.name, icon, disabled, data.VALID_COLOR)
+				tree_item = _create_node(gui_parent, node, icon, disabled, data.VALID_COLOR)
 			else:
-				tree_item = _create_node(gui_parent, node.name, icon, disabled)
+				tree_item = _create_node(gui_parent, node, icon, disabled)
 
 
 		_build_file_tree(node, tree_item, disabled)
 
 
 
-func _create_node(parent: TreeItem, text: String, icon: Texture2D, disabled := false, color: Variant = null) -> TreeItem:
-	var node := parent.create_child()
-	node.set_text(0, text)
+func _create_node(parent: TreeItem, node: FMTreeNode, icon: Texture2D, disabled := false, color: Variant = null) -> TreeItem:
+	var tree_item := parent.create_child()
+	tree_item.set_text(0, node.name)
+	tree_item.set_metadata(0, node)
 
 	if color:
-		node.set_custom_color(0, color)
-		#node.set_icon_modulate(0, color)
+		tree_item.set_custom_color(0, color)
+		#tree_item.set_icon_modulate(0, color)
 
-	node.set_icon(0, icon)
-	node.set_icon_max_width(0, 16)
+	tree_item.set_icon(0, icon)
+	tree_item.set_icon_max_width(0, 16)
 
 	if disabled:
-		node.set_selectable(0, false)
-		node.set_custom_color(0, data.FADED_TEXT_COLOR)
+		tree_item.set_selectable(0, false)
+		tree_item.set_custom_color(0, data.FADED_TEXT_COLOR)
 
-	node.collapsed = true
-	return node
+	tree_item.collapsed = true
+	return tree_item

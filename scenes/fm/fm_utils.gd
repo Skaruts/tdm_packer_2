@@ -49,19 +49,19 @@ static func check_file_hash(mis: Mission, path: String) -> bool:
 	return Path.get_md5(path) == mis.file_hashes[path]
 
 
-static func load_edited_files(mis: Mission) -> void:
+static func load_edited_files(md: Dictionary, mis: Mission) -> Array[String]:
 	var missing_files: Array[String]
-	for filepath: String in mis.mdata.edited_files:
+	for filepath: String in md.edited_files:
 		if not Path.file_exists(filepath):
 			missing_files.append(filepath)
 			continue
+		mis.add_edited_file(filepath)
+	return missing_files
 
-		mis.mdata.edited_files[filepath] = Path.read_file_string(filepath)
-		mis.store_hash(filepath)
 
-
-static func save_edited_files(mis: Mission) -> void:
-	for filepath: String in mis.mdata.edited_files:
+static func save_edited_files(md: Dictionary, mis: Mission) -> void:
+	for filepath: String in md.edited_files:
+		assert(filepath in mis.mdata.edited_files)
 		if not check_file_hash(mis, filepath):
 			var content: String = mis.mdata.edited_files[filepath]
 			Path.write_file(filepath, content)
@@ -244,7 +244,7 @@ static func _gather_files(mission:Mission, parent:FMTreeNode) -> void:
 
 
 # TODO: this should be in the tree class, maybe
-static func print_tree_node_recursive(root:FMTreeNode) -> void:
+static func print_tree_node_recursive(root: FMTreeNode) -> void:
 	for c:FMTreeNode in root.children:
 		if not c.ignored:
 			logs.print(c.rel_path)
