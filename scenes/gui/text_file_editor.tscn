@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://xkay5o7nv1du"]
+[gd_scene load_steps=8 format=3 uid="uid://xkay5o7nv1du"]
 
 [ext_resource type="Texture2D" uid="uid://cdyi24tm4f81m" path="res://assets/icons/file_icon.png" id="1_fg4sr"]
 [ext_resource type="Script" uid="uid://c5phgrguk2262" path="res://scenes/gui/text_file_editor.gd" id="1_gjvmn"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://bsnqlh447ecu4" path="res://assets/icons/up_arrow_16.png" id="3_gjvmn"]
 [ext_resource type="Texture2D" uid="uid://c2l01wm768rqt" path="res://assets/icons/down_arrow_16.png" id="4_d5cbw"]
 [ext_resource type="Texture2D" uid="uid://ctpiegbm0nstp" path="res://assets/icons/check_mark_icon.png" id="5_pjvay"]
+[ext_resource type="CodeHighlighter" uid="uid://cfn24qtu57xs7" path="res://resources/syntax/def_syntax.tres" id="7_d5cbw"]
 
 [node name="text_file_editor" type="VBoxContainer"]
 anchors_preset = 15
@@ -45,15 +46,19 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+placeholder_text = "  "
 emoji_menu_enabled = false
 drag_and_drop_selection_enabled = false
 middle_mouse_paste_enabled = false
 empty_selection_clipboard_enabled = false
+wrap_mode = 1
+indent_wrapped_lines = true
 scroll_smooth = true
 scroll_past_end_of_file = true
 minimap_draw = true
 minimap_width = 60
 caret_blink = true
+syntax_highlighter = ExtResource("7_d5cbw")
 highlight_all_occurrences = true
 highlight_current_line = true
 line_folding = true

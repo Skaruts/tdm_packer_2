@@ -21,7 +21,20 @@ const DEFAULT_CONFIG := {
 		packname_suffix = "_v$version",
 		popup_bg_opacity = 0.5,
 		date_time_format = "d/m/y t",
-	}
+	},
+	syntax = {
+		keyword1  = Color(0.384, 1.0, 0.0),
+		keyword2  = Color(0.0, 0.831, 0.498),
+		keyword3  = Color(0.902, 0.0, 1.0),
+		header    = Color(0.341, 0.714, 1.0),
+		constant  = Color(0.0, 1.0, 1.0),
+		param     = Color(0.0, 1.0, 1.0),
+		number    = Color(0.788, 0.616, 0.988),
+		symbol    = Color(1.0, 1.0, 1.0),
+		comment   = Color(0.345, 0.345, 0.345),
+		string    = Color(1.0, 0.698, 0.212),
+		directive = Color(1.0, 0.253, 0.24),
+	},
 }
 
 #const DEFAULT_MODFILE =                          \

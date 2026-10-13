@@ -1,0 +1,18 @@
+[gd_resource type="CodeHighlighter" format=3 uid="uid://cfn24qtu57xs7"]
+
+[resource]
+number_color = Color(0.78936, 0.6138, 0.99, 1)
+symbol_color = Color(1, 1, 1, 1)
+keyword_colors = {
+"anim": Color(0.384314, 1, 0, 1),
+"channel": Color(0.384314, 1, 0, 1),
+"entityDef": Color(0.341176, 0.713726, 1, 1),
+"frame": Color(0.384314, 1, 0, 1),
+"mesh": Color(0.384314, 1, 0, 1),
+"model": Color(0.384314, 1, 0, 1)
+}
+color_regions = {
+"\" \"": Color(1, 0.698039, 0.211765, 1),
+"/* */": Color(0.345098, 0.345098, 0.345098, 1),
+"//": Color(0.345098, 0.345098, 0.345098, 1)
+}
