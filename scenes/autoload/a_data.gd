@@ -144,8 +144,8 @@ func update_config(new_config:ConfigData) -> void:
 	_update_theme()
 
 	# some stuff needs to know the config changed
-	fms.update_folders()
-	gui.update_missions_list_buttons()
+	fms.update_mission_data()
+	gui.update_missions_list()
 
 	for i:int in fms.missions.size():
 		var mis:Mission = fms.missions[i]

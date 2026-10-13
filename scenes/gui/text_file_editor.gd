@@ -4,9 +4,27 @@ extends VBoxContainer
 
 @onready var code_edit: CodeEdit = %CodeEdit
 
-func _ready() -> void:
-	pass
+var path: String
+var mission: Mission
 
+
+func _ready() -> void:
+	code_edit.text_changed.connect(_on_code_edit_text_changed.bind())
+	code_edit.focus_entered.connect(code_edit.set_highlight_current_line.bind(true))
+	code_edit.focus_exited.connect(code_edit.set_highlight_current_line.bind(false))
+
+
+
+func _on_code_edit_text_changed() -> void:
+	var dirty: bool = code_edit.get_version() != code_edit.get_saved_version()
+	mission.update_file(path, code_edit.text, dirty)
+	fms.start_save_timer(false)
+
+
+
+func set_data(mis: Mission, _path: String) -> void:
+	mission = mis
+	path = _path
 
 
 func update_text(text: String) -> void:

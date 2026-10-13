@@ -56,4 +56,9 @@ func _notification(what: int) -> void:
 		NOTIFICATION_WM_WINDOW_FOCUS_IN:
 			# if we're here because a dialog window just closed, don't update missions
 			if not popups.popup_has_just_closed:
+				var path := Path.join(fms.curr_mission.paths.root, "output.txt")
+				var mis_hash: String = fms.curr_mission.file_hashes[path]
+				var disk_hash := Path.get_md5(path)
+				logs.print(mis_hash, disk_hash)
+
 				fms.check_missions_on_focus_in()

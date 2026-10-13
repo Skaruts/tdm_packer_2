@@ -550,6 +550,7 @@ func get_mission_with_id(id: String) -> Mission:
 
 
 func check_missions_on_focus_in() -> void:
+	# check for missing missions
 	var missing_missions: Dictionary[String, bool]
 	for id in mission_datas.get_section_keys("missions"):
 		var md: Dictionary = mission_datas.get_value("missions", id, null)
@@ -559,6 +560,7 @@ func check_missions_on_focus_in() -> void:
 
 	update_mission_data()
 
+	# check for missions that are no longer missing
 	var non_missing_count := 0
 	var new_missing_missions: Array[String]
 
@@ -574,6 +576,8 @@ func check_missions_on_focus_in() -> void:
 			_replace_mission(mis)
 			non_missing_count += 1
 
+
+	# report on missing missions
 	var last_idx := missions.find(curr_mission)
 
 	if new_missing_missions.size() > 0:
@@ -583,13 +587,17 @@ func check_missions_on_focus_in() -> void:
 
 		popups.show_message( "Warning", message )
 
+	# if missions were added or removed, sort the list
 	if new_missing_missions.size() > 0 or non_missing_count > 0:
 		sort_missions()
 		# save_missions_data()
 		curr_mission = missions[last_idx]
 
+	# update the UI
 	for m in missions:
-		FMUtils.build_file_tree(m)
+	# 	# FMUtils.build_file_tree(m)
+	# 	# _load_mission_files(m)
+	# 	# check_mission_filesystem(m)
 		gui.on_mission_reloaded( get_mission_index(m), true )
 
 	gui.update_missions_list()
@@ -597,12 +605,18 @@ func check_missions_on_focus_in() -> void:
 
 
 
+func _get_relative_file_path(path: String, id: String) -> String:
+	var fm_path := Path.join(fms_folder, id)
+	return path.replace(fm_path + '/', '')
+
+
 func add_edited_file_to_mission(mis: Mission, path: String) -> void:
 	mis.add_edited_file(path)
 	var md: Dictionary = mission_datas.get_value("missions", mis.id, null)
 	assert(md != null)
-	if not path in md.edited_files:
-		md.edited_files.append(path)
+	var rel_path := _get_relative_file_path(path, mis.id)
+	if not rel_path in md.edited_files:
+		md.edited_files.append(rel_path)
 		save_missions_data()
 
 
@@ -611,7 +625,8 @@ func remove_edited_file_from_mission(mis: Mission, path: String) -> void:
 	mis.remove_edited_file(path)
 	var md: Dictionary = mission_datas.get_value("missions", mis.id, null)
 	assert(md != null)
-	md.edited_files.erase(path)
+	var rel_path := _get_relative_file_path(path, mis.id)
+	md.edited_files.erase(rel_path)
 	save_missions_data()
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=

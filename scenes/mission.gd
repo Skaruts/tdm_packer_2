@@ -188,12 +188,18 @@ func set_paths(path:String) -> void:
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 func store_hash(filepath: String) -> void:
-	file_hashes[filepath] = FMUtils.get_file_hash(filepath)
+	var hash := FMUtils.get_file_hash(filepath)
+	var filename := filepath.get_file()
+	file_hashes[filepath] = hash
 
 
 func remove_hash(filepath: String) -> void:
 	if filepath in file_hashes:
 		file_hashes.erase(filepath)
+
+
+func get_file_hash(filepath: String) -> String:
+	return file_hashes[filepath]
 
 
 func add_edited_file(path: String) -> void:
@@ -204,6 +210,17 @@ func add_edited_file(path: String) -> void:
 func remove_edited_file(path: String) -> void:
 	mdata.edited_files.erase(path)
 	remove_hash(path)
+
+
+func has_edited_file(path: String) -> bool:
+	return path in mdata.edited_files
+
+
+
+func update_file(path: String, content: String, file_dirty := true, silent := false) -> void:
+	mdata.edited_files[path] = content
+	set_dirty_flag(file_dirty, DirtyFlags.FILES, silent)
+
 
 func set_dirty_flag(file_dirty: bool, flag: DirtyFlags, _silent := false) -> void:
 	#var old_dirty := dirty

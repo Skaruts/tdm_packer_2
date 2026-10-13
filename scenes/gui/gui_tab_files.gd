@@ -22,7 +22,7 @@ func _ready() -> void:
 	tr_files.item_activated.connect(_on_tr_files_item_activated)
 
 	var tab_bar := tc_editors.get_tab_bar()
-	tab_bar.tab_close_display_policy = TabBar.CLOSE_BUTTON_SHOW_ALWAYS
+	tab_bar.tab_close_display_policy = TabBar.CLOSE_BUTTON_SHOW_NEVER
 	tab_bar.max_tab_width = 150
 
 	tab_bar.tab_close_pressed.connect(_on_tab_bar_tab_close_pressed)
@@ -38,6 +38,8 @@ func _ready() -> void:
 				_on_tab_bar_tab_close_pressed(curr_tab_hovered_idx)
 	)
 
+	for c in tc_editors.get_children():
+		c.queue_free()
 
 
 func _on_tab_bar_tab_close_pressed(tab_idx: int) -> void:
@@ -73,7 +75,7 @@ func _on_tr_files_item_activated() -> void:
 	# 	tc_editors.remove_child(dummy_editor)
 
 	fms.add_edited_file_to_mission(_mission, node.path)
-	_add_editor(node)
+	_add_editor_id_needed(node)
 	_update_editor(node.path, _mission.mdata.edited_files[node.path])
 
 	tc_editors.current_tab = tc_editors.get_child_count() - 1
@@ -135,13 +137,16 @@ func set_mission(mission: Mission) -> void:
 	# for c: FMTreeNode in _mission.file_tree.children:
 
 
-func _add_editor(node: FMTreeNode) -> void:
-	if node.path in editors: return
+func _add_editor_id_needed(node: FMTreeNode) -> bool:
+	if node.path in editors: return false
 	var ed: TextFileEditor = TextFileEditorScene.instantiate()
 	tc_editors.add_child(ed)
+	ed.set_data(_mission, node.path)
 	editors[node.path] = ed
 	ed.name = node.name
 	ed.set_meta("node", node)
+	return true
+
 
 func _update_editor(path: String, text: String) -> void:
 	editors[path].update_text(text)
@@ -159,10 +164,17 @@ func _reload_tabs(parent: FMTreeNode) -> void:
 	for node: FMTreeNode in parent.children:
 		if not node.is_dir:
 			if node.path in _mission.mdata.edited_files:
+				var old_hash: String
+				if _mission.has_edited_file(node.path):
+					old_hash = _mission.get_file_hash(node.path)
+
 				fms.add_edited_file_to_mission(_mission, node.path)
 
-				_add_editor(node)
-				_update_editor(node.path, _mission.mdata.edited_files[node.path])
+				var added_ed := _add_editor_id_needed(node)
+				var hash_comp := old_hash == _mission.get_file_hash(node.path)
+				if added_ed \
+				or not hash_comp:
+					_update_editor(node.path, _mission.mdata.edited_files[node.path])
 		else:
 			_reload_tabs(node)
 

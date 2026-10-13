@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://cch1qviuewj5"]
+[gd_scene load_steps=4 format=3 uid="uid://cch1qviuewj5"]
 
 [ext_resource type="Script" uid="uid://c4u5jw8aj2wwo" path="res://scenes/gui/gui_tab_files.gd" id="1_lvyyf"]
+[ext_resource type="PackedScene" uid="uid://xkay5o7nv1du" path="res://scenes/gui/text_file_editor.tscn" id="2_rbsxu"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7trsy"]
 
@@ -43,8 +44,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxEmpty_7trsy")
+current_tab = 0
 
-[node name="TabBar" type="TabBar" parent="."]
-visible = false
+[node name="text_file_editor" parent="HSplitContainer/tc_editors" instance=ExtResource("2_rbsxu")]
 layout_mode = 2
-metadata/_tab_index = 1
