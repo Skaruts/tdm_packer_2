@@ -56,7 +56,6 @@ indent_wrapped_lines = true
 scroll_smooth = true
 scroll_past_end_of_file = true
 minimap_draw = true
-minimap_width = 60
 caret_blink = true
 syntax_highlighter = ExtResource("7_d5cbw")
 highlight_all_occurrences = true
