@@ -26,16 +26,16 @@ func _ready() -> void:
 	tab_bar.max_tab_width = 150
 
 	tab_bar.tab_close_pressed.connect(_on_tab_bar_tab_close_pressed)
-	tab_bar.tab_hovered.connect(
-		func(idx: int) -> void:
-			curr_tab_hovered_idx = idx
-	)
+
 	tab_bar.gui_input.connect(
 		func(event: InputEvent) -> void:
 			if event is InputEventMouseButton \
 			and event.button_index == 3\
 			and event.pressed:
-				_on_tab_bar_tab_close_pressed(curr_tab_hovered_idx)
+				var lmp := tab_bar.get_local_mouse_position()
+				var idx := tab_bar.get_tab_idx_at_point(lmp)
+				if idx != -1:
+					_on_tab_bar_tab_close_pressed(idx)
 	)
 
 	for c in tc_editors.get_children():
