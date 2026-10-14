@@ -51,7 +51,6 @@ emoji_menu_enabled = false
 drag_and_drop_selection_enabled = false
 middle_mouse_paste_enabled = false
 empty_selection_clipboard_enabled = false
-wrap_mode = 1
 indent_wrapped_lines = true
 scroll_smooth = true
 scroll_past_end_of_file = true

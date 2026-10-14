@@ -83,6 +83,7 @@ func _on_tr_files_item_activated() -> void:
 
 
 func on_mission_reloaded(_force_update := false) -> void:
+	logs.print("on_mission_reloaded")
 	# TODO: update the syntax highlighters if mission is readonly or not
 
 	var is_missing := fms.is_mission_missing(_mission.id)
@@ -93,10 +94,16 @@ func on_mission_reloaded(_force_update := false) -> void:
 		if valid_mission:
 			ed.tag_code_editor()
 		ed.update_button_states()
+		ed.update_colors()
+
+	var tb: TabBar = tc_editors.get_tab_bar()
+	tb.tab_close_display_policy = data.config.tab_close_buttons_mode
 
 	if not is_missing:
 		_reload_tree()
 		_reload_tabs(_mission.file_tree)
+
+
 
 
 # func update_pack_name() -> void:
@@ -149,7 +156,10 @@ func _add_editor_id_needed(node: FMTreeNode) -> bool:
 
 
 func _update_editor(path: String, text: String) -> void:
+	logs.print("_update_editor")
 	editors[path].update_text(text)
+	editors[path].update_colors()
+
 
 func _remove_editor(tab: Control) -> void:
 	var node: FMTreeNode = tab.get_meta("node")
@@ -157,7 +167,6 @@ func _remove_editor(tab: Control) -> void:
 	tab.queue_free()
 	tc_editors.remove_child(tab)
 	assert(editors.size() == tc_editors.get_child_count())
-
 
 
 func _reload_tabs(parent: FMTreeNode) -> void:

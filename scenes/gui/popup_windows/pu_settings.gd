@@ -1,26 +1,51 @@
 extends BasePopup
 
 
-@onready var le_tdm              : LineEdit = %le_tdm
-@onready var le_dr               : LineEdit = %le_dr
-@onready var le_tdm_copy         : LineEdit = %le_tdm_copy
-@onready var btn_browse_tdm      : Button   = %btn_browse_tdm
-@onready var btn_browse_dr       : Button   = %btn_browse_dr
-@onready var btn_browse_tdm_copy : Button   = %btn_browse_tdm_copy
+@onready var le_tdm              : LineEdit    = %le_tdm
+@onready var le_dr               : LineEdit    = %le_dr
+@onready var le_tdm_copy         : LineEdit    = %le_tdm_copy
+@onready var btn_browse_tdm      : Button      = %btn_browse_tdm
+@onready var btn_browse_dr       : Button      = %btn_browse_dr
+@onready var btn_browse_tdm_copy : Button      = %btn_browse_tdm_copy
 
 @onready var sb_gui_font_size    : SpinBox     = %sb_gui_font_size
 @onready var sb_code_font_size   : SpinBox     = %sb_code_font_size
 @onready var cbt_show_roots      : CheckButton = %cbt_show_roots
 @onready var sb_bg_opacity       : SpinBox     = %sb_bg_opacity
 
-@onready var le_pk4_suffix: LineEdit = %le_pk4_suffix
-@onready var le_date_time_format: LineEdit = %le_date_time_format
+@onready var le_pk4_suffix       : LineEdit    = %le_pk4_suffix
+@onready var le_date_time_format : LineEdit    = %le_date_time_format
 
+
+@onready var cpb_background : ColorPickerButton = %cpb_background
+@onready var ob_close_btns  : OptionButton      = %ob_close_btns
+
+@onready var cpb_text       : ColorPickerButton = %cpb_text
+@onready var cpb_keywords1  : ColorPickerButton = %cpb_keywords1
+@onready var cpb_comments   : ColorPickerButton = %cpb_comments
+@onready var cpb_keywords2  : ColorPickerButton = %cpb_keyword2
+@onready var cpb_strings    : ColorPickerButton = %cpb_strings
+@onready var cpb_keywords3  : ColorPickerButton = %cpb_keyword3
+@onready var cpb_numbers    : ColorPickerButton = %cpb_numbers
+@onready var cpb_types      : ColorPickerButton = %cpb_types
+@onready var cpb_booleans   : ColorPickerButton = %cpb_booleans
+@onready var cpb_functions  : ColorPickerButton = %cpb_functions
+@onready var cpb_constants  : ColorPickerButton = %cpb_constants
+@onready var cpb_builtins   : ColorPickerButton = %cpb_builtins
+@onready var cpb_symbols    : ColorPickerButton = %cpb_symbols
+@onready var cpb_members    : ColorPickerButton = %cpb_members
+@onready var cpb_directives : ColorPickerButton = %cpb_directives
+@onready var cpb_headers    : ColorPickerButton = %cpb_headers
+@onready var cpb_params     : ColorPickerButton = %cpb_params
+
+
+
+var color_pickers: Array[ColorPickerButton]
 var temp_config: ConfigData
 
 
 func _on_ready() -> void:
-	%tabs.current_tab = 0
+	%tc_tabs.current_tab = 0
 
 	sb_gui_font_size.value_changed.connect(_on_sb_gui_font_size_value_changed)
 	sb_code_font_size.value_changed.connect(_on_sb_code_font_size_value_changed)
@@ -33,6 +58,22 @@ func _on_ready() -> void:
 	btn_browse_tdm.pressed.connect(_on_btn_browse_tdm_pressed)
 	btn_browse_dr.pressed.connect(_on_btn_browse_dr_pressed)
 	btn_browse_tdm_copy.pressed.connect(_on_btn_browse_tdm_copy_pressed)
+
+	color_pickers = [
+		cpb_background,   cpb_text,        cpb_keywords1,
+		cpb_comments,     cpb_keywords2,   cpb_strings,
+		cpb_keywords3,    cpb_numbers,     cpb_types,
+		cpb_booleans,     cpb_functions,   cpb_constants,
+		cpb_builtins,     cpb_symbols,     cpb_members,
+		cpb_directives,   cpb_headers,     cpb_params,
+	]
+
+	for cbp in color_pickers:
+		cbp.color_changed.connect(_on_cpb_color_changed.bind(cbp))
+
+	ob_close_btns.item_selected.connect(_in_ob_close_btns_item_selected)
+
+
 
 func _on_close_requested() -> void:
 	pass
@@ -58,6 +99,29 @@ func _on_popup() -> void:
 	le_date_time_format.text = temp_config.date_time_format
 
 
+	cpb_background.color   = temp_config.background_color
+	ob_close_btns.selected = temp_config.tab_close_buttons_mode
+
+	cpb_text.color       = temp_config.text
+	cpb_keywords1.color  = temp_config.keyword1
+	cpb_comments.color   = temp_config.comment
+	cpb_keywords2.color  = temp_config.keyword2
+	cpb_strings.color    = temp_config.string
+	cpb_keywords3.color  = temp_config.keyword3
+	cpb_numbers.color    = temp_config.number
+	cpb_types.color      = temp_config.type
+	cpb_booleans.color   = temp_config.boolean
+	cpb_functions.color  = temp_config.function
+	cpb_constants.color  = temp_config.constant
+	cpb_builtins.color   = temp_config.builtin
+	cpb_symbols.color    = temp_config.symbol
+	cpb_members.color    = temp_config.member
+	cpb_directives.color = temp_config.directive
+	cpb_headers.color    = temp_config.header
+	cpb_params.color     = temp_config.param
+
+
+
 func _on_input(event: InputEvent) -> void:
 	#if event.is_action_pressed("ui_accept")\
 	#and not btn_ok.disabled:
@@ -76,8 +140,7 @@ func _on_bar_button_pressed(idx:int) -> void:
 
 func _commit_data() -> void:
 	data.update_config(temp_config)
-	gui.workspace_set_show_roots()
-	gui.update_missions_list_buttons()
+
 
 
 func _validate_and_update_colors(line_edit:CustomLineEdit, filepath:String, key:String) -> void:
@@ -212,4 +275,38 @@ func _on_le_pk_4_suffix_text_changed(new_text: String) -> void:
 
 func _on_le_date_time_format_text_changed(new_text:String) -> void:
 	temp_config.date_time_format = new_text
+	_update_apply_button()
+
+
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+
+#		Color Settings Buttons
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+func _on_cpb_color_changed(color: Color, cpb: ColorPickerButton) -> void:
+	match cpb:
+		cpb_background : temp_config.background_color = color
+		cpb_text       : temp_config.text      = color
+		cpb_keywords1  : temp_config.keyword1  = color
+		cpb_comments   : temp_config.comment   = color
+		cpb_keywords2  : temp_config.keyword2  = color
+		cpb_strings    : temp_config.string    = color
+		cpb_keywords3  : temp_config.keyword3  = color
+		cpb_numbers    : temp_config.number    = color
+		cpb_types      : temp_config.type      = color
+		cpb_booleans   : temp_config.boolean   = color
+		cpb_functions  : temp_config.function  = color
+		cpb_constants  : temp_config.constant  = color
+		cpb_builtins   : temp_config.builtin   = color
+		cpb_symbols    : temp_config.symbol    = color
+		cpb_members    : temp_config.member    = color
+		cpb_directives : temp_config.directive = color
+		cpb_headers    : temp_config.header    = color
+		cpb_params     : temp_config.param     = color
+	_update_apply_button()
+
+
+func _in_ob_close_btns_item_selected(idx: int) -> void:
+	temp_config.tab_close_buttons_mode = idx
 	_update_apply_button()

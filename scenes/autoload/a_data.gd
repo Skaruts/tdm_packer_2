@@ -22,23 +22,28 @@ const DEFAULT_CONFIG := {
 		popup_bg_opacity = 0.5,
 		date_time_format = "d/m/y t",
 	},
+	editors = {
+		background_color = Color(0.07, 0.064, 0.062),
+		tab_close_buttons_mode = 0,
+	},
 	syntax = {
+		text      = Color.LIGHT_GRAY,
 		keyword1  = Color(0.384, 1.0, 0.0),
 		keyword2  = Color(0.0, 0.831, 0.498),
 		keyword3  = Color(0.902, 0.0, 1.0),
-		header    = Color(0.341, 0.714, 1.0),
-		constant  = Color(0.0, 1.0, 1.0),
-		param     = Color(0.0, 1.0, 1.0),
+		type      = Color(0.415, 1.0, 0.22),
+		function  = Color(0.22, 0.545, 1.0),
+		builtin   = Color(0.376, 0.959, 0.99),
+		member    = Color(1.0, 0.417, 0.0),
 		number    = Color(0.788, 0.616, 0.988),
+		constant  = Color(0.0, 1.0, 1.0),
 		symbol    = Color(1.0, 1.0, 1.0),
 		comment   = Color(0.345, 0.345, 0.345),
 		string    = Color(1.0, 0.698, 0.212),
 		directive = Color(1.0, 0.253, 0.24),
-		member    = Color(1.0, 0.417, 0.0),
-		function  = Color(0.22, 0.545, 1.0),
-		builtin   = Color(0.376, 0.959, 0.99),
-		type      = Color(0.415, 1.0, 0.22),
 		boolean   = Color(0.788, 0.616, 0.988),
+		header    = Color(0.341, 0.714, 1.0),
+		param     = Color(0.0, 1.0, 1.0),
 	},
 }
 
@@ -123,6 +128,10 @@ func _update_theme() -> void:
 	theme.set_font_size("font_size", "CodeEdit", config.code_font_size)
 	popups.popup_background.color.a = config.popup_bg_opacity
 
+	var stylebox: StyleBoxFlat = theme.get_stylebox("normal", "CodeEdit")
+	stylebox.bg_color = config.background_color
+
+
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 #        External API
@@ -169,9 +178,14 @@ func update_config(new_config:ConfigData) -> void:
 		var mis:Mission = fms.missions[i]
 		if mis.update_zipname():
 			#fms.soft_reload_mission(mis, true)
-			#gui.update_workspace_pack_name( fms.get_mission_index(mis) )
-			gui.update_workspace_pack_name( i )
+			#gui.workspace_update_pack_name( fms.get_mission_index(mis) )
+			gui.workspace_update_pack_name(i)
+		gui.on_mission_reloaded(i)
 
+
+	gui.update_workspaces()
+	gui.workspace_set_show_roots()
+	gui.missions_list_update_buttons()
 
 
 

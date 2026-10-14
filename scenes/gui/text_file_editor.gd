@@ -32,19 +32,7 @@ func set_data(mis: Mission, _path: String) -> void:
 
 func update_text(text: String) -> void:
 	code_edit.text = text
-
-	var ext := path.get_extension()
-	logs.print(ext, path)
-
-	match ext:
-		"mtr"    : code_edit.syntax_highlighter = MaterialCodeHighlighter.new()
-		"skin"   : code_edit.syntax_highlighter = SkinCodeHighlighter.new()
-		"xd"     : code_edit.syntax_highlighter = XDataCodeHighlighter.new()
-		"prt"    : code_edit.syntax_highlighter = ParticleCodeHighlighter.new()
-		"def"    : code_edit.syntax_highlighter = DefCodeHighlighter.new()
-		"gui"    : code_edit.syntax_highlighter = GuiCodeHighlighter.new()
-		"script" : code_edit.syntax_highlighter = ScriptCodeHighlighter.new()
-		_: code_edit.syntax_highlighter = null
+	# update_colors()
 
 
 func tag_code_editor() -> void:
@@ -63,3 +51,17 @@ func update_button_states() -> void:
 	# 	# when they exist
 	# 	pass
 	pass
+
+
+func update_colors() -> void:
+	logs.print("update_colors")
+	var ext := path.get_extension()
+	match ext:
+		"mtr"    : code_edit.syntax_highlighter = MaterialCodeHighlighter.new()
+		"skin"   : code_edit.syntax_highlighter = SkinCodeHighlighter.new()
+		"xd"     : code_edit.syntax_highlighter = XDataCodeHighlighter.new()
+		"prt"    : code_edit.syntax_highlighter = ParticleCodeHighlighter.new()
+		"def"    : code_edit.syntax_highlighter = DefCodeHighlighter.new()
+		"gui"    : code_edit.syntax_highlighter = GuiCodeHighlighter.new()
+		"script" : code_edit.syntax_highlighter = ScriptCodeHighlighter.new()
+		_: code_edit.syntax_highlighter = null
