@@ -42,8 +42,8 @@ func update_text(text: String) -> void:
 		"xd"     : code_edit.syntax_highlighter = XDataCodeHighlighter.new()
 		"prt"    : code_edit.syntax_highlighter = ParticleCodeHighlighter.new()
 		"def"    : code_edit.syntax_highlighter = DefCodeHighlighter.new()
-		# "gui"    : code_edit.syntax_highlighter = GuiCodeHighlighter.new()
-		# "script" : code_edit.syntax_highlighter = ScriptCodeHighlighter.new()
+		"gui"    : code_edit.syntax_highlighter = GuiCodeHighlighter.new()
+		"script" : code_edit.syntax_highlighter = ScriptCodeHighlighter.new()
 		_: code_edit.syntax_highlighter = null
 
 

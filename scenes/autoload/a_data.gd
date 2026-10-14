@@ -34,6 +34,11 @@ const DEFAULT_CONFIG := {
 		comment   = Color(0.345, 0.345, 0.345),
 		string    = Color(1.0, 0.698, 0.212),
 		directive = Color(1.0, 0.253, 0.24),
+		member    = Color(1.0, 0.417, 0.0),
+		function  = Color(0.22, 0.545, 1.0),
+		builtin   = Color(0.376, 0.959, 0.99),
+		type      = Color(0.415, 1.0, 0.22),
+		boolean   = Color(0.788, 0.616, 0.988),
 	},
 }
 
