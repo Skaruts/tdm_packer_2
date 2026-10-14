@@ -28,7 +28,8 @@ const DEFAULT_CONFIG := {
 	},
 	syntax = {
 		text      = Color.LIGHT_GRAY,
-		keyword1  = Color(0.384, 1.0, 0.0),
+		keyword1  = Color(1.0, 0.839, 0.122),
+
 		keyword2  = Color(0.0, 0.831, 0.498),
 		keyword3  = Color(0.902, 0.0, 1.0),
 		type      = Color(0.415, 1.0, 0.22),
@@ -37,7 +38,7 @@ const DEFAULT_CONFIG := {
 		member    = Color(1.0, 0.417, 0.0),
 		number    = Color(0.788, 0.616, 0.988),
 		constant  = Color(0.0, 1.0, 1.0),
-		symbol    = Color(1.0, 1.0, 1.0),
+		symbol    = Color(0.67, 0.79, 1.0),
 		comment   = Color(0.345, 0.345, 0.345),
 		string    = Color(1.0, 0.698, 0.212),
 		directive = Color(1.0, 0.253, 0.24),
@@ -166,7 +167,6 @@ func initialize() -> void:
 
 func update_config(new_config:ConfigData) -> void:
 	if not new_config.dirty: return
-	logs.print("SAVING OPTIONS")
 
 	config.update(new_config)
 	_save_config()

@@ -20,27 +20,29 @@ extends BasePopup
 @onready var cpb_background : ColorPickerButton = %cpb_background
 @onready var ob_close_btns  : OptionButton      = %ob_close_btns
 
-@onready var cpb_text       : ColorPickerButton = %cpb_text
-@onready var cpb_keywords1  : ColorPickerButton = %cpb_keywords1
-@onready var cpb_comments   : ColorPickerButton = %cpb_comments
-@onready var cpb_keywords2  : ColorPickerButton = %cpb_keyword2
-@onready var cpb_strings    : ColorPickerButton = %cpb_strings
-@onready var cpb_keywords3  : ColorPickerButton = %cpb_keyword3
-@onready var cpb_numbers    : ColorPickerButton = %cpb_numbers
-@onready var cpb_types      : ColorPickerButton = %cpb_types
-@onready var cpb_booleans   : ColorPickerButton = %cpb_booleans
-@onready var cpb_functions  : ColorPickerButton = %cpb_functions
-@onready var cpb_constants  : ColorPickerButton = %cpb_constants
-@onready var cpb_builtins   : ColorPickerButton = %cpb_builtins
-@onready var cpb_symbols    : ColorPickerButton = %cpb_symbols
-@onready var cpb_members    : ColorPickerButton = %cpb_members
-@onready var cpb_directives : ColorPickerButton = %cpb_directives
-@onready var cpb_headers    : ColorPickerButton = %cpb_headers
-@onready var cpb_params     : ColorPickerButton = %cpb_params
+@onready var gc_code_colors: GridContainer = %gc_code_colors
 
+enum ColorPickerButtons {
+	TEXT,
+	KEYWORD1,
+	COMMENT,
+	KEYWORD2,
+	STRING,
+	KEYWORD3,
+	NUMBER,
+	TYPE,
+	BOOLEAN,
+	FUNCTION,
+	CONSTANT,
+	BUILTIN,
+	SYMBOL,
+	MEMBER,
+	DIRECTIVE,
+	HEADER,
+	PARAM,
+}
 
-
-var color_pickers: Array[ColorPickerButton]
+var color_pickers: Array[ColorButton]
 var temp_config: ConfigData
 
 
@@ -59,17 +61,23 @@ func _on_ready() -> void:
 	btn_browse_dr.pressed.connect(_on_btn_browse_dr_pressed)
 	btn_browse_tdm_copy.pressed.connect(_on_btn_browse_tdm_copy_pressed)
 
-	color_pickers = [
-		cpb_background,   cpb_text,        cpb_keywords1,
-		cpb_comments,     cpb_keywords2,   cpb_strings,
-		cpb_keywords3,    cpb_numbers,     cpb_types,
-		cpb_booleans,     cpb_functions,   cpb_constants,
-		cpb_builtins,     cpb_symbols,     cpb_members,
-		cpb_directives,   cpb_headers,     cpb_params,
-	]
 
-	for cbp in color_pickers:
-		cbp.color_changed.connect(_on_cpb_color_changed.bind(cbp))
+
+	# NOTE: this removes the dummy buttons used to plan the UI
+	for c: Control in gc_code_colors.get_children():
+		c.queue_free()
+
+	const ColorSettingButton := preload("res://scenes/gui/custom/color_button.tscn")
+
+	for i in ColorPickerButtons.size():
+		#var field_name := (ColorPickerButtons.keys()[i] as String).to_lower()
+		var field_name := String(ColorPickerButtons.keys()[i]).to_lower()
+
+		var csb := ColorSettingButton.instantiate()
+		gc_code_colors.add_child(csb)
+		csb.text = field_name.capitalize()
+		csb.color_changed.connect( _on_cpb_color_changed.bind( field_name ) )
+		color_pickers.append(csb)
 
 	ob_close_btns.item_selected.connect(_in_ob_close_btns_item_selected)
 
@@ -102,23 +110,44 @@ func _on_popup() -> void:
 	cpb_background.color   = temp_config.background_color
 	ob_close_btns.selected = temp_config.tab_close_buttons_mode
 
-	cpb_text.color       = temp_config.text
-	cpb_keywords1.color  = temp_config.keyword1
-	cpb_comments.color   = temp_config.comment
-	cpb_keywords2.color  = temp_config.keyword2
-	cpb_strings.color    = temp_config.string
-	cpb_keywords3.color  = temp_config.keyword3
-	cpb_numbers.color    = temp_config.number
-	cpb_types.color      = temp_config.type
-	cpb_booleans.color   = temp_config.boolean
-	cpb_functions.color  = temp_config.function
-	cpb_constants.color  = temp_config.constant
-	cpb_builtins.color   = temp_config.builtin
-	cpb_symbols.color    = temp_config.symbol
-	cpb_members.color    = temp_config.member
-	cpb_directives.color = temp_config.directive
-	cpb_headers.color    = temp_config.header
-	cpb_params.color     = temp_config.param
+	for i in ColorPickerButtons.size():
+		var cpb := color_pickers[i]
+		match i:
+			ColorPickerButtons.TEXT:      cpb.color = temp_config.text
+			ColorPickerButtons.KEYWORD1:  cpb.color = temp_config.keyword1
+			ColorPickerButtons.COMMENT:   cpb.color = temp_config.comment
+			ColorPickerButtons.KEYWORD2:  cpb.color = temp_config.keyword2
+			ColorPickerButtons.STRING:    cpb.color = temp_config.string
+			ColorPickerButtons.KEYWORD3:  cpb.color = temp_config.keyword3
+			ColorPickerButtons.NUMBER:    cpb.color = temp_config.number
+			ColorPickerButtons.TYPE:      cpb.color = temp_config.type
+			ColorPickerButtons.BOOLEAN:   cpb.color = temp_config.boolean
+			ColorPickerButtons.FUNCTION:  cpb.color = temp_config.function
+			ColorPickerButtons.CONSTANT:  cpb.color = temp_config.constant
+			ColorPickerButtons.BUILTIN:   cpb.color = temp_config.builtin
+			ColorPickerButtons.SYMBOL:    cpb.color = temp_config.symbol
+			ColorPickerButtons.MEMBER:    cpb.color = temp_config.member
+			ColorPickerButtons.DIRECTIVE: cpb.color = temp_config.directive
+			ColorPickerButtons.HEADER:    cpb.color = temp_config.header
+			ColorPickerButtons.PARAM:     cpb.color = temp_config.param
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -284,26 +313,8 @@ func _on_le_date_time_format_text_changed(new_text:String) -> void:
 #		Color Settings Buttons
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-func _on_cpb_color_changed(color: Color, cpb: ColorPickerButton) -> void:
-	match cpb:
-		cpb_background : temp_config.background_color = color
-		cpb_text       : temp_config.text      = color
-		cpb_keywords1  : temp_config.keyword1  = color
-		cpb_comments   : temp_config.comment   = color
-		cpb_keywords2  : temp_config.keyword2  = color
-		cpb_strings    : temp_config.string    = color
-		cpb_keywords3  : temp_config.keyword3  = color
-		cpb_numbers    : temp_config.number    = color
-		cpb_types      : temp_config.type      = color
-		cpb_booleans   : temp_config.boolean   = color
-		cpb_functions  : temp_config.function  = color
-		cpb_constants  : temp_config.constant  = color
-		cpb_builtins   : temp_config.builtin   = color
-		cpb_symbols    : temp_config.symbol    = color
-		cpb_members    : temp_config.member    = color
-		cpb_directives : temp_config.directive = color
-		cpb_headers    : temp_config.header    = color
-		cpb_params     : temp_config.param     = color
+func _on_cpb_color_changed(color: Color, field: String) -> void:
+	temp_config[field] = color
 	_update_apply_button()
 
 

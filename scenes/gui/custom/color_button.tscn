@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://ds41q6trfle86"]
+
+[ext_resource type="Script" uid="uid://ceowyokpkijl0" path="res://scenes/gui/custom/color_button.gd" id="1_vgwy8"]
+
+[node name="color_button" type="HBoxContainer"]
+size_flags_horizontal = 3
+script = ExtResource("1_vgwy8")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Text"
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[connection signal="color_changed" from="ColorPickerButton" to="." method="_on_color_picker_button_color_changed"]

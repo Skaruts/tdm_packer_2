@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://bdcwd3fh8e61y"]
+[gd_scene load_steps=6 format=3 uid="uid://bdcwd3fh8e61y"]
 
 [ext_resource type="Script" uid="uid://3di4rd3tiucr" path="res://scenes/gui/popup_windows/pu_settings.gd" id="1_kyeu5"]
 [ext_resource type="Texture2D" uid="uid://ccon7rtj7qknv" path="res://assets/icons/folder_icon.png" id="2_86vlf"]
 [ext_resource type="StyleBox" uid="uid://byni8x36qkwsd" path="res://resources/darker_panel.tres" id="2_by5op"]
 [ext_resource type="Script" uid="uid://d10ddpoov81uu" path="res://scenes/gui/custom/gui_custom_line_edit.gd" id="2_furee"]
+[ext_resource type="PackedScene" uid="uid://ds41q6trfle86" path="res://scenes/gui/custom/color_button.tscn" id="5_oxaf3"]
 
 [node name="settings_dialog" type="Window"]
 auto_translate_mode = 1
@@ -259,42 +260,38 @@ icon = ExtResource("2_86vlf")
 flat = true
 expand_icon = true
 
-[node name="Text Editors" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs"]
+[node name="Text Editors" type="ScrollContainer" parent="PanelContainer/VBoxContainer/tc_tabs"]
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_horizontal = 3
 metadata/_tab_index = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/VBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="editors_section" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer"]
+[node name="editors_section" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/VBoxContainer2/VBoxContainer"]
 layout_mode = 2
 text = "Editors"
 horizontal_alignment = 1
 
-[node name="HSeparator2" type="HSeparator" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer"]
-visible = false
-layout_mode = 2
-
-[node name="GridContainer" type="GridContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer"]
+[node name="GridContainer" type="GridContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/VBoxContainer2/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 columns = 2
 
-[node name="close_buttons" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer"]
+[node name="close_buttons" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/VBoxContainer2/VBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer/close_buttons"]
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/VBoxContainer2/VBoxContainer/GridContainer/close_buttons"]
 layout_mode = 2
 text = "Tab Close Buttons"
 
-[node name="ob_close_btns" type="OptionButton" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer/close_buttons"]
+[node name="ob_close_btns" type="OptionButton" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/VBoxContainer2/VBoxContainer/GridContainer/close_buttons"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -308,277 +305,53 @@ popup/item_1/id = 1
 popup/item_2/text = " Always"
 popup/item_2/id = 2
 
-[node name="background_color" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer"]
+[node name="background_color" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/VBoxContainer2/VBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer/background_color"]
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/VBoxContainer2/VBoxContainer/GridContainer/background_color"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Background Color"
 
-[node name="cpb_background" type="ColorPickerButton" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer/background_color"]
+[node name="cpb_background" type="ColorPickerButton" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/VBoxContainer2/VBoxContainer/GridContainer/background_color"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HSeparator" type="HSeparator" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/VBoxContainer2/VBoxContainer"]
 layout_mode = 2
 
-[node name="code_section" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/VBoxContainer2"]
+layout_mode = 2
+
+[node name="code_section" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/VBoxContainer2/VBoxContainer2"]
 layout_mode = 2
 text = "Code"
 horizontal_alignment = 1
 
-[node name="HSeparator3" type="HSeparator" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer"]
-visible = false
-layout_mode = 2
-
-[node name="GridContainer2" type="GridContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer"]
+[node name="gc_code_colors" type="GridContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/VBoxContainer2/VBoxContainer2"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 columns = 2
 
-[node name="text" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2"]
+[node name="color_setting_button" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/VBoxContainer2/VBoxContainer2/gc_code_colors" instance=ExtResource("5_oxaf3")]
 layout_mode = 2
-size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/text"]
+[node name="color_setting_button2" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/VBoxContainer2/VBoxContainer2/gc_code_colors" instance=ExtResource("5_oxaf3")]
 layout_mode = 2
-size_flags_horizontal = 3
-text = "Text"
 
-[node name="cpb_text" type="ColorPickerButton" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/text"]
-unique_name_in_owner = true
+[node name="color_setting_button3" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/VBoxContainer2/VBoxContainer2/gc_code_colors" instance=ExtResource("5_oxaf3")]
 layout_mode = 2
-size_flags_horizontal = 3
 
-[node name="keywords1" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2"]
+[node name="color_setting_button4" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/VBoxContainer2/VBoxContainer2/gc_code_colors" instance=ExtResource("5_oxaf3")]
 layout_mode = 2
-size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/keywords1"]
+[node name="color_setting_button5" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/VBoxContainer2/VBoxContainer2/gc_code_colors" instance=ExtResource("5_oxaf3")]
 layout_mode = 2
-size_flags_horizontal = 3
-text = "Keywords1"
 
-[node name="cpb_keywords1" type="ColorPickerButton" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/keywords1"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="comments" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/comments"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Comments"
-
-[node name="cpb_comments" type="ColorPickerButton" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/comments"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="keywords2" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/keywords2"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Keywords2"
-
-[node name="cpb_keyword2" type="ColorPickerButton" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/keywords2"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="strings" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/strings"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Strings"
-
-[node name="cpb_strings" type="ColorPickerButton" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/strings"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="keywords3" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/keywords3"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Keywords3"
-
-[node name="cpb_keyword3" type="ColorPickerButton" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/keywords3"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="numbers" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/numbers"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Numbers"
-
-[node name="cpb_numbers" type="ColorPickerButton" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/numbers"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="types" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/types"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Types"
-
-[node name="cpb_types" type="ColorPickerButton" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/types"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="booleans" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/booleans"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Booleans"
-
-[node name="cpb_booleans" type="ColorPickerButton" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/booleans"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="functions" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/functions"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Functions"
-
-[node name="cpb_functions" type="ColorPickerButton" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/functions"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="constants" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/constants"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Constants"
-
-[node name="cpb_constants" type="ColorPickerButton" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/constants"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="builtins" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/builtins"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Builtin Functions"
-
-[node name="cpb_builtins" type="ColorPickerButton" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/builtins"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="symbols" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/symbols"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Symbols"
-
-[node name="cpb_symbols" type="ColorPickerButton" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/symbols"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="members" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/members"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Member Variables"
-
-[node name="cpb_members" type="ColorPickerButton" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/members"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="directives" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/directives"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Directives"
-
-[node name="cpb_directives" type="ColorPickerButton" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/directives"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="headers" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/headers"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Headers"
-
-[node name="cpb_headers" type="ColorPickerButton" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/headers"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="params" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/params"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Parameters"
-
-[node name="cpb_params" type="ColorPickerButton" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer/GridContainer2/params"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="HSeparator4" type="HSeparator" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/ScrollContainer/VBoxContainer"]
-visible = false
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/VBoxContainer/tc_tabs/Text Editors/VBoxContainer2/VBoxContainer2"]
 layout_mode = 2
 
 [node name="button_bar" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
