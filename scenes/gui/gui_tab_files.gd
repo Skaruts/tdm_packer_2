@@ -14,8 +14,10 @@ var editors  : Dictionary[String, TextFileEditor]
 # var dummy_editor: TextFileEditor
 
 var syntax_highlighters: Array[SyntaxHighlighter]
-
 var curr_tab_hovered_idx: int = 0
+
+var tr_files_root: TreeItem
+
 
 func _ready() -> void:
 	# dummy_editor = tc_editors.get_child(0)
@@ -51,6 +53,49 @@ func _on_tab_bar_tab_close_pressed(tab_idx: int) -> void:
 	# 	tc_editors.add_child(dummy_editor)
 
 	fms.remove_edited_file_from_mission(_mission, node.path)
+	update_tree_node_file_opened(node, false)
+
+
+
+func update_tree_node_file_opened(node: FMTreeNode, opened: bool) -> void:
+	var ti := _get_tree_item_by_name(tr_files_root, node.name)
+	ti.set_custom_color(0, data.accent_color if opened else data.TEXT_COLOR)
+	_set_item_edited_files_button(ti, node.is_dir, opened)
+
+	var ti_parent := ti.get_parent()
+	var node_parent := node.parent
+	while ti_parent != null and ti_parent != tr_files_root:
+		if _dir_has_edited_files(node_parent):
+			ti_parent.set_custom_color(0, data.accent_color)
+			_set_item_edited_files_button(ti_parent, node_parent.is_dir, true)
+			if not opened: break
+		else:
+			ti_parent.set_custom_color(0, data.TEXT_COLOR)
+			_set_item_edited_files_button(ti_parent, node_parent.is_dir, false)
+
+		ti_parent = ti_parent.get_parent()
+		node_parent = node_parent.parent
+
+
+
+
+func _get_tree_item_by_name(parent: TreeItem, target_name: String) -> TreeItem:
+	if not parent:
+		return null
+
+	# Check the current item (column 0 is usually where the text/name is)
+	if parent.get_text(0) == target_name:
+		return parent
+
+	# Search children recursively
+	var child := parent.get_first_child()
+	while child:
+		var found := _get_tree_item_by_name(child, target_name)
+		if found:
+			return found
+		child = child.get_next()
+
+	return null
 
 
 func _on_tr_files_item_activated() -> void:
@@ -77,9 +122,9 @@ func _on_tr_files_item_activated() -> void:
 	fms.add_edited_file_to_mission(_mission, node.path)
 	_add_editor_id_needed(node)
 	_update_editor(node.path, _mission.mdata.edited_files[node.path])
+	update_tree_node_file_opened(node, true)
 
 	tc_editors.current_tab = tc_editors.get_child_count() - 1
-
 
 
 func on_mission_reloaded(_force_update := false) -> void:
@@ -126,8 +171,8 @@ func set_mission(mission: Mission) -> void:
 	# _update_buttons_states()
 
 
-	var valid_mission := not fms.is_mission_missing(_mission.id) \
-						 and not fms.is_mission_readonly(_mission.id)
+	# var valid_mission := not fms.is_mission_missing(_mission.id) \
+	# 					 and not fms.is_mission_readonly(_mission.id)
 
 	# ce_pkignore.syntax_highlighter = pk_syntax_highlighter if valid_mission else null
 
@@ -191,7 +236,7 @@ func _reload_tabs(parent: FMTreeNode) -> void:
 
 func _reload_tree() -> void:
 	tr_files.clear()
-	var tr_files_root := tr_files.create_item()
+	tr_files_root = tr_files.create_item()
 	tr_files_root.set_text(0, _mission.id)
 
 	var disabled := fms.is_mission_readonly(_mission.id)
@@ -215,6 +260,7 @@ const RESTRICTED_FILES := [
 	"startingmap.txt",
 ]
 
+
 func _is_valid_file(node: FMTreeNode) -> bool:
 	var ext := node.path.get_extension()
 	if ext == "": return false
@@ -234,6 +280,18 @@ func _dir_has_valid_files(node: FMTreeNode) -> bool:
 	return false
 
 
+func _dir_has_edited_files(node: FMTreeNode) -> bool:
+	assert(node.is_dir)
+
+	for c: FMTreeNode in node.children:
+		if not c.is_dir:
+			if c.path in _mission.mdata.edited_files:
+				return true
+		elif _dir_has_edited_files(c):
+			return true
+	return false
+
+
 func _build_file_tree(parent: FMTreeNode, gui_parent: TreeItem, disabled := false) -> void:
 	for node: FMTreeNode in parent.children:
 		if node.ignored: continue
@@ -243,22 +301,16 @@ func _build_file_tree(parent: FMTreeNode, gui_parent: TreeItem, disabled := fals
 
 		if not node.is_dir:
 			if _is_valid_file(node):
-				if node.path in _mission.mdata.edited_files:
-					tree_item = _create_node(gui_parent, node, icon, disabled, data.VALID_COLOR)
-				else:
-					tree_item = _create_node(gui_parent, node, icon, disabled)
+				var has_edited_files := node.path in _mission.mdata.edited_files
+				tree_item = _create_node(gui_parent, node, icon, disabled, has_edited_files)
 		elif _dir_has_valid_files(node):
-			if node.has_edited_files(_mission):
-				tree_item = _create_node(gui_parent, node, icon, disabled, data.VALID_COLOR)
-			else:
-				tree_item = _create_node(gui_parent, node, icon, disabled)
-
+			var has_edited_files := _dir_has_edited_files(node)
+			tree_item = _create_node(gui_parent, node, icon, disabled, has_edited_files)
 
 		_build_file_tree(node, tree_item, disabled)
 
 
-
-func _create_node(parent: TreeItem, node: FMTreeNode, icon: Texture2D, disabled := false, color: Variant = null) -> TreeItem:
+func _create_node(parent: TreeItem, node: FMTreeNode, icon: Texture2D, disabled := false, opened_files := false, color: Variant = null) -> TreeItem:
 	var tree_item := parent.create_child()
 	tree_item.set_text(0, node.name)
 	tree_item.set_metadata(0, node)
@@ -274,5 +326,18 @@ func _create_node(parent: TreeItem, node: FMTreeNode, icon: Texture2D, disabled 
 		tree_item.set_selectable(0, false)
 		tree_item.set_custom_color(0, data.FADED_TEXT_COLOR)
 
+	if opened_files:
+		_set_item_edited_files_button(tree_item, node.is_dir, true)
+
 	tree_item.collapsed = true
 	return tree_item
+
+
+const TOOLTIP_FILE := "This file is being edited"
+const TOOLTIP_DIR := "This folder has edited files"
+func _set_item_edited_files_button(item: TreeItem, is_dir: bool, opened: bool) -> void:
+	var tooltip := TOOLTIP_DIR if is_dir else TOOLTIP_FILE
+	if opened:
+		item.add_button(0, data.ICON_DOT, 0, true, tooltip)
+	else:
+		item.erase_button(0, 0)

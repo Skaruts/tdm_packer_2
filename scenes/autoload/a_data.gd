@@ -64,9 +64,10 @@ const DEFAULT_MODFILE =                          \
 const ERROR_COLOR       = Color(1.0, 0.49, 0.49)
 const WARNING_COLOR     = Color(1, 0.67500007152557, 0.22000002861023)
 const VALID_COLOR       = Color(0.43, 1, 0.43)
-const TEXT_COLOR        = Color(0.80000001192093, 0.80000001192093, 0.79607844352722)
+const TEXT_COLOR        = Color.LIGHT_GRAY
 const FADED_TEXT_COLOR  = Color(0.3, 0.3, 0.3)
 const EDITED_FILE_COLOR = Color(1, 0.851, 0.53)
+
 
 # Tecnically constants, as they'll never change
 var CWD           := Path.to_global("res://")
@@ -109,7 +110,8 @@ var app_title := "TDM Packer 2 (%s)" % [VERSION]
 
 var config: ConfigData
 
-
+var base_color := Color(0.149, 0.141, 0.125)
+var accent_color := Color(1.0, 0.467, 0.0)
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 #        Internal API

@@ -64,15 +64,3 @@ func get_child_named(name: String) -> Variant:
 
 	return null
 
-
-func has_edited_files(mis: Mission) -> bool:
-	assert(is_dir)
-
-	for c: FMTreeNode in children:
-		if not c.is_dir:
-			if c.path in mis.mdata.edited_files:
-				return true
-		elif c.has_edited_files(mis):
-			return true
-
-	return false
