@@ -24,19 +24,8 @@ var add_map                : Window
 
 var popup_counter := 0
 
-# hacky way of not updating things on NOTIFICATION_WM_WINDOW_FOCUS_IN
-# notification whenever a popup window closes (in main '_notification')
-var timer := Timer.new()
-var popup_has_just_closed := false
-
-
 
 func _ready() -> void:
-	add_child(timer)
-	timer.one_shot = true
-	timer.wait_time = 1
-	timer.timeout.connect(func() -> void: popup_has_just_closed = false)
-
 	confirmation_dialog.get_label().autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	confirmation_dialog.get_label().max_lines_visible = 10
 
@@ -60,13 +49,6 @@ func _on_popup_visibility_changed(pu:Window) -> void:
 		assert(popup_counter >= 0)
 		if popup_counter == 0:
 			popup_background.visible = false
-		set_popup_closed_flag()
-
-
-func set_popup_closed_flag() -> void:
-	logs.print("SET_POPUP_CLOSED_FLAG")
-	popup_has_just_closed = true
-	timer.start()
 
 
 func _connect_callback(pu:Window, _signal:StringName, callback:Variant=null) -> void:

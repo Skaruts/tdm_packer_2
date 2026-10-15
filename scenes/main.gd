@@ -45,6 +45,7 @@ func _on_console_toggled() -> void:
 	%console_split.collapsed = %console.collapsed
 
 
+var num_subwindows: int
 func _notification(what: int) -> void:
 	if is_inside_tree():
 		await get_tree().process_frame  # wait for popups to close, if any
@@ -53,12 +54,21 @@ func _notification(what: int) -> void:
 		NOTIFICATION_WM_CLOSE_REQUEST:
 			fms.force_save_mission(false)
 			get_tree().quit()
-		NOTIFICATION_WM_WINDOW_FOCUS_IN:
-			# if we're here because a dialog window just closed, don't update missions
-			if not popups.popup_has_just_closed:
-				#var path := Path.join(fms.curr_mission.paths.root, "output.txt")
-				#var mis_hash: String = fms.curr_mission.file_hashes[path]
-				#var disk_hash := Path.get_md5(path)
-				#logs.print(mis_hash, disk_hash)
 
+		NOTIFICATION_WM_WINDOW_FOCUS_OUT:
+			num_subwindows = get_all_subwindows(get_viewport()).size()
+			# logs.print(num_subwindows, "NOTIFICATION_WM_WINDOW_FOCUS_OUT")
+
+		NOTIFICATION_WM_WINDOW_FOCUS_IN:
+			# logs.print(num_subwindows, "NOTIFICATION_WM_WINDOW_FOCUS_IN")
+			if num_subwindows == 0:
 				fms.check_missions_on_focus_in()
+			#num_subwindows = get_all_subwindows(get_viewport()).size()
+
+
+
+func get_all_subwindows(window: Window) -> Array[Window]:
+	var windows: Array[Window] = window.get_embedded_subwindows()
+	for w in windows:
+		windows += get_all_subwindows(w)
+	return windows

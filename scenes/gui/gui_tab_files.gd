@@ -73,12 +73,6 @@ func _ready() -> void:
 
 	tabs_menu.id_pressed.connect(_on_tabs_menu_id_pressed)
 	tabs_menu.window_input.connect(_on_tabs_menu_window_input)
-	tabs_menu.focus_exited.connect(_on_tabs_menu_focus_exited)
-
-
-
-func _on_tabs_menu_focus_exited() -> void:
-	popups.set_popup_closed_flag()
 
 
 func _on_tabs_menu_window_input(event: InputEvent) -> void:
