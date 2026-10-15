@@ -206,8 +206,15 @@ func _reload_tabs(parent: FMTreeNode) -> void:
 
 		var added_ed := _add_editor_if_needed(node)
 		var hash_comp := old_hash == _mission.get_file_hash(node.path)
-		if added_ed or not hash_comp:
-			_update_editor(node.path, _mission.mdata.edited_files[node.path])
+		if added_ed:
+			editors[node.path].set_text(_mission.mdata.edited_files[node.path])
+			editors[node.path].update_colors()
+		elif not hash_comp:
+			logs.print("RELAODING FILE")
+			editors[node.path].update_text(_mission.mdata.edited_files[node.path])
+			editors[node.path].update_colors()
+
+
 
 
 func _reload_tree() -> void:

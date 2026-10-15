@@ -14,7 +14,6 @@ func _ready() -> void:
 	code_edit.focus_exited.connect(code_edit.set_highlight_current_line.bind(false))
 
 
-
 func _on_code_edit_text_changed() -> void:
 	var dirty: bool = code_edit.get_version() != code_edit.get_saved_version()
 	mission.update_file(path, code_edit.text, dirty)
@@ -22,14 +21,20 @@ func _on_code_edit_text_changed() -> void:
 	# code_edit.syntax_highlighter.clear_highlighting_cache()
 
 
-
 func set_data(mis: Mission, _path: String) -> void:
 	mission = mis
 	path = _path
 
 
+func set_text(text: String) -> void:
+	code_edit.text = text
+	code_edit.clear_undo_history()
+	code_edit.tag_saved_version()
+
+
 func update_text(text: String) -> void:
 	code_edit.text = text
+	code_edit.tag_saved_version()
 
 
 func tag_code_editor() -> void:
