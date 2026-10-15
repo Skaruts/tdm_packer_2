@@ -60,9 +60,13 @@ func _on_popup_visibility_changed(pu:Window) -> void:
 		assert(popup_counter >= 0)
 		if popup_counter == 0:
 			popup_background.visible = false
+		set_popup_closed_flag()
 
-		popup_has_just_closed = true
-		timer.start()
+
+func set_popup_closed_flag() -> void:
+	logs.print("SET_POPUP_CLOSED_FLAG")
+	popup_has_just_closed = true
+	timer.start()
 
 
 func _connect_callback(pu:Window, _signal:StringName, callback:Variant=null) -> void:

@@ -59,3 +59,15 @@ func update_colors() -> void:
 		_: code_edit.syntax_highlighter = null
 
 	code_edit.set("theme_override_colors/font_color", data.config.text)
+
+
+
+
+func toggle_word_wrap() -> void:
+	if code_edit.wrap_mode == TextEdit.LINE_WRAPPING_BOUNDARY:
+		code_edit.wrap_mode = TextEdit.LINE_WRAPPING_NONE
+	elif code_edit.wrap_mode == TextEdit.LINE_WRAPPING_NONE:
+		code_edit.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
+
+func get_word_wrap() -> bool:
+	return code_edit.wrap_mode == TextEdit.LINE_WRAPPING_BOUNDARY

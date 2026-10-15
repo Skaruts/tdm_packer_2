@@ -48,3 +48,11 @@ current_tab = 0
 
 [node name="text_file_editor" parent="HSplitContainer/tc_editors" instance=ExtResource("2_rbsxu")]
 layout_mode = 2
+
+[node name="tabs_menu" type="PopupMenu" parent="HSplitContainer"]
+size = Vector2i(181, 100)
+transient_to_focused = true
+hide_on_checkable_item_selection = false
+
+[node name="TabBar" type="TabBar" parent="HSplitContainer"]
+layout_mode = 2

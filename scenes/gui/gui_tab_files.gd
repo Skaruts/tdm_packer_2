@@ -7,6 +7,7 @@ const TextFileEditorScene := preload("res://scenes/gui/text_file_editor.tscn")
 
 @onready var tc_editors: TabContainer = %tc_editors
 @onready var tr_files: Tree = $HSplitContainer/VBoxContainer/tr_files
+@onready var tabs_menu: PopupMenu = $HSplitContainer/tabs_menu
 
 
 var _mission : Mission
@@ -20,6 +21,16 @@ var tr_files_root: TreeItem
 var tab_bar: TabBar
 
 
+enum TabMenuOptions {
+	CLOSE_TAB,
+	UNDO_CLOSE_TAB,
+	CLOSE_OTHER_TABS,
+	CLOSE_ALL_TABS,
+	WORD_WRAP,
+	LOCATE_IN_TREE,
+}
+
+
 func _ready() -> void:
 	for c in tc_editors.get_children():
 		c.free()
@@ -29,21 +40,111 @@ func _ready() -> void:
 	tab_bar = tc_editors.get_tab_bar()
 	tab_bar.tab_close_display_policy = TabBar.CLOSE_BUTTON_SHOW_NEVER
 	tab_bar.max_tab_width = 150
+	tab_bar.select_with_rmb = true
 
 	tab_bar.tab_close_pressed.connect(_on_tab_bar_tab_close_pressed)
-
-	tab_bar.gui_input.connect(
-		func(event: InputEvent) -> void:
-			if event is InputEventMouseButton \
-			and event.button_index == 3\
-			and event.pressed:
-				var lmp := tab_bar.get_local_mouse_position()
-				var idx := tab_bar.get_tab_idx_at_point(lmp)
-				if idx != -1:
-					_on_tab_bar_tab_close_pressed(idx)
-	)
+	tab_bar.gui_input.connect(_on_tab_bar_gui_input)
+	tab_bar.tab_rmb_clicked.connect(_on_tab_bar_tab_rmb_clicked)
 
 	tc_editors.sort_children.connect(_on_tc_editors_sort_children)
+
+	tabs_menu.add_item("Close Tab", TabMenuOptions.CLOSE_TAB)
+	# tabs_menu.add_item("Undo Close Tab", TabMenuOptions.UNDO_CLOSE_TAB)
+	tabs_menu.add_item("Close Other Tabs", TabMenuOptions.CLOSE_OTHER_TABS)
+	tabs_menu.add_item("Close All Tabs", TabMenuOptions.CLOSE_ALL_TABS)
+	tabs_menu.add_separator()
+	# tabs_menu.add_item("Toggle Word Wrap", TabMenuOptions.WORD_WRAP)
+	tabs_menu.add_check_item("Word Wrap", TabMenuOptions.WORD_WRAP)
+
+	tabs_menu.add_separator()
+	tabs_menu.add_item("Locate File", TabMenuOptions.LOCATE_IN_TREE)
+
+
+	tabs_menu.set_item_tooltip(
+		tabs_menu.get_item_index(TabMenuOptions.WORD_WRAP),
+		"Toggle word wrapping"
+	)
+
+	tabs_menu.set_item_tooltip(
+		tabs_menu.get_item_index(TabMenuOptions.LOCATE_IN_TREE),
+		"Locate and select this file in the file tree."
+	)
+
+
+	tabs_menu.id_pressed.connect(_on_tabs_menu_id_pressed)
+	tabs_menu.window_input.connect(_on_tabs_menu_window_input)
+	tabs_menu.focus_exited.connect(_on_tabs_menu_focus_exited)
+
+
+
+func _on_tabs_menu_focus_exited() -> void:
+	popups.set_popup_closed_flag()
+
+
+func _on_tabs_menu_window_input(event: InputEvent) -> void:
+	if not event is InputEventMouseButton or not event.pressed:
+		return
+
+	var r := Rect2(tabs_menu.position, tabs_menu.size)
+	if not r.has_point( get_global_mouse_position() ):
+		tabs_menu.hide()
+
+
+func _on_tabs_menu_id_pressed(id: int) -> void:
+	var idx := tab_right_clicked
+	var tab: TextFileEditor = tc_editors.get_child(idx)
+
+	match id:
+		TabMenuOptions.CLOSE_TAB:
+			_on_tab_bar_tab_close_pressed(idx)
+		# TabMenuOptions.UNDO_CLOSE_TAB:
+
+		TabMenuOptions.CLOSE_OTHER_TABS:
+			for i in range(tc_editors.get_child_count()-1, -1, -1):
+				if i == idx: continue
+				_on_tab_bar_tab_close_pressed(i)
+
+		TabMenuOptions.CLOSE_ALL_TABS:
+			for i in range(tc_editors.get_child_count()-1, -1, -1):
+				_on_tab_bar_tab_close_pressed(i)
+
+		TabMenuOptions.WORD_WRAP:
+			tab.toggle_word_wrap()
+			tabs_menu.set_item_checked(4, tab.get_word_wrap())
+
+		TabMenuOptions.LOCATE_IN_TREE:
+			var ti := _get_tree_item_by_name(tr_files_root, tab_bar.get_tab_title(idx))
+			logs.print(ti != null)
+			ti.uncollapse_tree()
+			ti.select(0)
+			tr_files.scroll_to_item(ti, true)
+
+
+
+
+
+var tab_right_clicked: int
+func _on_tab_bar_tab_rmb_clicked(idx: int) -> void:
+	tab_right_clicked = idx
+	var tab: TextFileEditor = tc_editors.get_child(idx)
+	tabs_menu.set_item_checked(4, tab.get_word_wrap())
+	tabs_menu.popup()
+	tabs_menu.position = tab_bar.get_global_mouse_position()
+
+
+func _on_tab_bar_gui_input(event: InputEvent) -> void:
+	if not event is InputEventMouseButton or not event.pressed:
+		return
+
+	# if event.button_index == 2:
+
+
+	if event.button_index == 3:
+		var lmp := tab_bar.get_local_mouse_position()
+		var idx := tab_bar.get_tab_idx_at_point(lmp)
+		if idx != -1:
+			_on_tab_bar_tab_close_pressed(idx)
+
 
 
 func _on_tc_editors_sort_children() -> void:
