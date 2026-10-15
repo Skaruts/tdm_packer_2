@@ -19,7 +19,7 @@ const DEFAULT_CONFIG := {
 		code_font_size  = 14,
 		show_tree_roots = true,
 		packname_suffix = "_v$version",
-		popup_bg_opacity = 0.5,
+		popup_bg_opacity = 0.25,
 		date_time_format = "d/m/y t",
 	},
 	editors = {
