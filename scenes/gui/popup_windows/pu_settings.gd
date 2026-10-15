@@ -24,22 +24,22 @@ extends BasePopup
 
 enum ColorPickerButtons {
 	TEXT,
-	KEYWORD1,
-	COMMENT,
-	KEYWORD2,
-	STRING,
-	KEYWORD3,
-	NUMBER,
-	TYPE,
-	BOOLEAN,
-	FUNCTION,
-	CONSTANT,
-	BUILTIN,
 	SYMBOL,
+	KEYWORD,
+	FLOW,
+	BASE_TYPE,
+	USER_TYPE,
+	PARAM_TYPE,
+	COMMENT,
+	STRING,
+	NUMBER,
+	BUILTIN,
+	FUNCTION,
 	MEMBER,
+	ENT_REF,
+	CONSTANT,
 	DIRECTIVE,
 	HEADER,
-	PARAM,
 }
 
 var color_pickers: Array[ColorButton]
@@ -113,23 +113,23 @@ func _on_popup() -> void:
 	for i in ColorPickerButtons.size():
 		var cpb := color_pickers[i]
 		match i:
-			ColorPickerButtons.TEXT:      cpb.color = temp_config.text
-			ColorPickerButtons.KEYWORD1:  cpb.color = temp_config.keyword1
-			ColorPickerButtons.COMMENT:   cpb.color = temp_config.comment
-			ColorPickerButtons.KEYWORD2:  cpb.color = temp_config.keyword2
-			ColorPickerButtons.STRING:    cpb.color = temp_config.string
-			ColorPickerButtons.KEYWORD3:  cpb.color = temp_config.keyword3
-			ColorPickerButtons.NUMBER:    cpb.color = temp_config.number
-			ColorPickerButtons.TYPE:      cpb.color = temp_config.type
-			ColorPickerButtons.BOOLEAN:   cpb.color = temp_config.boolean
-			ColorPickerButtons.FUNCTION:  cpb.color = temp_config.function
-			ColorPickerButtons.CONSTANT:  cpb.color = temp_config.constant
-			ColorPickerButtons.BUILTIN:   cpb.color = temp_config.builtin
-			ColorPickerButtons.SYMBOL:    cpb.color = temp_config.symbol
-			ColorPickerButtons.MEMBER:    cpb.color = temp_config.member
-			ColorPickerButtons.DIRECTIVE: cpb.color = temp_config.directive
-			ColorPickerButtons.HEADER:    cpb.color = temp_config.header
-			ColorPickerButtons.PARAM:     cpb.color = temp_config.param
+			ColorPickerButtons.TEXT:       cpb.color = temp_config.text
+			ColorPickerButtons.SYMBOL:     cpb.color = temp_config.symbol
+			ColorPickerButtons.KEYWORD:    cpb.color = temp_config.keyword
+			ColorPickerButtons.FLOW:       cpb.color = temp_config.flow
+			ColorPickerButtons.BASE_TYPE:  cpb.color = temp_config.base_type
+			ColorPickerButtons.USER_TYPE:  cpb.color = temp_config.user_type
+			ColorPickerButtons.PARAM_TYPE: cpb.color = temp_config.param_type
+			ColorPickerButtons.COMMENT:    cpb.color = temp_config.comment
+			ColorPickerButtons.STRING:     cpb.color = temp_config.string
+			ColorPickerButtons.NUMBER:     cpb.color = temp_config.number
+			ColorPickerButtons.BUILTIN:    cpb.color = temp_config.builtin
+			ColorPickerButtons.FUNCTION:   cpb.color = temp_config.function
+			ColorPickerButtons.MEMBER:     cpb.color = temp_config.member
+			ColorPickerButtons.ENT_REF:    cpb.color = temp_config.entref
+			ColorPickerButtons.CONSTANT:   cpb.color = temp_config.constant
+			ColorPickerButtons.DIRECTIVE:  cpb.color = temp_config.directive
+			ColorPickerButtons.HEADER:     cpb.color = temp_config.header
 
 
 

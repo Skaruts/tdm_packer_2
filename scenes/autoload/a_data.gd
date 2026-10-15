@@ -27,24 +27,24 @@ const DEFAULT_CONFIG := {
 		tab_close_buttons_mode = 0,
 	},
 	syntax = {
-		text      = Color.LIGHT_GRAY,
-		keyword1  = Color(1.0, 0.839, 0.122),
-
-		keyword2  = Color(0.0, 0.831, 0.498),
-		keyword3  = Color(0.902, 0.0, 1.0),
-		type      = Color(0.415, 1.0, 0.22),
-		function  = Color(0.22, 0.545, 1.0),
-		builtin   = Color(0.376, 0.959, 0.99),
-		member    = Color(1.0, 0.417, 0.0),
-		number    = Color(0.788, 0.616, 0.988),
-		constant  = Color(0.0, 1.0, 1.0),
-		symbol    = Color(0.67, 0.79, 1.0),
-		comment   = Color(0.345, 0.345, 0.345),
-		string    = Color(1.0, 0.698, 0.212),
-		directive = Color(1.0, 0.253, 0.24),
-		boolean   = Color(0.788, 0.616, 0.988),
-		header    = Color(0.341, 0.714, 1.0),
-		param     = Color(0.0, 1.0, 1.0),
+		text       = Color(0.787, 0.786, 0.784),
+		symbol     = Color(0.67, 0.79, 1.0),
+		# keyword    = Color(1.0, 0.839, 0.122),
+		keyword    = Color(1.0, 0.44, 0.52),
+		flow       = Color(1.0, 0.55, 0.8),
+		base_type  = Color(0.26, 1.0, 0.76),
+		user_type  = Color(0.243, 0.827, 0.055),
+		param_type = Color(0.775, 0.99, 0.376),
+		comment    = Color(0.635, 0.531, 0.77),
+		string     = Color(1.0, 0.93, 0.63),
+		number     = Color(0.63, 1.0, 0.88),
+		builtin    = Color(0.34, 0.7, 1.0),
+		function   = Color(0.34, 0.7, 1.0),
+		member     = Color(1.0, 0.486, 0.0),
+		entref     = Color(0.39, 0.76, 0.35),
+		constant   = Color(0.616, 0.51, 1.0),
+		directive  = Color(1, 0.253, 0.24, 1),
+		header     = Color(0.341, 0.714, 1, 1),
 	},
 }
 
@@ -65,7 +65,7 @@ const DEFAULT_MODFILE =                          \
 const ERROR_COLOR       = Color(1.0, 0.49, 0.49)
 const WARNING_COLOR     = Color(1, 0.67500007152557, 0.22000002861023)
 const VALID_COLOR       = Color(0.43, 1, 0.43)
-const TEXT_COLOR        = Color.LIGHT_GRAY
+const TEXT_COLOR        = Color(0.787, 0.786, 0.784)
 const FADED_TEXT_COLOR  = Color(0.3, 0.3, 0.3)
 const EDITED_FILE_COLOR = Color(1, 0.851, 0.53)
 
@@ -177,7 +177,7 @@ func update_config(new_config:ConfigData) -> void:
 	gui.update_missions_list()
 
 	for i:int in fms.missions.size():
-		var mis:Mission = fms.missions[i]
+		var mis: Mission = fms.missions[i]
 		if mis.update_zipname():
 			#fms.soft_reload_mission(mis, true)
 			#gui.workspace_update_pack_name( fms.get_mission_index(mis) )

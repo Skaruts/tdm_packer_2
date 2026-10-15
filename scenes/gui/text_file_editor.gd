@@ -28,11 +28,8 @@ func set_data(mis: Mission, _path: String) -> void:
 	path = _path
 
 
-
-
 func update_text(text: String) -> void:
 	code_edit.text = text
-	# update_colors()
 
 
 func tag_code_editor() -> void:
@@ -40,16 +37,6 @@ func tag_code_editor() -> void:
 
 
 func update_button_states() -> void:
-	# var mis: Mission = (owner as GuiTabFiles)._mission
-
-	# var is_missing := fms.is_mission_missing(mis.id)
-	# var is_readonly := fms.is_mission_readonly(mis.id)
-	# var valid_mission := not is_missing and not is_readonly
-
-	# if valid_mission:
-	# 	# update toolbar buttons
-	# 	# when they exist
-	# 	pass
 	pass
 
 

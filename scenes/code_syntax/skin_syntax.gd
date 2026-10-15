@@ -6,8 +6,8 @@ var comment_level := 0
 
 
 func _on_init() -> void:
-	keywords1 = ["model"]
-	headers = ["skin"]
+	keywords = ["model"]
+	builtins = ["skin"]  # headers
 
 
 # func _update_cache() -> void:

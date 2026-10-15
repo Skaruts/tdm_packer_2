@@ -3,7 +3,17 @@ extends BaseCodeHighlighter
 
 
 func _on_init() -> void:
-	keywords1 = [
+	builtins = [
+		"qer_editorimage",
+	]
+
+	param_types = [
+		"parm3",
+		"add",
+		"modulate",
+	]
+
+	keywords = [
 		"glass",
 		"noselfshadow",
 		"diffusemap",
@@ -17,15 +27,6 @@ func _on_init() -> void:
 		"alpha",
 	]
 
-	keywords2 = [
-		"qer_editorimage",
-	]
-
-	params = [
-		"parm3",
-		"add",
-		"modulate",
-	]
 
 
 # var comment_level := 0

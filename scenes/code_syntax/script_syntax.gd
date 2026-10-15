@@ -3,11 +3,10 @@ extends BaseCodeHighlighter
 
 
 func _on_init() -> void:
-
 	member_variable_color = data.config.member
 	function_color = data.config.function
 
-	types = [
+	base_types = [
 		"entity",
 		"void",
 		"float",
@@ -20,20 +19,12 @@ func _on_init() -> void:
 		"bool",
 	]
 
-	keywords1 = [
-
-	]
-
-	keywords2 = [
-
-	]
-	keywords3 = [
+	flows = [
 		"if",
 		"for",
 		"while",
 		"do",
 		"return",
-
 	]
 
 	constants = [

@@ -4,17 +4,23 @@ extends BaseCodeHighlighter
 
 var comment_level := 0
 
+var header_color: Color
+var section_color: Color
+var body_color: Color
 
 func _on_init() -> void:
-	keywords1 = [
+	keywords = [
 		"precache",
 	]
 
-	keywords2 = [
+	directives = [
 		"import",
 		"from",
 	]
 
+	header_color = data.config.function
+	section_color = data.config.keyword
+	body_color = data.config.string
 
 
 
@@ -58,18 +64,22 @@ func _get_line_syntax_highlighting(line_num: int) -> Dictionary:
 
 	var line_parts := stripped.split(':', false)
 
+
+
+# ffd61f
+
 	var key := line_parts[0].strip_edges()
 	var idx: int = line.find(key)
-	if   key in keywords1: color_map[idx] = { color = config.keyword3 }
-	elif key in keywords2: color_map[idx] = { color = config.keyword3 }
-	elif key in SYMBOLS:  color_map[idx] = { color = config.symbol }
+	if   key in keywords:   color_map[idx] = { color = config.keyword }
+	elif key in directives: color_map[idx] = { color = config.directive }
+	elif key in SYMBOLS:    color_map[idx] = { color = config.symbol }
 	else:
 		if page_rgx.search_all(key).size() > 0:
-			color_map[idx] = { color = config.keyword1 }
+			color_map[idx] = { color = section_color }
 		elif header_rgx.search_all(key).size() > 0:
-			color_map[idx] = { color = config.header }
+			color_map[idx] = { color = header_color }
 		else:
-			color_map[idx] = { color = config.string }
+			color_map[idx] = { color = body_color }
 
 	idx = line.find(':')
 	if idx != -1: color_map[idx] = { color = config.symbol }

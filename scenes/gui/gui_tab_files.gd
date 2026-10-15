@@ -56,7 +56,6 @@ func _on_tab_bar_tab_close_pressed(tab_idx: int) -> void:
 	update_tree_node_file_opened(node, false)
 
 
-
 func update_tree_node_file_opened(node: FMTreeNode, opened: bool) -> void:
 	var ti := _get_tree_item_by_name(tr_files_root, node.name)
 	ti.set_custom_color(0, data.accent_color if opened else data.TEXT_COLOR)
@@ -149,44 +148,11 @@ func on_mission_reloaded(_force_update := false) -> void:
 		_reload_tabs(_mission.file_tree)
 
 
-
-
-# func update_pack_name() -> void:
-# 	pass
-
-
-
 func set_mission(mission: Mission) -> void:
 	_mission = mission
 
-	# pk_syntax_highlighter = ce_pkignore.syntax_highlighter.duplicate()
-	# ce_pkignore.text = _mission.mdata.pkignore
-	# ce_pkignore.clear_undo_history()
-	# ce_pkignore.tag_saved_version()
-
-	# ce_readme.text = _mission.mdata.readme
-	# ce_readme.clear_undo_history()
-	# ce_readme.tag_saved_version()
-
-	# _update_buttons_states()
-
-
-	# var valid_mission := not fms.is_mission_missing(_mission.id) \
-	# 					 and not fms.is_mission_readonly(_mission.id)
-
-	# ce_pkignore.syntax_highlighter = pk_syntax_highlighter if valid_mission else null
-
-	# if not valid_mission:
-	# 	tr_files.clear()
-		# if not fms.is_mission_missing(_mission.id):
-		# 	_update_buttons_states()
-		# return
-
 	_reload_tree()
-	# _reload_tabs()
-
 	_reload_tabs(_mission.file_tree)
-	# for c: FMTreeNode in _mission.file_tree.children:
 
 
 func _add_editor_id_needed(node: FMTreeNode) -> bool:
@@ -231,7 +197,6 @@ func _reload_tabs(parent: FMTreeNode) -> void:
 					_update_editor(node.path, _mission.mdata.edited_files[node.path])
 		else:
 			_reload_tabs(node)
-
 
 
 func _reload_tree() -> void:

@@ -3,7 +3,21 @@ extends BaseCodeHighlighter
 
 
 func _on_init() -> void:
-	keywords1 = [
+	builtins = [   # headers
+		"particle",
+	]
+
+	param_types = [
+		"sphere",
+		"cone",
+		"view",
+	]
+
+	flows = [
+		"to",
+	]
+
+	keywords = [
 		"count",
 		"material",
 		"time",
@@ -29,17 +43,4 @@ func _on_init() -> void:
 		"entityColor",
 	]
 
-	headers = [
-		"particle",
-	]
-
-	params = [
-		"sphere",
-		"cone",
-		"view",
-	]
-
-	directives = [
-		"to",
-	]
 

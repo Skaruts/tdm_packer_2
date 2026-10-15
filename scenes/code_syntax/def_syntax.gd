@@ -3,7 +3,12 @@ extends BaseCodeHighlighter
 
 
 func _on_init() -> void:
-	keywords1 = [
+	headers = [
+		"entityDef",
+		"model",
+	]
+
+	keywords = [
 		"mesh",
 		"channel",
 		"anim",
@@ -11,12 +16,11 @@ func _on_init() -> void:
 		"frame",
 	]
 
-	headers = [
-		"entityDef",
-		"model",
+	flows = [
+		"to",
 	]
 
-	params = [
+	param_types = [
 		"walk",
 		"walk2",
 		"run",
@@ -33,9 +37,5 @@ func _on_init() -> void:
 		"footstep",
 		"sound_voice",
 		"snd_sight",
-	]
-
-	directives = [
-		"to",
 	]
 

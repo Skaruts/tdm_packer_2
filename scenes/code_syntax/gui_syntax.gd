@@ -3,7 +3,7 @@ extends BaseCodeHighlighter
 
 
 func _on_init() -> void:
-	headers = [
+	builtins = [  # headers
 		"windowDef",
 
 		# TODO: Not 100% sure about these
@@ -14,7 +14,10 @@ func _on_init() -> void:
 		"listDef",
 		"renderDef",
 		"sliderDef",
-		"windowDef",
+	]
+
+	flows = [
+		"if"
 	]
 
 	constants = [
@@ -51,7 +54,7 @@ func _on_init() -> void:
 		"BRIEFING_BACKGROUND_IMAGE",
 	]
 
-	keywords1 = [
+	keywords = [
 		"rect",
 		"nocursor",
 		"background",
@@ -75,24 +78,14 @@ func _on_init() -> void:
 		"runScript",
 		"showCursor",
 		"onActivate",
-
 	]
 
-	keywords2 = [
+	base_types = [
 		"onAction",
 		"onMouseEnter",
 		"onMouseExit",
 		"onNamedEvent",
 	]
-
-	keywords3 = [
-		"if"
-	]
-
-
-	# params = [
-
-	# ]
 
 	directives = [
 		"include",
