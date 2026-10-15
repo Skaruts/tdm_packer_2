@@ -12,29 +12,46 @@ func _on_init() -> void:
 		"float",
 		"vector",
 		"string",
-		"thread",
+		"object",
 
 		# TODO: not sure this is a thing
 		"int",
 		"bool",
 	]
 
-	flows = [
+	members = [
+		"self",
+		"sys",
+	]
+
+	keywords = [
 		"if",
+		"else",
+		"elseif",
 		"for",
 		"while",
 		"do",
 		"return",
+		"thread",
+		"break",
+		"continue",
+		"eachFrame",
 	]
 
-	constants = [
-		"SND_CHANNEL_VOICE",
-		"OBJ_COMPLETE",
-		"SND_CHANNEL_BODY",
-	]
+	# constants = [
+	# 	"SND_CHANNEL_VOICE",
+	# 	"OBJ_COMPLETE",
+	# 	"SND_CHANNEL_BODY",
+	# 	"OBJ_FAILED",
+	# ]
 
 	directives = [
-
+		"define",
+		"import",
+		"include",
+		"ifndef",
+		"ifdef",
+		"endif",
 	]
 
 

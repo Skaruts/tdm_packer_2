@@ -18,15 +18,16 @@ func _on_init() -> void:
 		"from",
 	]
 
-	header_color = data.config.function
-	section_color = data.config.keyword
-	body_color = data.config.string
+	header_color  = data.config.function
+	section_color = data.config.base_type
+	body_color    = data.config.string
 
 
 
 func _get_line_syntax_highlighting(line_num: int) -> Dictionary:
 	var page_rgx := RegEx.create_from_string("page[0-9]*_[a-zA-Z]*|gui_page[0-9]*|snd_[a-zA-Z0-9_]*|num_pages")
-	var header_rgx := RegEx.create_from_string("\\B[a-zA-Z]\\/[a-zA-Z0-9_\\/]*")
+	# var header_rgx := RegEx.create_from_string("\\B[a-zA-Z]\\/[a-zA-Z0-9_\\/]*")
+	# var header_rgx := RegEx.create_from_string("[a-zA-Z0-9_\\/]*")
 
 	var config      := data.config
 	var color_map   : Dictionary = {}
@@ -66,7 +67,7 @@ func _get_line_syntax_highlighting(line_num: int) -> Dictionary:
 
 
 
-# ffd61f
+
 
 	var key := line_parts[0].strip_edges()
 	var idx: int = line.find(key)
@@ -76,10 +77,14 @@ func _get_line_syntax_highlighting(line_num: int) -> Dictionary:
 	else:
 		if page_rgx.search_all(key).size() > 0:
 			color_map[idx] = { color = section_color }
-		elif header_rgx.search_all(key).size() > 0:
-			color_map[idx] = { color = header_color }
-		else:
+		elif '"' in key:
 			color_map[idx] = { color = body_color }
+		else:
+			color_map[idx] = { color = header_color }
+		# elif header_rgx.search_all(key).size() > 0:
+		# 	color_map[idx] = { color = header_color }
+		# else:
+		# 	color_map[idx] = { color = body_color }
 
 	idx = line.find(':')
 	if idx != -1: color_map[idx] = { color = config.symbol }

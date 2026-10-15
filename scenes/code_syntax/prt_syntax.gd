@@ -3,7 +3,7 @@ extends BaseCodeHighlighter
 
 
 func _on_init() -> void:
-	builtins = [   # headers
+	functions = [   # headers
 		"particle",
 	]
 
@@ -13,11 +13,11 @@ func _on_init() -> void:
 		"view",
 	]
 
-	flows = [
+	keywords = [
 		"to",
 	]
 
-	keywords = [
+	base_types = [
 		"count",
 		"material",
 		"time",

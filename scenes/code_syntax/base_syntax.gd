@@ -13,7 +13,11 @@ var builtins:    Array[String]
 var entrefs:     Array[String]
 var constants:   Array[String]
 var directives:  Array[String]
-var headers:     Array[String]
+
+var numbers:     Array[String]
+var symbols:     Array[String]
+var members:     Array[String]
+var functions:   Array[String]
 
 
 const SYMBOLS := ["(", ")", "{", "}", "\\", ":", "->", ",", "\n", "\t", "$", "&"]
@@ -40,7 +44,11 @@ func _init() -> void:
 	for kw: String in entrefs:     add_keyword_color(kw, config.entref)
 	for kw: String in constants:   add_keyword_color(kw, config.constant)
 	for kw: String in directives:  add_keyword_color(kw, config.directive)
-	for kw: String in headers:     add_keyword_color(kw, config.header)
+
+	for kw: String in numbers:    add_keyword_color(kw, config.number)
+	for kw: String in symbols:    add_keyword_color(kw, config.symbol)
+	for kw: String in members:    add_keyword_color(kw, config.member)
+	for kw: String in functions:  add_keyword_color(kw, config.function)
 
 	var booleans := ["true", "false", "null"]
 	for kw: String in booleans:    add_keyword_color(kw, config.number)

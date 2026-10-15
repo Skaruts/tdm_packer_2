@@ -3,7 +3,7 @@ extends BaseCodeHighlighter
 
 
 func _on_init() -> void:
-	builtins = [
+	user_types = [
 		"qer_editorimage",
 	]
 
@@ -13,7 +13,7 @@ func _on_init() -> void:
 		"modulate",
 	]
 
-	keywords = [
+	base_types = [
 		"glass",
 		"noselfshadow",
 		"diffusemap",

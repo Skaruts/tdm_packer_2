@@ -3,21 +3,20 @@ extends BaseCodeHighlighter
 
 
 func _on_init() -> void:
-	headers = [
+	member_variable_color = data.config.text
+	function_color = data.config.text
+
+	builtins = [
 		"entityDef",
 		"model",
 	]
 
-	keywords = [
+	base_types = [
 		"mesh",
 		"channel",
 		"anim",
 		"anim",
 		"frame",
-	]
-
-	flows = [
-		"to",
 	]
 
 	param_types = [

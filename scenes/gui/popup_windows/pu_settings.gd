@@ -26,7 +26,6 @@ enum ColorPickerButtons {
 	TEXT,
 	SYMBOL,
 	KEYWORD,
-	FLOW,
 	BASE_TYPE,
 	USER_TYPE,
 	PARAM_TYPE,
@@ -39,7 +38,6 @@ enum ColorPickerButtons {
 	ENT_REF,
 	CONSTANT,
 	DIRECTIVE,
-	HEADER,
 }
 
 var color_pickers: Array[ColorButton]
@@ -116,7 +114,6 @@ func _on_popup() -> void:
 			ColorPickerButtons.TEXT:       cpb.color = temp_config.text
 			ColorPickerButtons.SYMBOL:     cpb.color = temp_config.symbol
 			ColorPickerButtons.KEYWORD:    cpb.color = temp_config.keyword
-			ColorPickerButtons.FLOW:       cpb.color = temp_config.flow
 			ColorPickerButtons.BASE_TYPE:  cpb.color = temp_config.base_type
 			ColorPickerButtons.USER_TYPE:  cpb.color = temp_config.user_type
 			ColorPickerButtons.PARAM_TYPE: cpb.color = temp_config.param_type
@@ -129,7 +126,6 @@ func _on_popup() -> void:
 			ColorPickerButtons.ENT_REF:    cpb.color = temp_config.entref
 			ColorPickerButtons.CONSTANT:   cpb.color = temp_config.constant
 			ColorPickerButtons.DIRECTIVE:  cpb.color = temp_config.directive
-			ColorPickerButtons.HEADER:     cpb.color = temp_config.header
 
 
 
