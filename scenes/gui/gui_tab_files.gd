@@ -58,18 +58,15 @@ func _on_tab_bar_tab_close_pressed(tab_idx: int) -> void:
 
 func update_tree_node_file_opened(node: FMTreeNode, opened: bool) -> void:
 	var ti := _get_tree_item_by_name(tr_files_root, node.name)
-	ti.set_custom_color(0, data.accent_color if opened else data.TEXT_COLOR)
 	_set_item_edited_files_button(ti, node.is_dir, opened)
 
 	var ti_parent := ti.get_parent()
 	var node_parent := node.parent
 	while ti_parent != null and ti_parent != tr_files_root:
 		if _dir_has_edited_files(node_parent):
-			ti_parent.set_custom_color(0, data.accent_color)
 			_set_item_edited_files_button(ti_parent, node_parent.is_dir, true)
 			if not opened: break
 		else:
-			ti_parent.set_custom_color(0, data.TEXT_COLOR)
 			_set_item_edited_files_button(ti_parent, node_parent.is_dir, false)
 
 		ti_parent = ti_parent.get_parent()
@@ -303,6 +300,7 @@ const TOOLTIP_DIR := "This folder has edited files"
 func _set_item_edited_files_button(item: TreeItem, is_dir: bool, opened: bool) -> void:
 	var tooltip := TOOLTIP_DIR if is_dir else TOOLTIP_FILE
 	if opened:
+		item.erase_button(0, 0)
 		item.add_button(0, data.ICON_DOT, 0, true, tooltip)
 	else:
 		item.erase_button(0, 0)
