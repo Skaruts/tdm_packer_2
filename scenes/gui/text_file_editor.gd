@@ -52,3 +52,5 @@ func update_colors() -> void:
 		"gui"    : code_edit.syntax_highlighter = GuiCodeHighlighter.new()
 		"script" : code_edit.syntax_highlighter = ScriptCodeHighlighter.new()
 		_: code_edit.syntax_highlighter = null
+
+	code_edit.set("theme_override_colors/font_color", data.config.text)
