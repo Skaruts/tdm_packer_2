@@ -65,6 +65,24 @@ func _on_ready() -> void:
 	for c: Control in gc_code_colors.get_children():
 		c.queue_free()
 
+	const COLOR_TOOLTIPS : Array[String] = [
+		"The color of text in the text editors.",
+		"The color of symbols in the text editors.",
+		"The color of keywords in the text editors.",
+		"The color of base types in the text editors.",
+		"The color of user types in the text editors.",
+		"The color of parameter types in the text editors.",
+		"The color of comments in the text editors.",
+		"The color of strings in the text editors.",
+		"The color of numbers in the text editors.",
+		"The color of builtin functions in the text editors.",
+		"The color of function in the text editors.",
+		"The color of member variables in the text editors.",
+		"The color of entity references in the text editors.",
+		"The color of constants in the text editors.",
+		"The color of preprocessor directives in the text editors.",
+	]
+
 	const ColorSettingButton := preload("res://scenes/gui/custom/color_button.tscn")
 
 	for i in ColorPickerButtons.size():
@@ -76,6 +94,8 @@ func _on_ready() -> void:
 		csb.text = field_name.capitalize()
 		csb.color_changed.connect( _on_cpb_color_changed.bind( field_name ) )
 		color_pickers.append(csb)
+		csb.tooltip_text = COLOR_TOOLTIPS[i]
+		csb.color_button.tooltip_text = COLOR_TOOLTIPS[i]
 
 	ob_close_btns.item_selected.connect(_in_ob_close_btns_item_selected)
 
