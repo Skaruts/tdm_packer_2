@@ -11,19 +11,22 @@ const TextFileEditorScene := preload("res://scenes/gui/text_file_editor.tscn")
 
 var _mission : Mission
 var editors  : Dictionary[String, TextFileEditor]
-# var dummy_editor: TextFileEditor
 
 var syntax_highlighters: Array[SyntaxHighlighter]
 var curr_tab_hovered_idx: int = 0
 
 var tr_files_root: TreeItem
 
+var tab_bar: TabBar
+
 
 func _ready() -> void:
-	# dummy_editor = tc_editors.get_child(0)
+	for c in tc_editors.get_children():
+		c.free()
+
 	tr_files.item_activated.connect(_on_tr_files_item_activated)
 
-	var tab_bar := tc_editors.get_tab_bar()
+	tab_bar = tc_editors.get_tab_bar()
 	tab_bar.tab_close_display_policy = TabBar.CLOSE_BUTTON_SHOW_NEVER
 	tab_bar.max_tab_width = 150
 
@@ -40,17 +43,22 @@ func _ready() -> void:
 					_on_tab_bar_tab_close_pressed(idx)
 	)
 
-	for c in tc_editors.get_children():
-		c.queue_free()
+	tc_editors.sort_children.connect(_on_tc_editors_sort_children)
+
+
+func _on_tc_editors_sort_children() -> void:
+	logs.print("sort_children")
+
+	for i in tc_editors.get_child_count():
+		var tab: TextFileEditor = tc_editors.get_child(i)
+		var node: FMTreeNode = tab.get_meta("node")
+		tab_bar.set_tab_title(i, node.name)
 
 
 func _on_tab_bar_tab_close_pressed(tab_idx: int) -> void:
 	var tab := tc_editors.get_child(tab_idx)
 	var node: FMTreeNode = tab.get_meta("node")
 	_remove_editor(tab)
-
-	# if editors.size() == 0:
-	# 	tc_editors.add_child(dummy_editor)
 
 	fms.remove_edited_file_from_mission(_mission, node.path)
 	update_tree_node_file_opened(node, false)
@@ -102,8 +110,8 @@ func _on_tr_files_item_activated() -> void:
 	if node.path in editors:
 		var idx := -1
 		for i in tc_editors.get_child_count():
-			var tab: Control = tc_editors.get_child(i)
-			if tab.name == node.name.replace('.', '_'):
+			var title: String = tab_bar.get_tab_title(i)
+			if title == node.name:
 				idx = i
 				break
 
@@ -116,7 +124,7 @@ func _on_tr_files_item_activated() -> void:
 	# 	tc_editors.remove_child(dummy_editor)
 
 	fms.add_edited_file_to_mission(_mission, node.path)
-	_add_editor_id_needed(node)
+	_add_editor_if_needed(node)
 	_update_editor(node.path, _mission.mdata.edited_files[node.path])
 	update_tree_node_file_opened(node, true)
 
@@ -137,8 +145,7 @@ func on_mission_reloaded(_force_update := false) -> void:
 		ed.update_button_states()
 		ed.update_colors()
 
-	var tb: TabBar = tc_editors.get_tab_bar()
-	tb.tab_close_display_policy = data.config.tab_close_buttons_mode
+	tab_bar.tab_close_display_policy = data.config.tab_close_buttons_mode
 
 	if not is_missing:
 		_reload_tree()
@@ -152,14 +159,19 @@ func set_mission(mission: Mission) -> void:
 	_reload_tabs(_mission.file_tree)
 
 
-func _add_editor_id_needed(node: FMTreeNode) -> bool:
+func _add_editor_if_needed(node: FMTreeNode) -> bool:
 	if node.path in editors: return false
+
 	var ed: TextFileEditor = TextFileEditorScene.instantiate()
 	tc_editors.add_child(ed)
-	ed.set_data(_mission, node.path)
 	editors[node.path] = ed
+
+	ed.set_data(_mission, node.path)
 	ed.name = node.name
 	ed.set_meta("node", node)
+
+	tab_bar.set_tab_title( tc_editors.get_child_count()-1, node.name )
+
 	return true
 
 
@@ -179,21 +191,23 @@ func _remove_editor(tab: Control) -> void:
 
 func _reload_tabs(parent: FMTreeNode) -> void:
 	for node: FMTreeNode in parent.children:
-		if not node.is_dir:
-			if node.path in _mission.mdata.edited_files:
-				var old_hash: String
-				if _mission.has_edited_file(node.path):
-					old_hash = _mission.get_file_hash(node.path)
-
-				fms.add_edited_file_to_mission(_mission, node.path)
-
-				var added_ed := _add_editor_id_needed(node)
-				var hash_comp := old_hash == _mission.get_file_hash(node.path)
-				if added_ed \
-				or not hash_comp:
-					_update_editor(node.path, _mission.mdata.edited_files[node.path])
-		else:
+		if node.is_dir:
 			_reload_tabs(node)
+			continue
+
+		if not node.path in _mission.mdata.edited_files:
+			continue
+
+		var old_hash: String
+		if _mission.has_edited_file(node.path):
+			old_hash = _mission.get_file_hash(node.path)
+
+		fms.add_edited_file_to_mission(_mission, node.path)
+
+		var added_ed := _add_editor_if_needed(node)
+		var hash_comp := old_hash == _mission.get_file_hash(node.path)
+		if added_ed or not hash_comp:
+			_update_editor(node.path, _mission.mdata.edited_files[node.path])
 
 
 func _reload_tree() -> void:
@@ -300,7 +314,8 @@ const TOOLTIP_DIR := "This folder has edited files"
 func _set_item_edited_files_button(item: TreeItem, is_dir: bool, opened: bool) -> void:
 	var tooltip := TOOLTIP_DIR if is_dir else TOOLTIP_FILE
 	if opened:
-		item.erase_button(0, 0)
-		item.add_button(0, data.ICON_DOT, 0, true, tooltip)
+		if item.get_button_count(0) == 0:
+			item.add_button(0, data.ICON_DOT, 0, true, tooltip)
 	else:
-		item.erase_button(0, 0)
+		if item.get_button_count(0) > 0:
+			item.erase_button(0, 0)
