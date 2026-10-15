@@ -1,0 +1,8 @@
+[gd_resource type="CodeHighlighter" format=3 uid="uid://c728ruy7bhvgh"]
+
+[resource]
+color_regions = {
+"\" \"": Color(1, 0.698039, 0.211765, 1),
+"/*": Color(0.345098, 0.345098, 0.345098, 1),
+"//": Color(0.345098, 0.345098, 0.345098, 1)
+}

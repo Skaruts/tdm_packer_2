@@ -1,26 +1,51 @@
 extends BasePopup
 
 
-@onready var le_tdm              : LineEdit = %le_tdm
-@onready var le_dr               : LineEdit = %le_dr
-@onready var le_tdm_copy         : LineEdit = %le_tdm_copy
-@onready var btn_browse_tdm      : Button   = %btn_browse_tdm
-@onready var btn_browse_dr       : Button   = %btn_browse_dr
-@onready var btn_browse_tdm_copy : Button   = %btn_browse_tdm_copy
+@onready var le_tdm              : LineEdit    = %le_tdm
+@onready var le_dr               : LineEdit    = %le_dr
+@onready var le_tdm_copy         : LineEdit    = %le_tdm_copy
+@onready var btn_browse_tdm      : Button      = %btn_browse_tdm
+@onready var btn_browse_dr       : Button      = %btn_browse_dr
+@onready var btn_browse_tdm_copy : Button      = %btn_browse_tdm_copy
 
 @onready var sb_gui_font_size    : SpinBox     = %sb_gui_font_size
 @onready var sb_code_font_size   : SpinBox     = %sb_code_font_size
 @onready var cbt_show_roots      : CheckButton = %cbt_show_roots
 @onready var sb_bg_opacity       : SpinBox     = %sb_bg_opacity
 
-@onready var le_pk4_suffix: LineEdit = %le_pk4_suffix
-@onready var le_date_time_format: LineEdit = %le_date_time_format
+@onready var le_pk4_suffix       : LineEdit    = %le_pk4_suffix
+@onready var le_date_time_format : LineEdit    = %le_date_time_format
 
+
+@onready var cpb_background : ColorPickerButton = %cpb_background
+@onready var ob_close_btns  : OptionButton      = %ob_close_btns
+
+@onready var gc_code_colors: GridContainer = %gc_code_colors
+
+enum ColorPickerButtons {
+	TEXT,
+	SYMBOL,
+	KEYWORD,
+	BASE_TYPE,
+	USER_TYPE,
+	PARAM_TYPE,
+	COMMENT,
+	STRING,
+	NUMBER,
+	BUILTIN,
+	FUNCTION,
+	MEMBER,
+	ENT_REF,
+	CONSTANT,
+	DIRECTIVE,
+}
+
+var color_pickers: Array[ColorButton]
 var temp_config: ConfigData
 
 
 func _on_ready() -> void:
-	%tabs.current_tab = 0
+	%tc_tabs.current_tab = 0
 
 	sb_gui_font_size.value_changed.connect(_on_sb_gui_font_size_value_changed)
 	sb_code_font_size.value_changed.connect(_on_sb_code_font_size_value_changed)
@@ -33,6 +58,48 @@ func _on_ready() -> void:
 	btn_browse_tdm.pressed.connect(_on_btn_browse_tdm_pressed)
 	btn_browse_dr.pressed.connect(_on_btn_browse_dr_pressed)
 	btn_browse_tdm_copy.pressed.connect(_on_btn_browse_tdm_copy_pressed)
+
+
+
+	# NOTE: this removes the dummy buttons used to plan the UI
+	for c: Control in gc_code_colors.get_children():
+		c.queue_free()
+
+	const COLOR_TOOLTIPS : Array[String] = [
+		"The color of text in the text editors.",
+		"The color of symbols in the text editors.",
+		"The color of keywords in the text editors.",
+		"The color of base types in the text editors.",
+		"The color of user types in the text editors.",
+		"The color of parameter types in the text editors.",
+		"The color of comments in the text editors.",
+		"The color of strings in the text editors.",
+		"The color of numbers in the text editors.",
+		"The color of builtin functions in the text editors.",
+		"The color of function in the text editors.",
+		"The color of member variables in the text editors.",
+		"The color of entity references in the text editors.",
+		"The color of constants in the text editors.",
+		"The color of preprocessor directives in the text editors.",
+	]
+
+	const ColorSettingButton := preload("res://scenes/gui/custom/color_button.tscn")
+
+	for i in ColorPickerButtons.size():
+		#var field_name := (ColorPickerButtons.keys()[i] as String).to_lower()
+		var field_name := String(ColorPickerButtons.keys()[i]).to_lower()
+
+		var csb := ColorSettingButton.instantiate()
+		gc_code_colors.add_child(csb)
+		csb.text = field_name.capitalize()
+		csb.color_changed.connect( _on_cpb_color_changed.bind( field_name ) )
+		color_pickers.append(csb)
+		csb.tooltip_text = COLOR_TOOLTIPS[i]
+		csb.color_button.tooltip_text = COLOR_TOOLTIPS[i]
+
+	ob_close_btns.item_selected.connect(_in_ob_close_btns_item_selected)
+
+
 
 func _on_close_requested() -> void:
 	pass
@@ -58,6 +125,48 @@ func _on_popup() -> void:
 	le_date_time_format.text = temp_config.date_time_format
 
 
+	cpb_background.color   = temp_config.background_color
+	ob_close_btns.selected = temp_config.tab_close_buttons_mode
+
+	for i in ColorPickerButtons.size():
+		var cpb := color_pickers[i]
+		match i:
+			ColorPickerButtons.TEXT:       cpb.color = temp_config.text
+			ColorPickerButtons.SYMBOL:     cpb.color = temp_config.symbol
+			ColorPickerButtons.KEYWORD:    cpb.color = temp_config.keyword
+			ColorPickerButtons.BASE_TYPE:  cpb.color = temp_config.base_type
+			ColorPickerButtons.USER_TYPE:  cpb.color = temp_config.user_type
+			ColorPickerButtons.PARAM_TYPE: cpb.color = temp_config.param_type
+			ColorPickerButtons.COMMENT:    cpb.color = temp_config.comment
+			ColorPickerButtons.STRING:     cpb.color = temp_config.string
+			ColorPickerButtons.NUMBER:     cpb.color = temp_config.number
+			ColorPickerButtons.BUILTIN:    cpb.color = temp_config.builtin
+			ColorPickerButtons.FUNCTION:   cpb.color = temp_config.function
+			ColorPickerButtons.MEMBER:     cpb.color = temp_config.member
+			ColorPickerButtons.ENT_REF:    cpb.color = temp_config.entref
+			ColorPickerButtons.CONSTANT:   cpb.color = temp_config.constant
+			ColorPickerButtons.DIRECTIVE:  cpb.color = temp_config.directive
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 func _on_input(event: InputEvent) -> void:
 	#if event.is_action_pressed("ui_accept")\
 	#and not btn_ok.disabled:
@@ -76,8 +185,7 @@ func _on_bar_button_pressed(idx:int) -> void:
 
 func _commit_data() -> void:
 	data.update_config(temp_config)
-	gui.workspace_set_show_roots()
-	gui.update_missions_list_buttons()
+
 
 
 func _validate_and_update_colors(line_edit:CustomLineEdit, filepath:String, key:String) -> void:
@@ -212,4 +320,20 @@ func _on_le_pk_4_suffix_text_changed(new_text: String) -> void:
 
 func _on_le_date_time_format_text_changed(new_text:String) -> void:
 	temp_config.date_time_format = new_text
+	_update_apply_button()
+
+
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+
+#		Color Settings Buttons
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+func _on_cpb_color_changed(color: Color, field: String) -> void:
+	temp_config[field] = color
+	_update_apply_button()
+
+
+func _in_ob_close_btns_item_selected(idx: int) -> void:
+	temp_config.tab_close_buttons_mode = idx
 	_update_apply_button()

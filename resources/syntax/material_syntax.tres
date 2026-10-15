@@ -1,0 +1,27 @@
+[gd_resource type="CodeHighlighter" format=3 uid="uid://c22l042w3xbyj"]
+
+[resource]
+number_color = Color(0.78936, 0.6138, 0.99, 1)
+symbol_color = Color(1, 1, 1, 1)
+keyword_colors = {
+"add": Color(0, 1, 1, 1),
+"alpha": Color(0.384314, 1, 0, 1),
+"blend": Color(0.384314, 1, 0, 1),
+"bumpmap": Color(0.384314, 1, 0, 1),
+"colored": Color(0.384314, 1, 0, 1),
+"diffusemap": Color(0.384314, 1, 0, 1),
+"glass": Color(0.384314, 1, 0, 1),
+"map": Color(0.384314, 1, 0, 1),
+"modulate": Color(0, 1, 1, 1),
+"noselfshadow": Color(0.384314, 1, 0, 1),
+"parm3": Color(0, 1, 1, 1),
+"qer_editorimage": Color(0, 0.83, 0.498, 1),
+"rgb": Color(0.384314, 1, 0, 1),
+"specularmap": Color(0.384314, 1, 0, 1),
+"zeroClamp": Color(0.384314, 1, 0, 1)
+}
+color_regions = {
+"\" \"": Color(1, 0.698039, 0.211765, 1),
+"/* */": Color(0.345098, 0.345098, 0.345098, 1),
+"//": Color(0.345098, 0.345098, 0.345098, 1)
+}

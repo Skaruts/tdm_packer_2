@@ -23,7 +23,7 @@ func set_mission(m:Mission) -> void:
 	_mission = m
 	update_nodes()
 	tab_package.set_mission(m)
-	#tab_files.set_mission(m) # TODO
+	tab_files.set_mission(m)
 
 
 func on_mission_reloaded(force_update:=false) -> void:
@@ -36,8 +36,8 @@ func on_mission_reloaded(force_update:=false) -> void:
 
 func update_pack_name() -> void:
 	if fms.is_mission_missing(_mission.id): return
-	tab_package.update_pack_name()
-	tab_files.update_pack_name()
+	# tab_package.update_pack_name()
+	# tab_files.update_pack_name()
 
 
 func switch_main_tab(tab_idx: int) -> void:

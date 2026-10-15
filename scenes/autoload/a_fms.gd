@@ -40,6 +40,8 @@ func initialize() -> void:
 		# call 'check_mission_filesystem()', which is undesirable at this point
 		curr_mission = missions[0]
 
+	save_missions_data()
+
 
 func _ready() -> void:
 	set_process(false)
@@ -130,6 +132,7 @@ const DEFAULT_MISSION_DATA := {
 	opened   = false,
 	readonly = true,
 	missing  = false,
+	edited_files = [],
 }
 var mission_datas: ConfigFile
 
@@ -155,6 +158,7 @@ func save_missions_data() -> void:
 func update_mission_data() -> void:
 	var mission_ids := FMUtils.get_mission_id_list()
 
+	# check newly created missions
 	for id in mission_ids:
 		if mission_datas.get_value("missions", id, null) == null:
 			mission_datas.set_value("missions", id, DEFAULT_MISSION_DATA)
@@ -167,6 +171,11 @@ func update_mission_data() -> void:
 				mission_datas.erase_section_key("missions", id)
 			else:
 				md.missing = true
+
+	for id in mission_datas.get_section_keys("missions"):
+		var md: Dictionary = mission_datas.get_value("missions", id, null)
+		if not "edited_files" in md:
+			md.edited_files = []
 
 	save_missions_data()
 
@@ -253,9 +262,17 @@ func load_mission(id: String) -> Mission:
 
 
 func _load_mission_files(mis: Mission) -> void:
+	var md: Dictionary = mission_datas.get_value("missions", mis.id, null)
+	assert(md != null)
+
 	FMUtils.load_map_sequence(mis)
 	FMUtils.load_modfile(mis)
 	FMUtils.load_or_create_file(mis, "readme")
+
+	var missing_files := FMUtils.load_edited_files(md, mis)
+
+	for f in missing_files:
+		md.edited_files.erase(f)
 
 
 
@@ -331,6 +348,11 @@ func save_mission(mission: Mission, reload := false) -> void:
 
 	if mission.get_dirty_flag(Mission.DirtyFlags.MAPS):
 		FMUtils.save_maps_file(mission)
+
+	if mission.get_dirty_flag(Mission.DirtyFlags.FILES):
+		var md: Dictionary = mission_datas.get_value("missions", mission.id, null)
+		assert(md != null)
+		FMUtils.save_edited_files(md, mission)
 
 	#logs.print("saving mission", reload)
 	if reload:
@@ -451,10 +473,7 @@ func remove_mission(mis: Mission) -> void:
 	gui.remove_workspace(last_idx)
 
 
-func _check_file_hash(mis: Mission, path: String) -> bool:
-	if path not in mis.file_hashes: return false
-	var file_hash := FMUtils.get_file_hash(path)
-	return file_hash == mis.file_hashes[path]
+
 
 
 func check_mission_filesystem(mis: Mission) -> bool:
@@ -465,22 +484,25 @@ func check_mission_filesystem(mis: Mission) -> bool:
 
 	if mis.mdata.map_files.size() <= 1:
 		if not Path.file_exists(mis.paths.startingmap) \
-		or not _check_file_hash(mis, mis.paths.startingmap):
+		or not FMUtils.check_file_hash(mis, mis.paths.startingmap):
 			changed_files.append("map_sequence")
 	else:
 		if not Path.file_exists(mis.paths.mapsequence)\
-		or not _check_file_hash(mis, mis.paths.mapsequence):
+		or not FMUtils.check_file_hash(mis, mis.paths.mapsequence):
 			changed_files.append("map_sequence")
 
-	if not _check_file_hash(mis, mis.paths.modfile):
+	if not FMUtils.check_file_hash(mis, mis.paths.modfile):
 		logs.print("modfile was changed externally")
 		changed_files.append("modfile")
 
-	if not _check_file_hash(mis, mis.paths.readme):
+	if not FMUtils.check_file_hash(mis, mis.paths.readme):
 		changed_files.append("readme")
 
-	if not _check_file_hash(mis, mis.paths.pkignore):
+	if not FMUtils.check_file_hash(mis, mis.paths.pkignore):
 		changed_files.append("pkignore")
+
+	if not FMUtils.check_edited_files_changed(mis):
+		changed_files.append("edited_files")
 
 
 	if changed_files.size() == 0:
@@ -495,6 +517,10 @@ func check_mission_filesystem(mis: Mission) -> bool:
 			FMUtils.load_map_sequence(mis)
 		elif file == "modfile":
 			FMUtils.load_modfile(mis)
+		elif file == "edited_files":
+			var md: Dictionary = mission_datas.get_value("missions", mis.id, null)
+			assert(md != null)
+			FMUtils.load_edited_files(md, mis)
 		else:
 			FMUtils.load_or_create_file(mis, file)
 		gui.get_current_workspace().tab_package.reload_file(file)
@@ -524,6 +550,7 @@ func get_mission_with_id(id: String) -> Mission:
 
 
 func check_missions_on_focus_in() -> void:
+	# check for missing missions
 	var missing_missions: Dictionary[String, bool]
 	for id in mission_datas.get_section_keys("missions"):
 		var md: Dictionary = mission_datas.get_value("missions", id, null)
@@ -533,6 +560,7 @@ func check_missions_on_focus_in() -> void:
 
 	update_mission_data()
 
+	# check for missions that are no longer missing
 	var non_missing_count := 0
 	var new_missing_missions: Array[String]
 
@@ -548,23 +576,58 @@ func check_missions_on_focus_in() -> void:
 			_replace_mission(mis)
 			non_missing_count += 1
 
+
+	# report on missing missions
 	var last_idx := missions.find(curr_mission)
 
 	if new_missing_missions.size() > 0:
 		var message := "The following missions seem to be missing\n(may have been renamed or deleted):\n\n"
-		for id:String in new_missing_missions:
+		for id: String in new_missing_missions:
 			message += id + '\n'
 
 		popups.show_message( "Warning", message )
 
+	# if missions were added or removed, sort the list
 	if new_missing_missions.size() > 0 or non_missing_count > 0:
 		sort_missions()
 		# save_missions_data()
 		curr_mission = missions[last_idx]
-		gui.update_missions_list()
-		gui.update_workspaces()
+
+	# update the UI
+	for m in missions:
+	# 	# FMUtils.build_file_tree(m)
+	# 	# _load_mission_files(m)
+	# 	# check_mission_filesystem(m)
+		gui.on_mission_reloaded( get_mission_index(m), true )
+
+	gui.update_missions_list()
+	gui.update_workspaces()
 
 
+
+func _get_relative_file_path(path: String, id: String) -> String:
+	var fm_path := Path.join(fms_folder, id)
+	return path.replace(fm_path + '/', '')
+
+
+func add_edited_file_to_mission(mis: Mission, path: String) -> void:
+	mis.add_edited_file(path)
+	var md: Dictionary = mission_datas.get_value("missions", mis.id, null)
+	assert(md != null)
+	var rel_path := _get_relative_file_path(path, mis.id)
+	if not rel_path in md.edited_files:
+		md.edited_files.append(rel_path)
+		save_missions_data()
+
+
+func remove_edited_file_from_mission(mis: Mission, path: String) -> void:
+	fms.force_save_mission()
+	mis.remove_edited_file(path)
+	var md: Dictionary = mission_datas.get_value("missions", mis.id, null)
+	assert(md != null)
+	var rel_path := _get_relative_file_path(path, mis.id)
+	md.edited_files.erase(rel_path)
+	save_missions_data()
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 #		Playing / Packing / Editing

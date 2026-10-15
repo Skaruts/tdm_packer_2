@@ -19,9 +19,32 @@ const DEFAULT_CONFIG := {
 		code_font_size  = 14,
 		show_tree_roots = true,
 		packname_suffix = "_v$version",
-		popup_bg_opacity = 0.5,
+		popup_bg_opacity = 0.25,
 		date_time_format = "d/m/y t",
-	}
+	},
+	editors = {
+		background_color = Color(0.07, 0.064, 0.062),
+		tab_close_buttons_mode = 0,
+	},
+	# keyword    = Color(1.0, 0.839, 0.122),
+	syntax = {
+		text       = Color(0.787, 0.786, 0.784, 1),
+		symbol     = Color(0.67, 0.79, 1, 1),
+		keyword    = Color(1, 0.398667, 0.18, 1),
+		base_type  = Color(0.243, 0.827, 0.055, 1),
+		user_type  = Color(0.411765, 0.878431, 0.254902, 1),
+		param_type = Color(0.52, 1, 0.992, 1),
+		comment    = Color(0.5, 0.463167, 0.435, 1),
+		string     = Color(1, 0.93, 0.63, 1),
+		number     = Color(0.958667, 0.69, 1, 1),
+		builtin    = Color(0.34, 0.835, 1, 1),
+		function   = Color(0.34, 0.7, 1, 1),
+		member     = Color(1, 0.631667, 0.15, 1),
+		entref     = Color(0.39, 0.76, 0.35, 1),
+		constant   = Color(0.664, 0.52, 1, 1),
+		directive  = Color(1, 0.253, 0.24, 1),
+
+	},
 }
 
 #const DEFAULT_MODFILE =                          \
@@ -41,9 +64,11 @@ const DEFAULT_MODFILE =                          \
 const ERROR_COLOR       = Color(1.0, 0.49, 0.49)
 const WARNING_COLOR     = Color(1, 0.67500007152557, 0.22000002861023)
 const VALID_COLOR       = Color(0.43, 1, 0.43)
-const TEXT_COLOR        = Color(0.80000001192093, 0.80000001192093, 0.79607844352722)
+const TEXT_COLOR        = Color(0.787, 0.786, 0.784)
 const FADED_TEXT_COLOR  = Color(0.3, 0.3, 0.3)
 const EDITED_FILE_COLOR = Color(1, 0.851, 0.53)
+const TREE_ROOT_COLOR   = Color(1, 0.851, 0.53)
+
 
 # Tecnically constants, as they'll never change
 var CWD           := Path.to_global("res://")
@@ -86,6 +111,10 @@ var app_title := "TDM Packer 2 (%s)" % [VERSION]
 
 var config: ConfigData
 
+var base_color := Color(0.149, 0.141, 0.125)
+var accent_color := Color(1.0, 0.467, 0.0)
+
+
 
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
@@ -104,6 +133,10 @@ func _update_theme() -> void:
 	theme.default_font_size = config.gui_font_size
 	theme.set_font_size("font_size", "CodeEdit", config.code_font_size)
 	popups.popup_background.color.a = config.popup_bg_opacity
+
+	var stylebox: StyleBoxFlat = theme.get_stylebox("normal", "CodeEdit")
+	stylebox.bg_color = config.background_color
+
 
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
@@ -137,23 +170,27 @@ func initialize() -> void:
 
 func update_config(new_config:ConfigData) -> void:
 	if not new_config.dirty: return
-	logs.print("SAVING OPTIONS")
 
 	config.update(new_config)
 	_save_config()
 	_update_theme()
 
 	# some stuff needs to know the config changed
-	fms.update_folders()
-	gui.update_missions_list_buttons()
+	fms.update_mission_data()
+	gui.update_missions_list()
 
 	for i:int in fms.missions.size():
-		var mis:Mission = fms.missions[i]
+		var mis: Mission = fms.missions[i]
 		if mis.update_zipname():
 			#fms.soft_reload_mission(mis, true)
-			#gui.update_workspace_pack_name( fms.get_mission_index(mis) )
-			gui.update_workspace_pack_name( i )
+			#gui.workspace_update_pack_name( fms.get_mission_index(mis) )
+			gui.workspace_update_pack_name(i)
+		gui.on_mission_reloaded(i)
 
+
+	gui.update_workspaces()
+	gui.workspace_set_show_roots()
+	gui.missions_list_update_buttons()
 
 
 

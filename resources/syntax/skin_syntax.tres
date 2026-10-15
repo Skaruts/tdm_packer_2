@@ -1,0 +1,12 @@
+[gd_resource type="CodeHighlighter" format=3 uid="uid://dycw2p2crdnad"]
+
+[resource]
+keyword_colors = {
+"model": Color(0.384314, 1, 0, 1),
+"skin": Color(0.341176, 0.713726, 1, 1)
+}
+color_regions = {
+"\" \"": Color(1, 0.698039, 0.211765, 1),
+"/* */": Color(0.345098, 0.345098, 0.345098, 1),
+"//": Color(0.345098, 0.345098, 0.345098, 1)
+}

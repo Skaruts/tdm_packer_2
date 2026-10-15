@@ -1,0 +1,63 @@
+[gd_resource type="CodeHighlighter" format=3 uid="uid://bdglxgklesr5s"]
+
+[resource]
+number_color = Color(0.78936, 0.6138, 0.99, 1)
+symbol_color = Color(1, 1, 1, 1)
+keyword_colors = {
+"BRIEFING_TEXT_FONT": Color(0, 1, 1, 1),
+"BRIEFING_TEXT_SCALE": Color(0, 1, 1, 1),
+"GLOW_WHITE_COLOR": Color(0, 1, 1, 1),
+"MM_BUTTON_HUGE": Color(0, 1, 1, 1),
+"MM_FONT_LEFT": Color(0, 1, 1, 1),
+"MM_FONT_LEFT_GLOW": Color(0, 1, 1, 1),
+"MM_FONT_RIGHT": Color(0, 1, 1, 1),
+"MM_FONT_RIGHT_GLOW": Color(0, 1, 1, 1),
+"MM_MUSIC_BRIEFING": Color(0, 1, 1, 1),
+"MM_POS_OBJ_BACK_ACTION": Color(0, 1, 1, 1),
+"MM_POS_OBJ_BACK_BUTTON": Color(0, 1, 1, 1),
+"MM_POS_OBJ_BACK_BUTTON_GLOW": Color(0, 1, 1, 1),
+"MM_POS_OBJ_FORWARD_ACTION": Color(0, 1, 1, 1),
+"MM_POS_OBJ_FORWARD_BUTTON": Color(0, 1, 1, 1),
+"MM_POS_OBJ_FORWARD_BUTTON_GLOW": Color(0, 1, 1, 1),
+"MM_STATE_BACKWARD": Color(0, 1, 1, 1),
+"MM_STATE_FORWARD": Color(0, 1, 1, 1),
+"MM_STATE_MAINMENU": Color(0, 1, 1, 1),
+"OBJ_FULL_HEIGHT": Color(0, 1, 1, 1),
+"OBJ_FULL_WIDTH": Color(0, 1, 1, 1),
+"OBJ_OFFSET_X": Color(0, 1, 1, 1),
+"POS_BRIEFING_MAIN_MENU_BUTTON": Color(0, 1, 1, 1),
+"POS_BRIEFING_OBJECTIVES_BUTTON": Color(0, 1, 1, 1),
+"SBOLDGLOW_WHITE_COLOR": Color(0, 1, 1, 1),
+"SGLOW_BRIGHTRED_COLOR": Color(0, 1, 1, 1),
+"SGLOW_WHITE_COLOR": Color(0, 1, 1, 1),
+"SINVISIBLE": Color(0, 1, 1, 1),
+"SUBTITLES_NAMEPREFIX": Color(0, 1, 1, 1),
+"backcolor": Color(0.384314, 1, 0, 1),
+"background": Color(0.384314, 1, 0, 1),
+"bordercolor": Color(0.384314, 1, 0, 1),
+"font": Color(0.384314, 1, 0, 1),
+"forecolor": Color(0.384314, 1, 0, 1),
+"matcolor": Color(0.384314, 1, 0, 1),
+"noTime": Color(0.384314, 1, 0, 1),
+"nocursor": Color(0.384314, 1, 0, 1),
+"onAction": Color(0.384314, 1, 0, 1),
+"onMouseEnter": Color(0.384314, 1, 0, 1),
+"onMouseExit": Color(0.384314, 1, 0, 1),
+"onNamedEvent": Color(0.341176, 0.713726, 1, 1),
+"onTime": Color(0.384314, 1, 0, 1),
+"rect": Color(0.384314, 1, 0, 1),
+"resetTime": Color(0.384314, 1, 0, 1),
+"set": Color(0.901961, 0, 1, 1),
+"text": Color(0.384314, 1, 0, 1),
+"textalign": Color(0.384314, 1, 0, 1),
+"textalignx": Color(0.384314, 1, 0, 1),
+"textscale": Color(0.384314, 1, 0, 1),
+"transition": Color(0.384314, 1, 0, 1),
+"visible": Color(0.384314, 1, 0, 1),
+"windowDef": Color(0.341176, 0.713726, 1, 1)
+}
+color_regions = {
+"\" \"": Color(1, 0.698039, 0.211765, 1),
+"/* */": Color(0.345098, 0.345098, 0.345098, 1),
+"//": Color(0.345098, 0.345098, 0.345098, 1)
+}

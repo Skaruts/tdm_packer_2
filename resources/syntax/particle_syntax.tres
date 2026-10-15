@@ -1,0 +1,40 @@
+[gd_resource type="CodeHighlighter" format=3 uid="uid://17xnvudemx4s"]
+
+[resource]
+number_color = Color(0.78936, 0.6138, 0.99, 1)
+symbol_color = Color(1, 1, 1, 1)
+keyword_colors = {
+"aspect": Color(0.384314, 1, 0, 1),
+"boundsExpansion": Color(0.384314, 1, 0, 1),
+"bunching": Color(0.384314, 1, 0, 1),
+"color": Color(0.384314, 1, 0, 1),
+"cone": Color(0, 1, 1, 1),
+"count": Color(0.383333, 1, 0, 1),
+"cycles": Color(0.384314, 1, 0, 1),
+"direction": Color(0.384314, 1, 0, 1),
+"distribution": Color(0.384314, 1, 0, 1),
+"entityColor": Color(0.384314, 1, 0, 1),
+"fadeColor": Color(0.384314, 1, 0, 1),
+"fadeIn": Color(0.384314, 1, 0, 1),
+"fadeIndex": Color(0.384314, 1, 0, 1),
+"fadeOut": Color(0.384314, 1, 0, 1),
+"gravity": Color(0.384314, 1, 0, 1),
+"material": Color(0.384314, 1, 0, 1),
+"offset": Color(0.384314, 1, 0, 1),
+"orientation": Color(0.384314, 1, 0, 1),
+"particle": Color(0.34, 0.714, 1, 1),
+"randomDistribution": Color(0.384314, 1, 0, 1),
+"rotation": Color(0.384314, 1, 0, 1),
+"size": Color(0.384314, 1, 0, 1),
+"speed": Color(0.384314, 1, 0, 1),
+"sphere": Color(0, 1, 1, 1),
+"time": Color(0.384314, 1, 0, 1),
+"timeOffset": Color(0.384314, 1, 0, 1),
+"to": Color(0.9, 0, 1, 1),
+"view": Color(0, 1, 1, 1)
+}
+color_regions = {
+"\" \"": Color(1, 0.698039, 0.211765, 1),
+"/* */": Color(0.345098, 0.345098, 0.345098, 1),
+"//": Color(0.345098, 0.345098, 0.345098, 1)
+}

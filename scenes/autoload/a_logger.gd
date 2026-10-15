@@ -133,7 +133,7 @@ func _get_caller(error_level:int) -> String:
 #		Public API
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-func error(msg:Variant, print_path:=true, push:=true, __error_level:=0) -> void:
+func error(msg:Variant, print_path:=true, push:=true, __error_level:=1) -> void:
 	if not log_errors: return
 	var caller:String = _get_caller(__error_level+1) if print_path else ""
 	var full_msg := caller + str(msg)
