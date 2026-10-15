@@ -214,11 +214,12 @@ func _reload_tree() -> void:
 	tr_files.clear()
 	tr_files_root = tr_files.create_item()
 	tr_files_root.set_text(0, _mission.id)
+	tr_files_root.set_custom_color(0, data.TREE_ROOT_COLOR)
 
 	var disabled := fms.is_mission_readonly(_mission.id)
 	_build_file_tree(_mission.file_tree, tr_files_root, disabled)
 
-	pass
+
 
 
 

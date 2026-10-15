@@ -443,12 +443,12 @@ func _build_trees() -> void:
 
 	var inc_tree_root := tr_included.create_item()
 	inc_tree_root.set_text(0, _mission.zipname)
-	inc_tree_root.set_custom_color(0, data.EDITED_FILE_COLOR)
+	inc_tree_root.set_custom_color(0, data.TREE_ROOT_COLOR)
 	#lb_included.text = _mission.zipname
 
 	var exc_tree_root := tr_excluded.create_item()
 	exc_tree_root.set_text(0, "Excluded Files")
-	exc_tree_root.set_custom_color(0, data.EDITED_FILE_COLOR)
+	exc_tree_root.set_custom_color(0, data.TREE_ROOT_COLOR)
 
 	# var t1 := Time.get_ticks_msec()
 
