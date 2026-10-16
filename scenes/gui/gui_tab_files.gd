@@ -75,89 +75,6 @@ func _ready() -> void:
 	tabs_menu.window_input.connect(_on_tabs_menu_window_input)
 
 
-func _on_tabs_menu_window_input(event: InputEvent) -> void:
-	if not event is InputEventMouseButton or not event.pressed:
-		return
-
-	var r := Rect2(tabs_menu.position, tabs_menu.size)
-	if not r.has_point( get_global_mouse_position() ):
-		tabs_menu.hide()
-
-
-func _on_tabs_menu_id_pressed(id: int) -> void:
-	var idx := tab_right_clicked
-	var tab: TextFileEditor = tc_editors.get_child(idx)
-
-	match id:
-		TabMenuOptions.CLOSE_TAB:
-			_on_tab_bar_tab_close_pressed(idx)
-		# TabMenuOptions.UNDO_CLOSE_TAB:
-
-		TabMenuOptions.CLOSE_OTHER_TABS:
-			for i in range(tc_editors.get_child_count()-1, -1, -1):
-				if i == idx: continue
-				_on_tab_bar_tab_close_pressed(i)
-
-		TabMenuOptions.CLOSE_ALL_TABS:
-			for i in range(tc_editors.get_child_count()-1, -1, -1):
-				_on_tab_bar_tab_close_pressed(i)
-
-		TabMenuOptions.WORD_WRAP:
-			tab.toggle_word_wrap()
-			tabs_menu.set_item_checked(4, tab.get_word_wrap())
-
-		TabMenuOptions.LOCATE_IN_TREE:
-			var ti := _get_tree_item_by_name(tr_files_root, tab_bar.get_tab_title(idx))
-			logs.print(ti != null)
-			ti.uncollapse_tree()
-			ti.select(0)
-			tr_files.scroll_to_item(ti, true)
-
-
-
-
-
-var tab_right_clicked: int
-func _on_tab_bar_tab_rmb_clicked(idx: int) -> void:
-	tab_right_clicked = idx
-	var tab: TextFileEditor = tc_editors.get_child(idx)
-	tabs_menu.set_item_checked(4, tab.get_word_wrap())
-	tabs_menu.popup()
-	tabs_menu.position = tab_bar.get_global_mouse_position()
-
-
-func _on_tab_bar_gui_input(event: InputEvent) -> void:
-	if not event is InputEventMouseButton or not event.pressed:
-		return
-
-	# if event.button_index == 2:
-
-
-	if event.button_index == 3:
-		var lmp := tab_bar.get_local_mouse_position()
-		var idx := tab_bar.get_tab_idx_at_point(lmp)
-		if idx != -1:
-			_on_tab_bar_tab_close_pressed(idx)
-
-
-
-func _on_tc_editors_sort_children() -> void:
-	logs.print("sort_children")
-
-	for i in tc_editors.get_child_count():
-		var tab: TextFileEditor = tc_editors.get_child(i)
-		var node: FMTreeNode = tab.get_meta("node")
-		tab_bar.set_tab_title(i, node.name)
-
-
-func _on_tab_bar_tab_close_pressed(tab_idx: int) -> void:
-	var tab := tc_editors.get_child(tab_idx)
-	var node: FMTreeNode = tab.get_meta("node")
-	_remove_editor(tab)
-
-	fms.remove_edited_file_from_mission(_mission, node.path)
-	update_tree_node_file_opened(node, false)
-
 
 func update_tree_node_file_opened(node: FMTreeNode, opened: bool) -> void:
 	var ti := _get_tree_item_by_name(tr_files_root, node.name)
@@ -195,36 +112,6 @@ func _get_tree_item_by_name(parent: TreeItem, target_name: String) -> TreeItem:
 		child = child.get_next()
 
 	return null
-
-
-func _on_tr_files_item_activated() -> void:
-	var item := tr_files.get_selected()
-	var node: FMTreeNode = item.get_metadata(0)
-	if node.is_dir: return
-
-	if node.path in editors:
-		var idx := -1
-		for i in tc_editors.get_child_count():
-			var title: String = tab_bar.get_tab_title(i)
-			if title == node.name:
-				idx = i
-				break
-
-		if idx >= 0:
-			tc_editors.current_tab = idx
-
-		return
-
-	# if tc_editors.get_child(0) == dummy_editor:
-	# 	tc_editors.remove_child(dummy_editor)
-
-	fms.add_edited_file_to_mission(_mission, node.path)
-	_add_editor_if_needed(node)
-	_update_editor(node.path, _mission.mdata.edited_files[node.path])
-	update_tree_node_file_opened(node, true)
-
-	tc_editors.current_tab = tc_editors.get_child_count() - 1
-
 
 func on_mission_reloaded(_force_update := false) -> void:
 	logs.print("on_mission_reloaded")
@@ -422,3 +309,133 @@ func _set_item_edited_files_button(item: TreeItem, is_dir: bool, opened: bool) -
 	else:
 		if item.get_button_count(0) > 0:
 			item.erase_button(0, 0)
+
+
+
+
+
+
+
+
+
+
+
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+
+#	Signals
+
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
+
+
+func _on_tr_files_item_activated() -> void:
+	var item := tr_files.get_selected()
+	var node: FMTreeNode = item.get_metadata(0)
+	if node.is_dir: return
+
+	if node.path in editors:
+		var idx := -1
+		for i in tc_editors.get_child_count():
+			var title: String = tab_bar.get_tab_title(i)
+			if title == node.name:
+				idx = i
+				break
+
+		if idx >= 0:
+			tc_editors.current_tab = idx
+
+		return
+
+	# if tc_editors.get_child(0) == dummy_editor:
+	# 	tc_editors.remove_child(dummy_editor)
+
+	fms.add_edited_file_to_mission(_mission, node.path)
+	_add_editor_if_needed(node)
+	_update_editor(node.path, _mission.mdata.edited_files[node.path])
+	update_tree_node_file_opened(node, true)
+
+	tc_editors.current_tab = tc_editors.get_child_count() - 1
+
+
+func _on_tabs_menu_window_input(event: InputEvent) -> void:
+	if not event is InputEventMouseButton or not event.pressed:
+		return
+
+	var r := Rect2(tabs_menu.position, tabs_menu.size)
+	if not r.has_point( get_global_mouse_position() ):
+		tabs_menu.hide()
+
+
+func _on_tabs_menu_id_pressed(id: int) -> void:
+	var idx := tab_right_clicked
+	var tab: TextFileEditor = tc_editors.get_child(idx)
+
+	match id:
+		TabMenuOptions.CLOSE_TAB:
+			_on_tab_bar_tab_close_pressed(idx)
+		# TabMenuOptions.UNDO_CLOSE_TAB:
+
+		TabMenuOptions.CLOSE_OTHER_TABS:
+			for i in range(tc_editors.get_child_count()-1, -1, -1):
+				if i == idx: continue
+				_on_tab_bar_tab_close_pressed(i)
+
+		TabMenuOptions.CLOSE_ALL_TABS:
+			for i in range(tc_editors.get_child_count()-1, -1, -1):
+				_on_tab_bar_tab_close_pressed(i)
+
+		TabMenuOptions.WORD_WRAP:
+			tab.toggle_word_wrap()
+			tabs_menu.set_item_checked(4, tab.get_word_wrap())
+
+		TabMenuOptions.LOCATE_IN_TREE:
+			var ti := _get_tree_item_by_name(tr_files_root, tab_bar.get_tab_title(idx))
+			logs.print(ti != null)
+			ti.uncollapse_tree()
+			ti.select(0)
+			tr_files.scroll_to_item(ti, true)
+
+
+
+
+
+var tab_right_clicked: int
+func _on_tab_bar_tab_rmb_clicked(idx: int) -> void:
+	tab_right_clicked = idx
+	var tab: TextFileEditor = tc_editors.get_child(idx)
+	tabs_menu.set_item_checked(4, tab.get_word_wrap())
+	tabs_menu.popup()
+	tabs_menu.position = tab_bar.get_global_mouse_position()
+
+
+func _on_tab_bar_gui_input(event: InputEvent) -> void:
+	if not event is InputEventMouseButton or not event.pressed:
+		return
+
+	# if event.button_index == 2:
+
+
+	if event.button_index == 3:
+		var lmp := tab_bar.get_local_mouse_position()
+		var idx := tab_bar.get_tab_idx_at_point(lmp)
+		if idx != -1:
+			_on_tab_bar_tab_close_pressed(idx)
+
+
+
+func _on_tc_editors_sort_children() -> void:
+	logs.print("sort_children")
+
+	for i in tc_editors.get_child_count():
+		var tab: TextFileEditor = tc_editors.get_child(i)
+		var node: FMTreeNode = tab.get_meta("node")
+		tab_bar.set_tab_title(i, node.name)
+
+
+func _on_tab_bar_tab_close_pressed(tab_idx: int) -> void:
+	var tab := tc_editors.get_child(tab_idx)
+	var node: FMTreeNode = tab.get_meta("node")
+	_remove_editor(tab)
+
+	fms.remove_edited_file_from_mission(_mission, node.path)
+	update_tree_node_file_opened(node, false)
