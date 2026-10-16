@@ -3,19 +3,24 @@ extends RefCounted
 
 
 
-var parent:FMTreeNode
-var children:Array[FMTreeNode]
 
-var path:String
-var rel_path:String
-var name:String
-var ignored:bool
-var is_dir:bool
+var _parent : WeakRef
+var parent : FMTreeNode:
+		set(new_parent): _parent = weakref(new_parent)
+		get():           return _parent.get_ref()
+
+var children : Array[FMTreeNode]
+
+var path     : String
+var rel_path : String
+var name     : String
+var ignored  : bool
+var is_dir   : bool
 
 
 
 
-func _init(_path: String, _parent: Variant=null) -> void:
+func _init(_path: String, _parent: Variant = null) -> void:
 	path = _path
 	name = _path.get_file()
 
