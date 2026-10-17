@@ -2,6 +2,8 @@ class_name GuiTabFiles
 extends TabContainer
 
 
+const NodeInfo := TreeUtils.NodeInfo
+
 const TextFileEditorScene := preload("res://scenes/gui/text_file_editor.tscn")
 
 
@@ -75,6 +77,33 @@ func _ready() -> void:
 	tabs_menu.window_input.connect(_on_tabs_menu_window_input)
 
 
+func set_mission(mission: Mission) -> void:
+	_mission = mission
+
+	_build_tree()
+	_reload_tabs(_mission.file_tree)
+
+
+func on_mission_reloaded(_force_update := false) -> void:
+	logs.print("on_mission_reloaded")
+	# TODO: update the syntax highlighters if mission is readonly or not
+
+	var is_missing := fms.is_mission_missing(_mission.id)
+	var is_readonly := fms.is_mission_readonly(_mission.id)
+	var valid_mission := not is_missing and not is_readonly
+
+	for ed: TextFileEditor in editors.values():
+		if valid_mission:
+			ed.tag_code_editor()
+		ed.update_button_states()
+		ed.update_colors()
+
+	tab_bar.tab_close_display_policy = data.config.tab_close_buttons_mode
+
+	if not is_missing:
+		_build_tree()
+		_reload_tabs(_mission.file_tree)
+
 
 func update_tree_node_file_opened(node: FMTreeNode, opened: bool) -> void:
 	var ti := _get_tree_item_by_name(tr_files_root, node.name)
@@ -113,32 +142,6 @@ func _get_tree_item_by_name(parent: TreeItem, target_name: String) -> TreeItem:
 
 	return null
 
-func on_mission_reloaded(_force_update := false) -> void:
-	logs.print("on_mission_reloaded")
-	# TODO: update the syntax highlighters if mission is readonly or not
-
-	var is_missing := fms.is_mission_missing(_mission.id)
-	var is_readonly := fms.is_mission_readonly(_mission.id)
-	var valid_mission := not is_missing and not is_readonly
-
-	for ed: TextFileEditor in editors.values():
-		if valid_mission:
-			ed.tag_code_editor()
-		ed.update_button_states()
-		ed.update_colors()
-
-	tab_bar.tab_close_display_policy = data.config.tab_close_buttons_mode
-
-	if not is_missing:
-		_reload_tree()
-		_reload_tabs(_mission.file_tree)
-
-
-func set_mission(mission: Mission) -> void:
-	_mission = mission
-
-	_reload_tree()
-	_reload_tabs(_mission.file_tree)
 
 
 func _add_editor_if_needed(node: FMTreeNode) -> bool:
@@ -197,16 +200,117 @@ func _reload_tabs(parent: FMTreeNode) -> void:
 			editors[node.path].update_colors()
 
 
+func _build_tree() -> void:
+	logs.print("RELOAD_TREE", _mission.id)
 
+	var sel_path: String
+	var sel_item := tr_files.get_selected()
+	if sel_item:
+		var info: NodeInfo = sel_item.get_metadata(0)
+		sel_path = info.path
 
-func _reload_tree() -> void:
+	var expanded_paths : Dictionary = {}
+	var should_restore := tr_files_root != null
+
+	if should_restore:
+		TreeUtils.get_tree_state(tr_files_root, expanded_paths)
+
 	tr_files.clear()
 	tr_files_root = tr_files.create_item()
+	tr_files_root.set_metadata(0, NodeInfo.new(_mission.file_tree.path, _mission.file_tree.name, _mission.file_tree))
 	tr_files_root.set_text(0, _mission.id)
 	tr_files_root.set_custom_color(0, data.TREE_ROOT_COLOR)
-
 	var disabled := fms.is_mission_readonly(_mission.id)
+
 	_build_file_tree(_mission.file_tree, tr_files_root, disabled)
+
+	if should_restore:
+		TreeUtils.restore_tree_state(tr_files, tr_files_root, expanded_paths, sel_path)
+
+	# _prune_tree_of_missing_files(tr_files_root, disabled)
+	# print("--------------------")
+	# TreeUtils.print_tree(tr_files_root)
+	# _add_new_files_to_tree(_mission.file_tree, tr_files_root, disabled)
+	# print("--------------------")
+	# TreeUtils.print_tree(tr_files_root)
+
+
+# func _prune_tree_of_missing_files(parent: TreeItem, disabled := false) -> void:
+# 	if parent == null: return
+
+# 	var item := parent.get_first_child()
+# 	if not item:
+# 		if not parent == tr_files_root:
+# 			parent.get_parent().remove_child(parent)
+# 		return
+
+# 	# check missing files and prune the tree
+# 	while item != null:
+# 		var info: NodeInfo = item.get_metadata(0)
+# 		assert(info.node)
+
+# 		if info.node.is_dir:
+# 			if Path.dir_exists(info.path):
+# 				_prune_tree_of_missing_files(item, disabled)
+# 		elif not Path.file_exists(info.path):
+# 			parent.remove_child(item)
+
+# 		item = item.get_next()
+
+
+
+# func _add_new_files_to_tree(parent_node: FMTreeNode, parent: TreeItem, disabled := false) -> void:
+# 	if parent == null: return
+# 	assert(parent_node.is_dir)
+
+# 	var node := parent_node.get_first_child()
+# 	var item := parent.get_first_child()
+# 	var idx := 0
+
+# 	while node != null:
+# 		var icon := data.ICON_FOLDER if node.is_dir else data.ICON_FILE
+
+# 		if item:
+# 			idx = item.get_index()
+
+# 		if node.is_dir:
+# 			var has_valid_files := _dir_has_valid_files(node)
+# 			var has_edited_files := _dir_has_edited_files(node)
+# 			if not item:
+# 				# - folder was newly created or moved and item needs to be created
+# 				# - item is a folder that doesn't contain edited files
+# 				if has_valid_files:
+# 					item = _create_tree_item(parent, node, icon, disabled, has_edited_files, null, idx)
+# 			else:
+# 				if item.get_text(0) != node.name:
+# 					item = _create_tree_item(parent, node, icon, disabled, has_edited_files, null, item.get_index())
+# 				else:
+# 					item.set_metadata(0, NodeInfo.new(node.path, node.name, node))
+# 			if has_valid_files:
+# 				_add_new_files_to_tree(node, item, disabled)
+# 		else:
+# 			var is_edited_file := node.path in _mission.mdata.edited_files
+
+# 			if not item:
+# 				# - file was newly created or moved and item needs to be created
+# 				if _is_valid_file(node):
+# 					item = _create_tree_item(parent, node, icon, disabled, is_edited_file, null, idx)
+# 			else:
+# 				if item.get_text(0) != node.name:
+# 					item = _create_tree_item(parent, node, icon, disabled, is_edited_file, null, item.get_index())
+# 				else:
+# 					item.set_metadata(0, NodeInfo.new(node.path, node.name, node))
+
+# 		node = node.get_next()
+# 		if item:
+# 			item = item.get_next()
+
+
+
+
+
+
+
 
 
 
@@ -265,36 +369,40 @@ func _build_file_tree(parent: FMTreeNode, gui_parent: TreeItem, disabled := fals
 
 		if not node.is_dir:
 			if _is_valid_file(node):
-				var has_edited_files := node.path in _mission.mdata.edited_files
-				tree_item = _create_node(gui_parent, node, icon, disabled, has_edited_files)
+				var is_edited_file := node.path in _mission.mdata.edited_files
+				tree_item = _create_tree_item(gui_parent, node, icon, disabled, is_edited_file)
 		elif _dir_has_valid_files(node):
 			var has_edited_files := _dir_has_edited_files(node)
-			tree_item = _create_node(gui_parent, node, icon, disabled, has_edited_files)
+			tree_item = _create_tree_item(gui_parent, node, icon, disabled, has_edited_files)
 
 		_build_file_tree(node, tree_item, disabled)
 
 
-func _create_node(parent: TreeItem, node: FMTreeNode, icon: Texture2D, disabled := false, opened_files := false, color: Variant = null) -> TreeItem:
-	var tree_item := parent.create_child()
-	tree_item.set_text(0, node.name)
-	tree_item.set_metadata(0, node)
+
+
+func _create_tree_item(parent: TreeItem, node: FMTreeNode, icon: Texture2D,
+					   disabled := false, opened_files := false,
+					   color: Variant = null, at_index := -1) -> TreeItem:
+	var item := parent.create_child(at_index)
+	item.set_text(0, node.name)
+	item.set_metadata(0, NodeInfo.new(node.path, node.name, node))
 
 	if color:
-		tree_item.set_custom_color(0, color)
-		#tree_item.set_icon_modulate(0, color)
+		item.set_custom_color(0, color)
+		#item.set_icon_modulate(0, color)
 
-	tree_item.set_icon(0, icon)
-	tree_item.set_icon_max_width(0, 16)
+	item.set_icon(0, icon)
+	item.set_icon_max_width(0, 16)
 
 	if disabled:
-		tree_item.set_selectable(0, false)
-		tree_item.set_custom_color(0, data.FADED_TEXT_COLOR)
+		item.set_selectable(0, false)
+		item.set_custom_color(0, data.FADED_TEXT_COLOR)
 
 	if opened_files:
-		_set_item_edited_files_button(tree_item, node.is_dir, true)
+		_set_item_edited_files_button(item, node.is_dir, true)
 
-	tree_item.collapsed = true
-	return tree_item
+	item.collapsed = true
+	return item
 
 
 const TOOLTIP_FILE := "This file is being edited"
@@ -328,7 +436,10 @@ func _set_item_edited_files_button(item: TreeItem, is_dir: bool, opened: bool) -
 
 func _on_tr_files_item_activated() -> void:
 	var item := tr_files.get_selected()
-	var node: FMTreeNode = item.get_metadata(0)
+	var info: NodeInfo = item.get_metadata(0)
+	var node := info.node
+	assert(node)
+
 	if node.is_dir: return
 
 	if node.path in editors:

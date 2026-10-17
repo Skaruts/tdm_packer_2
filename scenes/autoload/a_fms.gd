@@ -515,15 +515,17 @@ func check_mission_filesystem(mis: Mission) -> bool:
 	for file: String in changed_files:
 		if file == "map_sequence":
 			FMUtils.load_map_sequence(mis)
+			gui.get_current_workspace().tab_package.reload_file(file)
 		elif file == "modfile":
 			FMUtils.load_modfile(mis)
+			gui.get_current_workspace().tab_package.reload_file(file)
 		elif file == "edited_files":
 			var md: Dictionary = mission_datas.get_value("missions", mis.id, null)
 			assert(md != null)
 			FMUtils.load_edited_files(md, mis)
 		else:
 			FMUtils.load_or_create_file(mis, file)
-		gui.get_current_workspace().tab_package.reload_file(file)
+			gui.get_current_workspace().tab_package.reload_file(file)
 
 	return true
 
@@ -593,11 +595,11 @@ func check_missions_on_focus_in() -> void:
 		# save_missions_data()
 		curr_mission = missions[last_idx]
 
-	# update the UI
+	# update the missions and the UI
 	for m in missions:
-	# 	# FMUtils.build_file_tree(m)
-	# 	# _load_mission_files(m)
-	# 	# check_mission_filesystem(m)
+		FMUtils.build_file_tree(m)
+		# _load_mission_files(m)
+		check_mission_filesystem(m)
 		gui.on_mission_reloaded( get_mission_index(m), true )
 
 	gui.update_missions_list()

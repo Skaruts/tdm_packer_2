@@ -7,7 +7,7 @@ extends RefCounted
 var _parent : WeakRef
 var parent : FMTreeNode:
 		set(new_parent): _parent = weakref(new_parent)
-		get():           return _parent.get_ref()
+		get():           return _parent.get_ref() if _parent else null
 
 var children : Array[FMTreeNode]
 
@@ -18,11 +18,21 @@ var ignored  : bool
 var is_dir   : bool
 
 
+func print_branch(indent := 0) -> void:
+	print("\t".repeat(indent) + name)
 
+	var node := get_first_child()
 
-func _init(_path: String, _parent: Variant = null) -> void:
+	while node:
+		#var text := node.get_text(0)
+		node.print_branch(indent+1)
+		node = node.get_next()
+		#var next := node.get_text(0)
+
+func _init(_path: String, _parent: Variant = null, _is_dir := false) -> void:
 	path = _path
 	name = _path.get_file()
+	is_dir = _is_dir
 
 	if _parent:
 		parent = _parent as FMTreeNode
@@ -69,3 +79,15 @@ func get_child_named(name: String) -> Variant:
 
 	return null
 
+
+func get_first_child() -> FMTreeNode:
+	if children.size() == 0: return null
+	return children[0]
+
+
+# TODO: makes this a linked list kind of tree
+func get_next() -> FMTreeNode:
+	var idx := parent.children.find(self)
+	if idx >= parent.children.size()-1:
+		return null
+	return parent.children[idx+1]

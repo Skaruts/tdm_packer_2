@@ -164,7 +164,7 @@ static func build_file_tree(mission: Mission) -> void:
 	mission.inc_file_count      = 0
 	mission.exc_dir_count       = 0
 	mission.exc_file_count      = 0
-	mission.file_tree           = FMTreeNode.new(mission.paths.root)
+	mission.file_tree           = FMTreeNode.new(mission.paths.root, null, true)
 	mission.ignored_files       = default_ignored_files.duplicate()
 	mission.ignored_directories = default_ignored_directories.duplicate()
 	mission.filepaths.clear()
@@ -185,7 +185,7 @@ static func build_file_tree(mission: Mission) -> void:
 	# logs.task("Finished building file tree")
 
 
-static func init_ignores(mission:Mission) -> void:
+static func init_ignores(mission: Mission) -> void:
 	if mission.mdata.pkignore == "": return
 
 	var list: PackedStringArray = mission.mdata.pkignore.split('\n', false)
@@ -206,9 +206,9 @@ static func init_ignores(mission:Mission) -> void:
 			mission.ignored_files.add(line)
 
 
-static func _gather_files(mission:Mission, parent:FMTreeNode) -> void:
-	var dirpaths:Array[String]  = Path.get_dirpaths(parent.path)
-	var filepaths:Array[String] = Path.get_filepaths(parent.path)
+static func _gather_files(mission: Mission, parent: FMTreeNode) -> void:
+	var dirpaths  : Array[String] = Path.get_dirpaths(parent.path)
+	var filepaths : Array[String] = Path.get_filepaths(parent.path)
 
 	if not dirpaths.size() and not filepaths.size():
 		if parent.path == mission.paths.maps: return
@@ -220,10 +220,9 @@ static func _gather_files(mission:Mission, parent:FMTreeNode) -> void:
 	var ign_files := mission.ignored_files
 	var ign_dirs  := mission.ignored_directories
 
-	for fullpath:String in dirpaths:
+	for fullpath: String in dirpaths:
 		var rel_path := fullpath.replace(mission.paths.root, '')
-		var dir_node := FMTreeNode.new(fullpath, parent)
-		dir_node.is_dir = true
+		var dir_node := FMTreeNode.new(fullpath, parent, true)
 		dir_node.ignored = parent.ignored or should_ignore(rel_path, ign_dirs) \
 						or (fullpath != mission.paths.maps and fullpath.contains(mission.paths.maps))
 		if dir_node.ignored:
@@ -233,7 +232,7 @@ static func _gather_files(mission:Mission, parent:FMTreeNode) -> void:
 			mission.inc_dir_count += 1
 		_gather_files(mission, dir_node)
 
-	for fullpath:String in filepaths:
+	for fullpath: String in filepaths:
 		var rel_path  := fullpath.replace(mission.paths.root, '')
 		var file_node := FMTreeNode.new(fullpath, parent)
 		file_node.ignored = parent.ignored or should_ignore(rel_path, ign_files)
