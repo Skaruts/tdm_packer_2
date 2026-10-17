@@ -260,8 +260,6 @@ func _dir_has_edited_files(node: FMTreeNode) -> bool:
 
 func _build_file_tree(parent: FMTreeNode, gui_parent: TreeItem, disabled := false) -> void:
 	for node: FMTreeNode in parent.children:
-		if node.ignored: continue
-
 		var icon := data.ICON_FOLDER if node.is_dir else data.ICON_FILE
 		var tree_item: TreeItem
 
