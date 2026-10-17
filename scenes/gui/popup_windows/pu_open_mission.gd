@@ -5,11 +5,13 @@ var _first_item        : TreeItem
 var _last_item         : TreeItem
 var _selected_missions : Dictionary
 
-@onready var lb_header   : Label = %lb_header
-@onready var tr_missions : Tree  = %tr_missions
-@onready var lb_warnings: Label = %lb_warnings
 
-@onready var btn_unlock_fm: Button = %btn_unlock_fm
+@onready var lb_header     : Label = %lb_header
+@onready var tr_missions   : Tree  = %tr_missions
+@onready var lb_warnings   : Label = %lb_warnings
+@onready var btn_unlock_fm : Button = %btn_unlock_fm
+@onready var le_search     : CustomLineEdit = %le_search
+
 
 const fm_tooltip_more := "Click to toggle editable/read-only. Making a mission editable means TDM Packer\n"          \
 					   + "can create the necessary base base files for the mission. This is not recommended\n"       \
@@ -22,6 +24,8 @@ const lock_tooltip_ro := "This mission is read-only.\n\n" + fm_tooltip_more
 const lock_tooltip_ed := "This mission is editable.\n\n" + fm_tooltip_more
 
 
+var _names          : Array[String] = []
+var _filtered_names : Array[String] = []
 
 func _on_ready() -> void:
 	tr_missions.columns = 2
@@ -32,14 +36,24 @@ func _on_ready() -> void:
 	btn_unlock_fm.pressed.connect(_on_btn_unlock_fm_pressed)
 
 	tr_missions.button_clicked.connect(_on_tr_missions_button_clicked)
+	tr_missions.gui_input.connect(_on_tr_missions_gui_input)
+	le_search.text_changed.connect(_on_le_search_text_changed)
 
+
+func _on_le_search_text_changed(_new_text: String) -> void:
+	_filtered_names.clear()
+	_build_missions_list()
 
 
 func _on_popup() -> void:
 	lb_warnings.hide()
 	btn_ok.disabled = true
 	tr_missions.grab_focus()
+	_build_missions_list()
 
+
+
+func _build_missions_list() -> void:
 	# var num_invalid_missions := 0
 	var mission_paths := FMUtils.get_mission_folder_list()
 
@@ -49,9 +63,15 @@ func _on_popup() -> void:
 	var item: TreeItem
 
 	for i: int in mission_paths.size():
-		var path := mission_paths[i]
+		var name := mission_paths[i].get_file()
+		var filter: String = le_search.text
+		_names.append(name)
+		if filter == "" or name.contains(filter):
+			_filtered_names.append(name)
+
+	for i: int in _filtered_names.size():
+		var mission_id := _filtered_names[i]
 		var idx  := i % tr_missions.columns
-		var mission_id := path.get_file()
 
 		# var is_valid_mission := Path.file_exists(Path.join(path, data.MODFILE_FILENAME))
 		var is_loaded := fms.is_mission_already_loaded(mission_id)
@@ -96,12 +116,16 @@ func _on_popup() -> void:
 	# 	lb_warnings.show()
 
 
-func _on_input(event: InputEvent) -> void:
-	if   event.is_action_pressed("ui_home"):
+
+func _on_tr_missions_gui_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_home"):
 		_select_first_item()
 	elif event.is_action_pressed("ui_end"):
 		_select_last_item()
-	elif event.is_action_pressed("ui_cancel"):
+
+
+func _on_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
 		_on_bar_button_pressed(BarButton.CANCEL)
 
 
@@ -135,12 +159,14 @@ func _hack_to_force_tree_to_update_visuals() -> void:
 
 
 func _select_first_item() -> void:
+	if _filtered_names.size() <= 1: return
 	tr_missions.set_selected(_first_item, 0)
 	tr_missions.ensure_cursor_is_visible()
 	_hack_to_force_tree_to_update_visuals()
 
 
 func _select_last_item() -> void:
+	if _filtered_names.size() <= 1: return
 	for i:int in range(tr_missions.columns-1, -1, -1):
 		if _last_item.is_selectable(i):
 			tr_missions.set_selected(_last_item, i)
