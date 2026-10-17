@@ -351,7 +351,7 @@ func _dir_has_valid_files(node: FMTreeNode) -> bool:
 
 
 func _dir_has_edited_files(node: FMTreeNode) -> bool:
-	assert(node.is_dir)
+	if not node.is_dir: return false
 
 	for c: FMTreeNode in node.children:
 		if not c.is_dir:
