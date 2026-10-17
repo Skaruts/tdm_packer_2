@@ -52,6 +52,11 @@ const _COLOR_MAP_TITLE := Color(0.82, 0.698, 0.361)
 var pk_syntax_highlighter: SyntaxHighlighter
 
 func _ready() -> void:
+	tr_included.item_mouse_selected.connect(TreeUtils._on_tree_item_mouse_selected.bind(tr_included))
+	tr_excluded.item_mouse_selected.connect(TreeUtils._on_tree_item_mouse_selected.bind(tr_excluded))
+	tr_included.item_activated.connect(TreeUtils.toggle_folder_on_click.bind(tr_included))
+	tr_excluded.item_activated.connect(TreeUtils.toggle_folder_on_click.bind(tr_excluded))
+
 	tr_map_list.columns = 2
 	tr_map_list.hide_root = true
 	for i in 2:
