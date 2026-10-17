@@ -35,7 +35,6 @@ static func restore_tree_state(tree: Tree, parent: TreeItem,
 				expanded_paths: Dictionary, selected_path: String) -> void:
 	var info: NodeInfo = parent.get_metadata(0)
 
-	logs.print(info.path in expanded_paths, info.path)
 	parent.set_collapsed(not info.path in expanded_paths)
 
 	if info.path == selected_path:
