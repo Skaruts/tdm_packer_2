@@ -50,7 +50,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_placeholder_color = Color(0.37, 0.37, 0.37, 1)
-theme_override_colors/font_uneditable_color = Color(0.368627, 0.368627, 0.368627, 1)
+theme_override_colors/font_uneditable_color = Color(0.513726, 0.513726, 0.513726, 1)
 placeholder_text = "mission title..."
 keep_editing_on_text_submit = true
 emoji_menu_enabled = false
@@ -74,7 +74,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_placeholder_color = Color(0.37, 0.37, 0.37, 1)
-theme_override_colors/font_uneditable_color = Color(0.368627, 0.368627, 0.368627, 1)
+theme_override_colors/font_uneditable_color = Color(0.513726, 0.513726, 0.513726, 1)
 placeholder_text = "author name..."
 keep_editing_on_text_submit = true
 emoji_menu_enabled = false
@@ -98,7 +98,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_placeholder_color = Color(0.37, 0.37, 0.37, 1)
-theme_override_colors/font_uneditable_color = Color(0.368627, 0.368627, 0.368627, 1)
+theme_override_colors/font_uneditable_color = Color(0.513726, 0.513726, 0.513726, 1)
 placeholder_text = "mission version..."
 keep_editing_on_text_submit = true
 emoji_menu_enabled = false
@@ -118,7 +118,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_placeholder_color = Color(0.37, 0.37, 0.37, 1)
-theme_override_colors/font_uneditable_color = Color(0.368627, 0.368627, 0.368627, 1)
+theme_override_colors/font_uneditable_color = Color(0.513726, 0.513726, 0.513726, 1)
 placeholder_text = "required tdm version..."
 keep_editing_on_text_submit = true
 emoji_menu_enabled = false
@@ -149,7 +149,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/font_placeholder_color = Color(0.368627, 0.368627, 0.368627, 1)
-theme_override_colors/font_readonly_color = Color(0.368627, 0.368627, 0.368627, 1)
+theme_override_colors/font_readonly_color = Color(0.513726, 0.513726, 0.513726, 1)
 placeholder_text = "mission description..."
 emoji_menu_enabled = false
 drag_and_drop_selection_enabled = false
@@ -232,8 +232,16 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/font_placeholder_color = Color(0.368627, 0.368627, 0.368627, 1)
-theme_override_colors/font_readonly_color = Color(0.368627, 0.368627, 0.368627, 1)
+theme_override_colors/font_readonly_color = Color(0.513726, 0.513726, 0.513726, 1)
 theme_override_styles/focus = SubResource("StyleBoxEmpty_77p0q")
+text = "nduisadiasdnbasijk
+dsa´dsa
+dsad
+sadasdasdsadas
+asds
+asd
+asddad
+asddasdasdasd"
 placeholder_text = "readme file content..."
 drag_and_drop_selection_enabled = false
 wrap_mode = 1

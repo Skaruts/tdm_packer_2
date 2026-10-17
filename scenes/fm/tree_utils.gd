@@ -51,6 +51,7 @@ static func restore_tree_state(tree: Tree, parent: TreeItem,
 
 static func toggle_folder_on_click(tree: Tree) -> void:
 	var item := tree.get_selected()
+	if not item: return
 	var info: NodeInfo = item.get_metadata(0)
 	assert(info.node)
 	if not info.node.is_dir: return

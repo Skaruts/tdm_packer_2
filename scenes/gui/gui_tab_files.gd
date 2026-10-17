@@ -110,19 +110,19 @@ func on_mission_reloaded(_force_update := false) -> void:
 
 
 func update_tree_node_file_opened(node: FMTreeNode, opened: bool) -> void:
-	var ti := _get_tree_item_by_name(tr_files_root, node.name)
-	_set_item_edited_files_button(ti, node.is_dir, opened)
+	var item := _get_tree_item_by_name(tr_files_root, node.name)
+	_set_item_edited_files_button(item, node.is_dir, opened)
 
-	var ti_parent := ti.get_parent()
+	var item_parent := item.get_parent()
 	var node_parent := node.parent
-	while ti_parent != null and ti_parent != tr_files_root:
+	while item_parent != null and item_parent != tr_files_root:
 		if _dir_has_edited_files(node_parent):
-			_set_item_edited_files_button(ti_parent, node_parent.is_dir, true)
+			_set_item_edited_files_button(item_parent, node_parent.is_dir, true)
 			if not opened: break
 		else:
-			_set_item_edited_files_button(ti_parent, node_parent.is_dir, false)
+			_set_item_edited_files_button(item_parent, node_parent.is_dir, false)
 
-		ti_parent = ti_parent.get_parent()
+		item_parent = item_parent.get_parent()
 		node_parent = node_parent.parent
 
 
@@ -158,6 +158,7 @@ func _add_editor_if_needed(node: FMTreeNode) -> bool:
 	ed.set_data(_mission, node.path)
 	ed.name = node.name
 	ed.set_meta("node", node)
+
 
 	tab_bar.set_tab_title( tc_editors.get_child_count()-1, node.name )
 
@@ -202,6 +203,7 @@ func _reload_tabs(parent: FMTreeNode) -> void:
 			logs.print("RELAODING FILE")
 			editors[node.path].update_text(_mission.mdata.edited_files[node.path])
 			editors[node.path].update_colors()
+		editors[node.path].code_edit.editable = not fms.is_mission_readonly(_mission.id)
 
 
 func _build_tree() -> void:
@@ -547,6 +549,7 @@ func _on_tc_editors_sort_children() -> void:
 func _on_tab_bar_tab_close_pressed(tab_idx: int) -> void:
 	var tab := tc_editors.get_child(tab_idx)
 	var node: FMTreeNode = tab.get_meta("node")
+	assert(node)
 	_remove_editor(tab)
 
 	fms.remove_edited_file_from_mission(_mission, node.path)

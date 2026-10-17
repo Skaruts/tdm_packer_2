@@ -65,7 +65,7 @@ const ERROR_COLOR       = Color(1.0, 0.49, 0.49)
 const WARNING_COLOR     = Color(1, 0.67500007152557, 0.22000002861023)
 const VALID_COLOR       = Color(0.43, 1, 0.43)
 const TEXT_COLOR        = Color(0.787, 0.786, 0.784)
-const FADED_TEXT_COLOR  = Color(0.3, 0.3, 0.3)
+const FADED_TEXT_COLOR  = Color(0.514, 0.514, 0.514)
 const EDITED_FILE_COLOR = Color(1, 0.851, 0.53)
 const TREE_ROOT_COLOR   = Color(1, 0.851, 0.53)
 
