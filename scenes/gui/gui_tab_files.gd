@@ -34,10 +34,14 @@ enum TabMenuOptions {
 
 
 func _ready() -> void:
+	# make sure any dummy development editors get freed, if there's any
 	for c in tc_editors.get_children():
 		c.free()
 
 	tr_files.item_activated.connect(_on_tr_files_item_activated)
+	tr_files.item_mouse_selected.connect(TreeUtils._on_tree_item_mouse_selected.bind(tr_files))
+	tr_files.item_activated.connect(TreeUtils.toggle_folder_on_click.bind(tr_files))
+
 
 	tab_bar = tc_editors.get_tab_bar()
 	tab_bar.tab_close_display_policy = TabBar.CLOSE_BUTTON_SHOW_NEVER
@@ -432,15 +436,14 @@ func _set_item_edited_files_button(item: TreeItem, is_dir: bool, opened: bool) -
 #	Signals
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-
-
 func _on_tr_files_item_activated() -> void:
 	var item := tr_files.get_selected()
 	var info: NodeInfo = item.get_metadata(0)
 	var node := info.node
 	assert(node)
 
-	if node.is_dir: return
+	if node.is_dir:
+		return
 
 	if node.path in editors:
 		var idx := -1

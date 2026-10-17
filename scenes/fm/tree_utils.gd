@@ -47,3 +47,14 @@ static func restore_tree_state(tree: Tree, parent: TreeItem,
 	while item:
 		restore_tree_state(tree, item, expanded_paths, selected_path)
 		item = item.get_next()
+
+
+static func toggle_folder_on_click(tree: Tree) -> void:
+	var item := tree.get_selected()
+	var info: NodeInfo = item.get_metadata(0)
+	assert(info.node)
+	if not info.node.is_dir: return
+	item.collapsed = not item.collapsed
+
+static func _on_tree_item_mouse_selected(_mp: Vector2, _idx: int, tree: Tree) -> void:
+	toggle_folder_on_click(tree)
