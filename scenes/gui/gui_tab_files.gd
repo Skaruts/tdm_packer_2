@@ -115,8 +115,9 @@ func update_tree_node_file_opened(node: FMTreeNode, opened: bool) -> void:
 
 	var item_parent := item.get_parent()
 	var node_parent := node.parent
-	while item_parent != null and item_parent != tr_files_root:
-		if _dir_has_edited_files(node_parent):
+	while node_parent != null and item_parent != null \
+	and item_parent != tr_files_root:
+		if node.parent and _dir_has_edited_files(node_parent):
 			_set_item_edited_files_button(item_parent, node_parent.is_dir, true)
 			if not opened: break
 		else:
