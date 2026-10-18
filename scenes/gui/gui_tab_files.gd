@@ -110,7 +110,7 @@ func on_mission_reloaded(_force_update := false) -> void:
 
 
 func update_tree_node_file_opened(node: FMTreeNode, opened: bool) -> void:
-	var item := _get_tree_item_by_name(tr_files_root, node.name)
+	var item := _get_tree_item_by_path(tr_files_root, node.path)
 	_set_item_edited_files_button(item, node.is_dir, opened)
 
 	var item_parent := item.get_parent()
@@ -129,40 +129,41 @@ func update_tree_node_file_opened(node: FMTreeNode, opened: bool) -> void:
 
 
 
-func _get_tree_item_by_name(parent: TreeItem, target_name: String) -> TreeItem:
+func _get_tree_item_by_path(parent: TreeItem, target_path: String) -> TreeItem:
 	if not parent:
 		return null
 
-	# Check the current item (column 0 is usually where the text/name is)
-	if parent.get_text(0) == target_name:
+	var info: NodeInfo = parent.get_metadata(0)
+	if info.path == target_path:
 		return parent
 
-	# Search children recursively
-	var child := parent.get_first_child()
-	while child:
-		var found := _get_tree_item_by_name(child, target_name)
-		if found:
-			return found
-		child = child.get_next()
+	var item := parent.get_first_child()
+	while item:
+		var child := _get_tree_item_by_path(item, target_path)
+		if child:
+			return child
+		item = item.get_next()
 
 	return null
 
 
 
 func _add_editor_if_needed(node: FMTreeNode) -> bool:
-	if node.path in editors: return false
-
 	var ed: TextFileEditor = TextFileEditorScene.instantiate()
-	tc_editors.add_child(ed)
-	editors[node.path] = ed
+	if not node.path in editors:
+		var new_ed: TextFileEditor = TextFileEditorScene.instantiate()
+		editors[node.path] = new_ed
+		tc_editors.add_child(new_ed)
+		tab_bar.set_tab_title( tc_editors.get_child_count()-1, node.name )
 
+	ed = editors[node.path]
 	ed.set_data(_mission, node.path)
 	ed.name = node.name
+	if ed.has_meta("node"):
+		ed.remove_meta("node")
 	ed.set_meta("node", node)
 
-
 	ed.code_edit.editable = not fms.is_mission_readonly(_mission.id)
-	tab_bar.set_tab_title( tc_editors.get_child_count()-1, node.name )
 
 	return true
 
@@ -505,11 +506,12 @@ func _on_tabs_menu_id_pressed(id: int) -> void:
 			tabs_menu.set_item_checked(4, tab.get_word_wrap())
 
 		TabMenuOptions.LOCATE_IN_TREE:
-			var ti := _get_tree_item_by_name(tr_files_root, tab_bar.get_tab_title(idx))
-			logs.print(ti != null)
-			ti.uncollapse_tree()
-			ti.select(0)
-			tr_files.scroll_to_item(ti, true)
+			var node: FMTreeNode = tab.get_meta("node")
+			var ti := _get_tree_item_by_path(tr_files_root, node.path)
+			if ti:
+				ti.uncollapse_tree()
+				ti.select(0)
+				tr_files.scroll_to_item(ti, true)
 
 
 
