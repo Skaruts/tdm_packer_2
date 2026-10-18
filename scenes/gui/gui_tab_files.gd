@@ -403,7 +403,7 @@ func _create_tree_item(parent: TreeItem, node: FMTreeNode, icon: Texture2D,
 	item.set_icon_max_width(0, 16)
 
 	if disabled:
-		item.set_selectable(0, false)
+		# item.set_selectable(0, false)
 		item.set_custom_color(0, data.FADED_TEXT_COLOR)
 
 	if opened_files:
