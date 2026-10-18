@@ -24,7 +24,6 @@ const lock_tooltip_ro := "This mission is read-only.\n\n" + fm_tooltip_more
 const lock_tooltip_ed := "This mission is editable.\n\n" + fm_tooltip_more
 
 
-var _names          : Array[String] = []
 var _filtered_names : Array[String] = []
 
 func _on_ready() -> void:
@@ -37,18 +36,15 @@ func _on_ready() -> void:
 
 	tr_missions.button_clicked.connect(_on_tr_missions_button_clicked)
 	tr_missions.gui_input.connect(_on_tr_missions_gui_input)
-	le_search.text_changed.connect(_on_le_search_text_changed)
+	le_search.text_changed.connect(_build_missions_list)
 
-
-func _on_le_search_text_changed(_new_text: String) -> void:
-	_filtered_names.clear()
-	_build_missions_list()
 
 
 func _on_popup() -> void:
 	lb_warnings.hide()
 	btn_ok.disabled = true
 	tr_missions.grab_focus()
+	le_search.text = ""
 	_build_missions_list()
 
 
@@ -59,13 +55,13 @@ func _build_missions_list() -> void:
 
 	tr_missions.clear()
 	tr_missions.columns = 2
+	_filtered_names.clear()
 	var _root := tr_missions.create_item()
 	var item: TreeItem
 
 	for i: int in mission_paths.size():
 		var name := mission_paths[i].get_file()
 		var filter: String = le_search.text
-		_names.append(name)
 		if filter == "" or name.contains(filter):
 			_filtered_names.append(name)
 
