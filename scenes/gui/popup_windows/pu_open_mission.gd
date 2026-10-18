@@ -57,8 +57,9 @@ func _build_missions_list() -> void:
 	tr_missions.clear()
 	tr_missions.columns = 2
 	_filtered_names.clear()
-	var _root := tr_missions.create_item()
-	var item: TreeItem
+	var root := tr_missions.create_item()
+
+
 
 	for i: int in mission_paths.size():
 		var name := mission_paths[i].get_file()
@@ -66,51 +67,44 @@ func _build_missions_list() -> void:
 		if filter == "" or name.contains(filter):
 			_filtered_names.append(name)
 
-	for i: int in _filtered_names.size():
-		var mission_id := _filtered_names[i]
-		var idx  := i % tr_missions.columns
+	var num_rows : int = round(_filtered_names.size() / float(tr_missions.columns))
 
-		# var is_valid_mission := Path.file_exists(Path.join(path, data.MODFILE_FILENAME))
-		var is_loaded := fms.is_mission_already_loaded(mission_id)
-		var is_readonly := fms.is_mission_readonly(mission_id)
+	for j: int in num_rows:
+		var item := root.create_child()
 
-		if idx == 0:
-			item = _root.create_child()
-			# for j: int in tr_missions.columns:
-			# 	item.set_selectable(j, false)
+		var idx1 := j
+		_add_tree_item(_filtered_names[idx1], 0, item)
 
-		if   i == 0:                      _first_item = item
-		elif i == mission_paths.size()-1: _last_item = item
+		var idx2 := j+num_rows
+		if idx2 < _filtered_names.size():
+			_add_tree_item(_filtered_names[idx2], 1, item)
 
-		item.set_text(idx, mission_id)
-		item.set_icon(idx, data.ICON_FOLDER)
-		item.set_icon_max_width(idx, 20)
+	var children := root.get_children()
+	_first_item = children[0]
+	_last_item = children[children.size()-1]
+
+
+func _add_tree_item(id: String, col: int, item: TreeItem) -> void:
+		var is_loaded := fms.is_mission_already_loaded(id)
+		var is_readonly := fms.is_mission_readonly(id)
+
+		item.set_text(col, id)
+		item.set_icon(col, data.ICON_FOLDER)
+		item.set_icon_max_width(col, 20)
 
 		if is_readonly:
-			item.add_button(idx, data.ICON_DOT, 0, false, lock_tooltip_ro)
-			item.set_button_color(idx, 0, Color.DIM_GRAY)
+			item.add_button(col, data.ICON_DOT, 0, false, lock_tooltip_ro)
+			item.set_button_color(col, 0, Color.DIM_GRAY)
 		else:
-			item.add_button(idx, data.ICON_CHECKMARK, 0, false, lock_tooltip_ed)
-			item.set_button_color(idx, 0, data.VALID_COLOR)
-
+			item.add_button(col, data.ICON_CHECKMARK, 0, false, lock_tooltip_ed)
+			item.set_button_color(col, 0, data.VALID_COLOR)
 
 		if is_loaded:
-			# item.set_custom_color(idx, data.VALID_COLOR)
-			item.set_custom_color(idx, data.FADED_TEXT_COLOR)
-			item.set_selectable(idx, false)
+			item.set_custom_color(col, data.FADED_TEXT_COLOR)
+			item.set_selectable(col, false)
 		else:
-			# item.set_selectable(idx, true)
-			item.set_metadata(idx, true) #is_valid_mission)
+			item.set_metadata(col, true)
 
-			# if not is_valid_mission:
-			# 	num_invalid_missions += 1
-			# 	item.set_custom_color(idx, data.ERROR_COLOR)
-
-
-
-	# if num_invalid_missions > 0:
-	# 	lb_warnings.text = "%s folders are missing 'darkmod.txt'" % num_invalid_missions
-	# 	lb_warnings.show()
 
 
 func _on_le_search_text_changed(_new_text: String) -> void:
