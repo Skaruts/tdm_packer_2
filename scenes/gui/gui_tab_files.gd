@@ -530,10 +530,7 @@ func _on_tab_bar_gui_input(event: InputEvent) -> void:
 	if not event is InputEventMouseButton or not event.pressed:
 		return
 
-	# if event.button_index == 2:
-
-
-	if event.button_index == 3:
+	if event.button_index == MOUSE_BUTTON_MIDDLE:
 		var lmp := tab_bar.get_local_mouse_position()
 		var idx := tab_bar.get_tab_idx_at_point(lmp)
 		if idx != -1:

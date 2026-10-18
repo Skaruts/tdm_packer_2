@@ -41,7 +41,7 @@ func _on_ready() -> void:
 	rtl_listing.gui_input.connect(
 		func(event: InputEvent) -> void:
 			if event is InputEventMouseButton:
-				if event.button_index == 2 and event.pressed:
+				if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 					text_menu.position = get_mouse_position() + Vector2(position)
 					text_menu.popup()
 	)
