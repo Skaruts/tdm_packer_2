@@ -3,18 +3,44 @@ extends BaseCodeHighlighter
 
 
 func _on_init() -> void:
+	member_variable_color = data.config.text
+	# function_color = data.config.text
+
+	# NOTE: http://www.iddevnet.com/doom3/materials.php
+
+
+	functions = [ # headers
+		"table",
+	]
+
 	user_types = [
 		"qer_editorimage",
+		"time",
 	]
 
 	param_types = [
-		"parm3",
 		"add",
 		"modulate",
+		"_black",
+		"decal",
+		"Parm0",
+		"Parm1",
+		"Parm2",
+		"parm3",
+		"parm4",
+		"parm5",
+		"parm6",
+		"parm7",
+		"parm8",
+		"parm9",
 	]
 
 	base_types = [
 		"glass",
+		"wood",
+		"metal",
+		"stone",
+		"translucent",
 		"noselfshadow",
 		"diffusemap",
 		"specularmap",
@@ -22,9 +48,37 @@ func _on_init() -> void:
 		"blend",
 		"map",
 		"rgb",
+		"red",
+		"green",
+		"blue",
 		"colored",
 		"zeroClamp",
 		"alpha",
+		"forceHighQuality",
+		"blendLight",
+		"noShadows",
+		"lightFalloffImage",
+		"ambientLight",
+		"Program",
+		"vertexParm",
+		"fragmentProgram",
+		"fragmentMap",
+		"frobstage_texture",
+		"frobstage_diffuse",
+		"forceoverlays",
+		"sort",
+		"translate",
+		"twosided",
+		"description",
+		"maskcolor",
+		"maskalpha",
+		"texgen",
+	]
+
+	keywords = [
+		"if",
+		"elseif",
+		"else",
 	]
 
 
