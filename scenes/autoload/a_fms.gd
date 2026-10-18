@@ -65,7 +65,7 @@ func _process(delta: float) -> void:
 	stop_timer_and_save()
 
 var _should_reload := false
-func start_save_timer(reload:bool) -> void:
+func start_save_timer(reload: bool) -> void:
 	_save_timer = _save_delay
 	_mission_to_save = curr_mission
 	_should_reload = reload
@@ -79,7 +79,7 @@ func is_save_timer_counting() -> bool:
 func stop_timer_and_save() -> void:
 	set_process(false)
 	save_mission(_mission_to_save, _should_reload)
-	check_mission_warnings(_mission_to_save)
+
 	_should_reload = false
 
 
@@ -109,7 +109,6 @@ func check_mission_warnings(mis: Mission) -> void:
 
 		if is_excluded:
 			mis.warnings[MissionWarning.MAP_IS_EXCLUDED] = warning_strings[MissionWarning.MAP_IS_EXCLUDED]
-
 
 
 func get_mission_warnings_string(mis: Mission) -> String:
@@ -356,6 +355,7 @@ func save_mission(mission: Mission, reload := false) -> void:
 	#logs.print("saving mission", reload)
 	if reload:
 		soft_reload_mission(mission)
+		gui.update_missions_list()
 
 
 
@@ -588,6 +588,7 @@ func check_missions_on_focus_in() -> void:
 
 		popups.show_message( "Warning", message )
 
+
 	# if missions were added or removed, sort the list
 	if new_missing_missions.size() > 0 or non_missing_count > 0:
 		sort_missions()
@@ -596,6 +597,8 @@ func check_missions_on_focus_in() -> void:
 
 	# update the missions and the UI
 	for m in missions:
+		if is_mission_missing(m.id):
+			continue
 		FMUtils.build_file_tree(m)
 		# _load_mission_files(m)
 		check_mission_filesystem(m)
