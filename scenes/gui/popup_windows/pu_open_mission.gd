@@ -36,20 +36,21 @@ func _on_ready() -> void:
 
 	tr_missions.button_clicked.connect(_on_tr_missions_button_clicked)
 	tr_missions.gui_input.connect(_on_tr_missions_gui_input)
-	le_search.text_changed.connect(_build_missions_list)
+	le_search.text_changed.connect(_on_le_search_text_changed)
 
 
 
 func _on_popup() -> void:
 	lb_warnings.hide()
 	btn_ok.disabled = true
-	tr_missions.grab_focus()
+	# tr_missions.grab_focus()
+	le_search.grab_focus()
 	le_search.text = ""
 	_build_missions_list()
 
 
-
 func _build_missions_list() -> void:
+	logs.print("_build_missions_list")
 	# var num_invalid_missions := 0
 	var mission_paths := FMUtils.get_mission_folder_list()
 
@@ -111,6 +112,9 @@ func _build_missions_list() -> void:
 	# 	lb_warnings.text = "%s folders are missing 'darkmod.txt'" % num_invalid_missions
 	# 	lb_warnings.show()
 
+
+func _on_le_search_text_changed(_new_text: String) -> void:
+	_build_missions_list()
 
 
 func _on_tr_missions_gui_input(event: InputEvent) -> void:
