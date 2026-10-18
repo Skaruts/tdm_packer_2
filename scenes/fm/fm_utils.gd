@@ -506,8 +506,8 @@ static func load_modfile(mis: Mission) -> void:
 
 
 static func _save_mission_file(mis: Mission, content: String, filepath: String,
-	                           filename: String, flag: Mission.DirtyFlags,
-	                           force_it := false) -> bool:
+							   filename: String, flag: Mission.DirtyFlags,
+							   force_it := false) -> bool:
 	if not mis.get_dirty_flag(flag) and not force_it: return false
 	Path.write_file(filepath, content)
 	console.print("Saved '%s'" % filename)
@@ -517,13 +517,13 @@ static func _save_mission_file(mis: Mission, content: String, filepath: String,
 
 static func save_readme(mis: Mission) -> void:
 	_save_mission_file(mis, mis.mdata.readme, mis.paths.readme,
-	                   data.README_FILENAME, Mission.DirtyFlags.README)
+					   data.README_FILENAME, Mission.DirtyFlags.README)
 	mis.store_hash(mis.paths.readme)
 
 
 static func save_pkignore(mis: Mission) -> void:
 	_save_mission_file(mis, mis.mdata.pkignore, mis.paths.pkignore,
-	                   data.IGNORES_FILENAME, Mission.DirtyFlags.PKIGNORE)
+					   data.IGNORES_FILENAME, Mission.DirtyFlags.PKIGNORE)
 	mis.store_hash(mis.paths.pkignore)
 
 
@@ -539,8 +539,8 @@ static func save_maps_file(mis: Mission) -> bool:
 			map = mis.mdata.map_files[0]
 
 		_save_mission_file(mis, map, mis.paths.startingmap,
-		                   data.STARTINGMAP_FILENAME, Mission.DirtyFlags.MAPS,
-		                   true)
+						   data.STARTINGMAP_FILENAME, Mission.DirtyFlags.MAPS,
+						   true)
 		mis.remove_hash(mis.paths.mapsequence)
 		mis.store_hash(mis.paths.startingmap)
 	else: # save tdm_mapsequence.txt
@@ -551,8 +551,8 @@ static func save_maps_file(mis: Mission) -> bool:
 		for i: int in mis.mdata.map_files.size():
 			string += "Mission %d: %s\n" % [i+1, mis.mdata.map_files[i]]
 		_save_mission_file(mis, string, mis.paths.mapsequence,
-		                   data.MAPSEQUENCE_FILENAME, Mission.DirtyFlags.MAPS,
-		                   true)
+						   data.MAPSEQUENCE_FILENAME, Mission.DirtyFlags.MAPS,
+						   true)
 		mis.remove_hash(mis.paths.startingmap)
 		mis.store_hash(mis.paths.mapsequence)
 
