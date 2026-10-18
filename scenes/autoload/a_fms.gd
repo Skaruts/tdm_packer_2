@@ -50,8 +50,8 @@ func _ready() -> void:
 	warning_strings[MissionWarning.MISSION_MISSING]    = "mission folder not found"
 	warning_strings[MissionWarning.NO_MAP_SEQUENCE]    = "map sequence contains no maps"
 	warning_strings[MissionWarning.MAP_IS_EXCLUDED]    = "map sequence contains maps excluded from the pk4"
-	# TODO
-	# warning_strings[MissionWarning.ALL_FILES_EXCLUDED] = "all mission files are excluded from the pk4"
+	warning_strings[MissionWarning.ALL_FILES_EXCLUDED] = "all mission files are excluded from the pk4"
+
 
 
 
@@ -85,20 +85,19 @@ func stop_timer_and_save() -> void:
 
 
 func check_mission_warnings(mis: Mission) -> void:
-
 	mis.warnings.clear()
 
 	# check if mission is missing
-	# TODO
+	if is_mission_missing(mis.id):
+		mis.warnings[MissionWarning.MISSION_MISSING] = warning_strings[MissionWarning.MISSION_MISSING]
+
+	# check if all files are excluded
+	if mis.inc_file_count == 0:
+		mis.warnings[MissionWarning.ALL_FILES_EXCLUDED] = warning_strings[MissionWarning.ALL_FILES_EXCLUDED]
 
 	# check if it has at least one map in the map sequence
-	# if not Path.dir_exists(mis.paths.maps) \
-	# or not mis.file_tree.get_child_named("maps").has_included_files():
-	# 	mis.warnings[MissionWarning.NO_MAP_SEQUENCE] = warning_strings[MissionWarning.NO_MAP_SEQUENCE]
-
 	if mis.mdata.map_files.size() == 0:
 		mis.warnings[MissionWarning.NO_MAP_SEQUENCE] = warning_strings[MissionWarning.NO_MAP_SEQUENCE]
-
 
 	# check if any of the maps in the map sequence are excluded from the pk4
 	for i: int in mis.mdata.map_files.size():
