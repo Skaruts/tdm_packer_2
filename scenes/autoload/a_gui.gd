@@ -17,6 +17,8 @@ var _missions_list_root: TreeItem
 
 
 func initialize() -> void:
+	tr_missions.set("theme_override_colors/font_disabled_color", data.FADED_TEXT_COLOR)
+
 	init_missions_list()
 	init_workspaces()
 	init_menu_bar()

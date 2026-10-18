@@ -52,6 +52,17 @@ const _COLOR_MAP_TITLE := Color(0.82, 0.698, 0.361)
 var pk_syntax_highlighter: SyntaxHighlighter
 
 func _ready() -> void:
+	le_title.set("theme_override_colors/font_uneditable_color", data.FADED_TEXT_COLOR)
+	le_author.set("theme_override_colors/font_uneditable_color", data.FADED_TEXT_COLOR)
+	le_version.set("theme_override_colors/font_uneditable_color", data.FADED_TEXT_COLOR)
+	le_tdm_version.set("theme_override_colors/font_uneditable_color", data.FADED_TEXT_COLOR)
+	ce_description.set("theme_override_colors/font_readonly_color", data.FADED_TEXT_COLOR)
+	ce_readme.set("theme_override_colors/font_readonly_color", data.FADED_TEXT_COLOR)
+	ce_pkignore.set("theme_override_colors/font_readonly_color", data.FADED_TEXT_COLOR)
+	tr_included.set("theme_override_colors/font_disabled_color", data.FADED_TEXT_COLOR)
+	tr_excluded.set("theme_override_colors/font_disabled_color", data.FADED_TEXT_COLOR)
+	tr_map_list.set("theme_override_colors/font_disabled_color", data.FADED_TEXT_COLOR)
+
 	tr_included.item_mouse_selected.connect(TreeUtils._on_tree_item_mouse_selected.bind(tr_included))
 	tr_excluded.item_mouse_selected.connect(TreeUtils._on_tree_item_mouse_selected.bind(tr_excluded))
 	tr_included.item_activated.connect(TreeUtils.toggle_folder_on_click.bind(tr_included))
