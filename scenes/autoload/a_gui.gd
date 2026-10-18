@@ -137,7 +137,7 @@ func update_missions_list() -> void:
 		if fms.is_mission_missing(mis.id):
 			item.set_custom_color(0, data.ERROR_COLOR)
 
-		if mis.warnings.size() > 0:
+		if mis.warnings.size() > 0 and not fms.is_mission_readonly(mis.id):
 			var warns := fms.get_mission_warnings_string(mis)
 			item.add_button(0, data.ICON_WARNING, 0, true, warns)
 
