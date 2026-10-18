@@ -402,18 +402,26 @@ static func create_mission_file(mis: Mission, filename: String, default_content 
 
 static func save_modfile(mis: Mission) -> void:
 	#_save_mission_file(mis, mis.mdata.modfile, mis.paths.modfile, core.MODFILE_FILENAME, Mission.DirtyFlags.MODFILE)
-	var modfile := "Title: %s\nDescription: %s\nAuthor: %s\nVersion: %s\nRequired TDM Version: %s\n"
+
 	var md := mis.mdata
-	modfile = modfile % [md.title, md.description, md.author, md.version, md.tdm_version]
 
-	var map_count := mis.mdata.map_files.size()
+	var title       := "Title: %s\n" % md.title
+	var description := "Description: %s\n" % md.description
+	var author      := "Author: %s\n" % md.author
+	var version     := "Version: %s\n" % md.version
+	var tdm_version := "Required TDM Version: %s\n" % md.tdm_version
+	var map_titles := ""
 
-	# TODO: add map titles
-	if map_count > 0:
-		for i: int in map_count:
-			var title := mis.mdata.map_titles[i]
-			if not title: continue
-			modfile += "Mission %s Title: %s\n" % [i+1, title]
+	for i: int in mis.mdata.map_files.size():
+		var name := mis.mdata.map_titles[i]
+		map_titles += "Mission %s Title: %s\n" % [i+1, name]
+
+	var modfile := title       \
+				 + map_titles  \
+				 + description \
+				 + author      \
+				 + version     \
+				 + tdm_version
 
 	Path.write_file(mis.paths.modfile, modfile)
 	console.print("Saved modfile")
@@ -442,6 +450,7 @@ static func load_modfile(mis: Mission) -> void:
 	var file_string := Path.read_file_string(mis.paths.modfile)
 	var section_rgx := RegEx.create_from_string(r"(Title:)|(Author:)|(Description:)|(Version:)|(Required TDM Version:)|(Mission \d+ Title:)")
 	var rgx_matches := section_rgx.search_all(file_string)
+	var map_count := 0
 
 	var headers: Dictionary = {}
 	for m: RegExMatch in rgx_matches:
@@ -450,16 +459,24 @@ static func load_modfile(mis: Mission) -> void:
 		var end := m.get_end()
 		headers[string] = {name=string, start=start, end=end}
 
+		if string.begins_with("Mission "):
+			map_count += 1
+
 	var mf := ModfileInfo.new()
+
+	if map_count > 0:
+		mf.map_titles.resize(map_count)
+
 	for key: String in headers:
 		var d: Dictionary = headers[key]
 		var idx: int      = d.end
 
 		if key.begins_with("Mission "):
+			var map_idx := key.to_int()-1
 			var end := _get_content_len(d, file_string, headers)
 			var map_title: String = file_string.substr(idx, end-idx)\
 										.strip_edges().replace('\n', '')
-			mf.map_titles.append(map_title)
+			mf.map_titles[map_idx] = map_title
 		elif key.begins_with("Required"):
 			var end := _get_content_len(d, file_string, headers)
 			var content := file_string.substr(idx, end-idx)\
