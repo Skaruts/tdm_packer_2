@@ -27,20 +27,20 @@ static var default_ignored_files := Set.new([
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 #		Utils
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-static var alpha_sort_paths := func(a:String, b:String) -> bool:
+static var alpha_sort_paths := func(a: String, b: String) -> bool:
 	var afile := a.get_file()
 	var bfile := b.get_file()
 	return afile < bfile
 
 
-static func should_ignore(path:String, filters:Set) -> bool:
+static func should_ignore(path: String, filters: Set) -> bool:
 	for string:String in filters.items():
 		if string in path:
 			return true
 	return false
 
 
-static func get_file_hash(path:String) -> String:
+static func get_file_hash(path: String) -> String:
 	return Path.get_md5(path)
 
 
@@ -80,7 +80,7 @@ static func check_edited_files_changed(mis: Mission) -> bool:
 #		Packing
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-static func pack_mission(output:Object, mission:Mission) -> void:
+static func pack_mission(output: Object, mission: Mission) -> void:
 	output.call_thread_safe("task", "Packing '%s'..." % [mission.zipname])
 
 	# delete any pk4's that may have been created by the packer
@@ -107,7 +107,7 @@ static func pack_mission(output:Object, mission:Mission) -> void:
 		output.call_thread_safe("error", report.error)
 
 
-static func _pack_files(output:Object, mission:Mission) -> ErrorReport:
+static func _pack_files(output: Object, mission: Mission) -> ErrorReport:
 	var zipper := ZIPPacker.new()
 	var pakpath := Path.join(mission.paths.root, mission.zipname)
 
@@ -126,7 +126,7 @@ static func _pack_files(output:Object, mission:Mission) -> ErrorReport:
 			break
 		output.call_thread_safe("set_percentage", (i+1)/file_count)
 
-		var fullpath:String = files[i]
+		var fullpath: String = files[i]
 		var rel_path := fullpath.trim_prefix(mission.paths.root + '/')
 		output.call_thread_safe("print", "    %s" % [rel_path])
 		zipper.start_file(rel_path)
@@ -224,7 +224,8 @@ static func _gather_files(mission: Mission, parent: FMTreeNode) -> void:
 		var rel_path := fullpath.replace(mission.paths.root, '')
 		var dir_node := FMTreeNode.new(fullpath, parent, true)
 		dir_node.ignored = parent.ignored or should_ignore(rel_path, ign_dirs) \
-						or (fullpath != mission.paths.maps and fullpath.contains(mission.paths.maps))
+						or (fullpath != mission.paths.maps
+							and fullpath.contains(mission.paths.maps))
 		if dir_node.ignored:
 			ign_dirs.add(fullpath)
 			mission.exc_dir_count += 1
@@ -297,7 +298,7 @@ static func get_mission_id_list() -> Array[String]:
 	return mission_ids
 
 
-static func validate_paths(output:Object, mission:Mission) -> bool:
+static func validate_paths(output: Object, mission: Mission) -> bool:
 	output.call_thread_safe("task", "Validating paths in '%s'..." % [mission.id])
 
 	var steps: float = mission.filepaths.size() # account for the mission folder itself
@@ -308,7 +309,7 @@ static func validate_paths(output:Object, mission:Mission) -> bool:
 	output.call_thread_safe("set_percentage", 1.0/steps)
 
 	#output.call_thread_safe("task", "Checking mission folder...")
-	for c:String in INVALID_CHARS:
+	for c: String in INVALID_CHARS:
 		if c in mission.id:
 			mission_folder_valid = false
 			output.call_thread_safe("warning", "Mission folder '%s' contains spaces or unsuported characters" % [mission.id])
@@ -322,20 +323,20 @@ static func validate_paths(output:Object, mission:Mission) -> bool:
 	if mission_folder_valid:
 		output.call_thread_safe("info", "Mission folder is valid")
 
-	for i:int in mission.filepaths.size():
+	for i: int in mission.filepaths.size():
 		output.call_thread_safe("set_percentage", (i+1)/steps)
 
-		var path:String = mission.filepaths[i]
+		var path: String = mission.filepaths[i]
 		var rel_path := path.replace(mission.paths.root + "/", '')
 
-		for c:String in INVALID_CHARS:
+		for c: String in INVALID_CHARS:
 			if c in rel_path:
 				invalid_paths.append(rel_path)
 				break
 
 	if invalid_paths.size() > 0:
 		output.call_thread_safe("error", "Some paths contain spaces or unsuported characters")
-		for path:String in invalid_paths:
+		for path: String in invalid_paths:
 			output.call_thread_safe("print", "      %s" % path)
 
 	var num_invalid_paths := invalid_paths.size() + (0 if mission_folder_valid else 1)
@@ -409,7 +410,7 @@ static func save_modfile(mis: Mission) -> void:
 
 	# TODO: add map titles
 	if map_count > 0:
-		for i:int in map_count:
+		for i: int in map_count:
 			var title := mis.mdata.map_titles[i]
 			if not title: continue
 			modfile += "Mission %s Title: %s\n" % [i+1, title]
@@ -504,22 +505,25 @@ static func load_modfile(mis: Mission) -> void:
 	mis.store_hash(mis.paths.modfile)
 
 
-
-static func _save_mission_file(mis:Mission, content:String, filepath:String, filename:String, flag:Mission.DirtyFlags, force_it:=false) -> bool:
+static func _save_mission_file(mis: Mission, content: String, filepath: String,
+	                           filename: String, flag: Mission.DirtyFlags,
+	                           force_it := false) -> bool:
 	if not mis.get_dirty_flag(flag) and not force_it: return false
 	Path.write_file(filepath, content)
 	console.print("Saved '%s'" % filename)
 	mis.set_dirty_flag(false, flag)
 	return true
 
-static func save_readme(mis:Mission) -> void:
-	_save_mission_file(mis, mis.mdata.readme, mis.paths.readme, data.README_FILENAME, Mission.DirtyFlags.README)
+
+static func save_readme(mis: Mission) -> void:
+	_save_mission_file(mis, mis.mdata.readme, mis.paths.readme,
+	                   data.README_FILENAME, Mission.DirtyFlags.README)
 	mis.store_hash(mis.paths.readme)
 
 
-static func save_pkignore(mis:Mission) -> void:
-	_save_mission_file(mis, mis.mdata.pkignore, mis.paths.pkignore, data.IGNORES_FILENAME, Mission.DirtyFlags.PKIGNORE)
-
+static func save_pkignore(mis: Mission) -> void:
+	_save_mission_file(mis, mis.mdata.pkignore, mis.paths.pkignore,
+	                   data.IGNORES_FILENAME, Mission.DirtyFlags.PKIGNORE)
 	mis.store_hash(mis.paths.pkignore)
 
 
@@ -530,11 +534,13 @@ static func save_maps_file(mis: Mission) -> bool:
 		if Path.file_exists(mis.paths.mapsequence):
 			DirAccess.remove_absolute(mis.paths.mapsequence)
 
-		var map:String
+		var map: String
 		if mis.mdata.map_files.size():
 			map = mis.mdata.map_files[0]
 
-		_save_mission_file(mis, map, mis.paths.startingmap, data.STARTINGMAP_FILENAME, Mission.DirtyFlags.MAPS, true)
+		_save_mission_file(mis, map, mis.paths.startingmap,
+		                   data.STARTINGMAP_FILENAME, Mission.DirtyFlags.MAPS,
+		                   true)
 		mis.remove_hash(mis.paths.mapsequence)
 		mis.store_hash(mis.paths.startingmap)
 	else: # save tdm_mapsequence.txt
@@ -542,9 +548,11 @@ static func save_maps_file(mis: Mission) -> bool:
 			DirAccess.remove_absolute(mis.paths.startingmap)
 
 		var string := ""
-		for i:int in mis.mdata.map_files.size():
+		for i: int in mis.mdata.map_files.size():
 			string += "Mission %d: %s\n" % [i+1, mis.mdata.map_files[i]]
-		_save_mission_file(mis, string, mis.paths.mapsequence, data.MAPSEQUENCE_FILENAME, Mission.DirtyFlags.MAPS, true)
+		_save_mission_file(mis, string, mis.paths.mapsequence,
+		                   data.MAPSEQUENCE_FILENAME, Mission.DirtyFlags.MAPS,
+		                   true)
 		mis.remove_hash(mis.paths.startingmap)
 		mis.store_hash(mis.paths.mapsequence)
 
@@ -570,9 +578,10 @@ static func load_map_sequence(mis: Mission) -> void:
 			var lines := Path.read_file_string(mis.paths.mapsequence)\
 						 .split('\n')
 
-			for line:String in lines:
+			for line: String in lines:
 				# TODO: detect comments and ignore (may need a proper parser)
-				if line == "" or line.find('Mission ') == -1 or line.find(':') == -1:
+				if line == "" or line.find('Mission ') == -1 \
+				or line.find(':') == -1:
 					continue
 
 				line = line.substr( line.find(':')+1 )

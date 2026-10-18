@@ -351,7 +351,7 @@ func reload_file(filename:String) -> void:
 			_build_map_list()
 
 
-func _on_code_editor_focus_changed(editor:CodeEdit, focused:bool) -> void:
+func _on_code_editor_focus_changed(editor: CodeEdit, focused: bool) -> void:
 	_curr_editor = null
 	ce_description.highlight_current_line = false
 	ce_readme.highlight_current_line = false
@@ -363,7 +363,7 @@ func _on_code_editor_focus_changed(editor:CodeEdit, focused:bool) -> void:
 	_curr_editor = editor
 
 
-func _on_code_editor_text_changed(editor:CodeEdit) -> void:
+func _on_code_editor_text_changed(editor: CodeEdit) -> void:
 	match editor:
 		ce_description:
 			var dirty:bool = ce_description.get_version() != ce_description.get_saved_version()
