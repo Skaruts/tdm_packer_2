@@ -160,6 +160,7 @@ func _add_editor_if_needed(node: FMTreeNode) -> bool:
 	ed.set_meta("node", node)
 
 
+	ed.code_edit.editable = not fms.is_mission_readonly(_mission.id)
 	tab_bar.set_tab_title( tc_editors.get_child_count()-1, node.name )
 
 	return true
