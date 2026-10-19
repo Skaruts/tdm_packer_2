@@ -15,8 +15,8 @@ const DEFAULT_CONFIG := {
 		tdm_copy_path = "",
 	},
 	gui = {
-		gui_font_size   = 14,
-		code_font_size  = 14,
+		gui_font_size   = 18,
+		code_font_size  = 18,
 		show_tree_roots = true,
 		packname_suffix = "_v$version",
 		popup_bg_opacity = 0.25,

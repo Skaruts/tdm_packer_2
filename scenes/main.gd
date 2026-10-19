@@ -27,7 +27,8 @@ func _ready() -> void:
 	w.borderless = false
 	#w.transparent = false
 	w.unresizable = false
-	w.size = Vector2i(1152, 738)
+	#w.size = Vector2i(1152, 738)
+	w.size = Vector2i(1440, 810)
 	w.move_to_center()
 
 	data.initialize()
