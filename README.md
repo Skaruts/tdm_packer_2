@@ -27,6 +27,9 @@ A GUI tool for [Dark Mod](https://www.thedarkmod.com/) mappers, to help managing
 
 First you need to set the paths to TDM and DarkRadiant. You can set all the paths in the settings panel, which you can find in the top-left menu icon -> `Settings` -> `Paths`.
 
+<img width="700" height="474" alt="paths" src="https://github.com/user-attachments/assets/dd6f0935-b34f-474a-93bb-9a674057e919" />
+
+
 - The TDM path is required for TDM Packer to find the `fms` folder, where all the missions are, and in case you wish to run TDM for the selected missions.
 
 - DarkRadiant's path is only required if you wish to launch DarkRadiant for the selected missions (by pressing the `Edit` button in the `Missions` panel).
@@ -35,9 +38,13 @@ First you need to set the paths to TDM and DarkRadiant. You can set all the path
 
 Then you can add missions to your list by pressing `Open` in the `Missions` panel. All missions are read-only by default, so if you wish to manage/edit a mission, click the dot icon next to it. It turns into a green checkmark, meaning the mission can be edited. You can change this at any time.
 
-You can then edit the files as you please, as well as add/remove maps from the map sequence list.
+<img width="649" height="523" alt="open_mission" src="https://github.com/user-attachments/assets/887eeae5-eb59-4424-ac8f-387d4c46e885" />
 
-Once you have your mission ready to publish, you can press the `Pack` button in the `Missions` panel to create the `pk4` file.
+
+You can then edit/manage the mission as you please, and once you have your mission ready to publish, you can press the `Pack` button in the `Missions` panel to create the `pk4` file.
+
+<img width="692" height="474" alt="packing" src="https://github.com/user-attachments/assets/20d0f84b-9ec1-4608-bff1-ae1c35b7d2fc" />
+
 
 
 # Using TDM Packer
@@ -55,7 +62,7 @@ This file works similarly to a `.gitignore` file, but more limited.
 
 The filtering is case-sensitive, and does not yet support using `*`. These filters are merely substrings that every directory/file path is tested against: if the path has any of these substrings in it, then it's excluded. It's safer to include dots for file extensions.
 
-<img width="1152" height="738" alt="pkignore" src="https://github.com/user-attachments/assets/99e5d628-4279-40da-8c41-4ad9cca85f88" />
+<img width="1152" height="738" alt="pkignore" src="https://github.com/user-attachments/assets/d17c3969-5952-4823-83bd-780e8b940582" />
 
 
 Some files and folders are automatically excluded:
@@ -72,7 +79,9 @@ Some are automatically included:
 
 ## darkmod.txt
 
-Your can edit this file through the text fields in `Package` -> `Pack`.
+Your can edit this file through the text fields in `Package -> Info`.
+
+<img width="1152" height="738" alt="modfile" src="https://github.com/user-attachments/assets/04bb751b-9e79-4f3c-bec1-d878d3fcdcb7" />
 
 The file will be saved in conformity to the ordering required by DarkRadiant:
 ```
@@ -94,6 +103,7 @@ Required TDM Version: ...
 
 
 
+
 ## Token Replacement
 
 There is support for a few preset tokens that you can include in your `readme.txt` file, as well as to automatically append the mission version to the `pk4` filename. When creating the `pk4`, TDM Packer will replace any of these tokens in your readme file with the respective information.
@@ -109,7 +119,7 @@ The currently supported tokens are:
 | $min_version |  Gets replaced by the `Required TDM Version` in darkmod.txt   |
 | $date_time   |  Gets replaced with the current time and date at which the `pk4` is being created  |
 
-The `$version` token can be used as a suffix for the `pk4` name. Extra text or symbols can be added to it in `Settings` (you can leave the field blank, if you don't want to use this feature at all).
+The `$version` token can be used as a suffix for the `pk4` name. Extra text or symbols can be added to it in `Settings` (you can leave the field blank if you don't want to use this feature at all).
 
 The date/time format can be set in the Settings, as well. By default is uses `d/m/y t`, where `t` is the current time (hh:mm), and `d`, `m`, `y` are day, month and year. That format results in:
 ```
@@ -127,6 +137,7 @@ Words or abreviations for months (e.g., "Jan", "Feb"...) are currently not suppo
 
 You can edit mission files in the `Files` tab, with syntax highlighting.
 
+<img width="1152" height="738" alt="files" src="https://github.com/user-attachments/assets/8365a90f-eeb6-4d0f-a381-fa245a1a7f5a" />
 
 
 
