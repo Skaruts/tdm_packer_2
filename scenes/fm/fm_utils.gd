@@ -412,9 +412,10 @@ static func save_modfile(mis: Mission) -> void:
 	var tdm_version := "Required TDM Version: %s\n" % md.tdm_version
 	var map_titles := ""
 
-	for i: int in mis.mdata.map_files.size():
-		var name := mis.mdata.map_titles[i]
-		map_titles += "Mission %s Title: %s\n" % [i+1, name]
+	if mis.mdata.map_titles.size() > 0:
+		for i: int in mis.mdata.map_files.size():
+			var name := mis.mdata.map_titles[i]
+			map_titles += "Mission %s Title: %s\n" % [i+1, name]
 
 	var modfile := title       \
 				 + map_titles  \
