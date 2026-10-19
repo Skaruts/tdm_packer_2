@@ -288,8 +288,9 @@ func set_mission_readonly(id: String, readonly: bool) -> void:
 	save_missions_data()
 
 	var mis: Mission = get_mission_with_id(id)
-	# _reload_mission( get_mission_with_id(id) )
+	if mis == null: return
 
+	# _reload_mission( get_mission_with_id(id) )
 	gui.update_workspaces()
 	gui.on_mission_reloaded( get_mission_index(mis) )
 	gui.update_missions_list()
