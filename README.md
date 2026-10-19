@@ -55,6 +55,7 @@ This file works similarly to a `.gitignore` file, but more limited.
 
 The filtering is case-sensitive, and does not yet support using `*`. These filters are merely substrings that every directory/file path is tested against: if the path has any of these substrings in it, then it's excluded. It's safer to include dots for file extensions.
 
+<img width="1152" height="738" alt="pkignore" src="https://github.com/user-attachments/assets/99e5d628-4279-40da-8c41-4ad9cca85f88" />
 
 
 Some files and folders are automatically excluded:
