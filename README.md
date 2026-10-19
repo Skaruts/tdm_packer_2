@@ -66,7 +66,6 @@ The filtering is case-sensitive, and does not yet support using `*`. These filte
 
 
 Some files and folders are automatically excluded:
-- any file with `bak` in it (backup files)
 - file extensions `.log`, `.dat`, `.py`, `.pyc`, `.pk4`, `.zip`, `.7z`, `.rar`, `.gitignore`, `.gitattributes`
 - the `.git` and `savegames` directories.
 - the `.pkignore` itself

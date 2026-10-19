@@ -19,7 +19,6 @@ static var default_ignored_files := Set.new([
 	".rar",
 	".log",
 	".dat",
-	"bak",
 ])
 
 
