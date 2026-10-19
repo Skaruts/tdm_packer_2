@@ -479,8 +479,8 @@ func _build_trees() -> void:
 	exc_tree_root.set_custom_color(0, data.TREE_ROOT_COLOR)
 
 	# var t1 := Time.get_ticks_msec()
-
-	var disabled := fms.is_mission_readonly(_mission.id)
+	var is_readonly := fms.is_mission_readonly(_mission.id)
+	var disabled := is_readonly
 	_build_inc_tree(_mission.file_tree, inc_tree_root, disabled)
 	_build_exc_tree(_mission.file_tree, exc_tree_root, disabled)
 
@@ -488,9 +488,11 @@ func _build_trees() -> void:
 		TreeUtils.restore_tree_state(tr_included, inc_tree_root, inc_expanded_paths, inc_sel_path)
 		TreeUtils.restore_tree_state(tr_excluded, exc_tree_root, exc_expanded_paths, exc_sel_path)
 
-	if not Path.dir_exists(_mission.paths.maps) \
-	or not _mission.file_tree.get_child_named("maps").has_included_files():
-		console.warning("'%s' has no valid maps" % _mission.id)
+	if not is_readonly:
+		if not Path.dir_exists(_mission.paths.maps) \
+		or not _mission.file_tree.get_child_named("maps").has_included_files():
+
+			console.warning("'%s' has no valid maps" % _mission.id)
 
 	# var t2 := Time.get_ticks_msec()
 	# var total_time := "%.5f" % [(t2-t1)/1000.0]
