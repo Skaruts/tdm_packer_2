@@ -49,7 +49,7 @@ You can then edit/manage the mission as you please, and once you have your missi
 
 # Using TDM Packer
 
-All changes are saved automatically.
+###### Note: All changes made to the mission are saved automatically.
 
 
 ## The `.pkignore` file
