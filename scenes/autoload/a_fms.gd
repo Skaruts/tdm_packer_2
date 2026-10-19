@@ -424,7 +424,8 @@ func get_current_mission_index() -> int:
 
 
 func get_mission_index(mission: Mission) -> int:
-	assert(missions.size() > 0 and mission != null)
+	assert(missions.size() > 0)
+	assert(mission != null)
 	return missions.find(mission)
 
 
