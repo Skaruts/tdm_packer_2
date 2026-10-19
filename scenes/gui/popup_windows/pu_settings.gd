@@ -19,6 +19,7 @@ extends BasePopup
 
 @onready var cpb_background : ColorPickerButton = %cpb_background
 @onready var ob_close_btns  : OptionButton      = %ob_close_btns
+@onready var cb_minimap     : CheckButton       = %cb_minimap
 
 @onready var gc_code_colors: GridContainer = %gc_code_colors
 
@@ -99,6 +100,8 @@ func _on_ready() -> void:
 
 	ob_close_btns.item_selected.connect(_in_ob_close_btns_item_selected)
 
+	cb_minimap.toggled.connect(_on_cb_minimap_toggled)
+
 
 
 func _on_close_requested() -> void:
@@ -107,6 +110,8 @@ func _on_close_requested() -> void:
 
 func _on_popup() -> void:
 	temp_config = data.config.duplicate()
+
+	cb_minimap.set_pressed_no_signal(temp_config.show_minimap)
 
 	le_tdm.text        = temp_config.tdm_path
 	le_dr.text         = temp_config.dr_path
@@ -336,4 +341,9 @@ func _on_cpb_color_changed(color: Color, field: String) -> void:
 
 func _in_ob_close_btns_item_selected(idx: int) -> void:
 	temp_config.tab_close_buttons_mode = idx
+	_update_apply_button()
+
+
+func _on_cb_minimap_toggled(toggled_on: bool) -> void:
+	temp_config.show_minimap = toggled_on
 	_update_apply_button()

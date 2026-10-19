@@ -96,6 +96,7 @@ func on_mission_reloaded(_force_update := false) -> void:
 			ed.tag_code_editor()
 		ed.update_button_states()
 		ed.update_colors()
+		ed.code_edit.minimap_draw = data.config.show_minimap
 
 	tab_bar.tab_close_display_policy = data.config.tab_close_buttons_mode
 
@@ -158,7 +159,7 @@ func _add_editor_if_needed(node: FMTreeNode) -> bool:
 	ed.set_meta("node", node)
 
 	ed.code_edit.editable = not fms.is_mission_readonly(_mission.id)
-
+	ed.code_edit.minimap_draw = data.config.show_minimap
 	return true
 
 

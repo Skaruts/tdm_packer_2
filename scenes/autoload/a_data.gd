@@ -25,6 +25,7 @@ const DEFAULT_CONFIG := {
 	editors = {
 		background_color = Color(0.07, 0.064, 0.062),
 		tab_close_buttons_mode = 0,
+		show_minimap = true,
 	},
 	# keyword    = Color(1.0, 0.839, 0.122),
 	syntax = {
