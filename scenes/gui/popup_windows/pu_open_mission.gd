@@ -45,7 +45,7 @@ func _on_popup() -> void:
 	btn_ok.disabled = true
 	# tr_missions.grab_focus()
 	le_search.grab_focus()
-	le_search.text = ""
+	# le_search.text = ""
 	_build_missions_list()
 
 
