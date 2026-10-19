@@ -169,26 +169,20 @@ func set_mission(mission: Mission) -> void:
 	_update_buttons_states()
 
 
-	var valid_mission := not fms.is_mission_missing(_mission.id) \
-						 and not fms.is_mission_readonly(_mission.id)
+	var not_readonly := not fms.is_mission_readonly(_mission.id)
 
-	ce_description.editable = valid_mission
-	ce_readme.editable = valid_mission
-	ce_pkignore.editable = valid_mission
-	le_title.editable = valid_mission
-	le_author.editable = valid_mission
-	le_version.editable = valid_mission
-	le_tdm_version.editable = valid_mission
+	ce_description.editable = not_readonly
+	ce_readme.editable = not_readonly
+	ce_pkignore.editable = not_readonly
+	le_title.editable = not_readonly
+	le_author.editable = not_readonly
+	le_version.editable = not_readonly
+	le_tdm_version.editable = not_readonly
 
-	ce_pkignore.syntax_highlighter = pk_syntax_highlighter if valid_mission else null
+	ce_pkignore.syntax_highlighter = pk_syntax_highlighter if not_readonly else null
 
-	if not valid_mission:
-		tr_included.clear()
-		tr_excluded.clear()
-		if not fms.is_mission_missing(_mission.id):
-			_build_map_list()
-			_update_buttons_states()
-
+	if not not_readonly:
+		_update_buttons_states()
 
 	_build_trees()
 	_build_map_list()
@@ -206,16 +200,14 @@ func _update_buttons_states() -> void:
 		btn_move_up.focus_mode    = Control.FOCUS_NONE
 		btn_move_down.focus_mode  = Control.FOCUS_NONE
 	else:
-		var no_maps := true
-		if _maps_tree_root:
-			no_maps = _maps_tree_root.get_child_count() == 0
+		var no_maps := true if not _maps_tree_root \
+							else _maps_tree_root.get_child_count() == 0
 
 		var selected := tr_map_list.get_selected()
-		var disabled := no_maps or fms.is_mission_missing(_mission.id) \
-					 or fms.is_mission_readonly(_mission.id) or not selected
+		var disabled := no_maps or fms.is_mission_readonly(_mission.id) \
+								or not selected
 
-		btn_add_map.disabled = fms.is_mission_missing(_mission.id) \
-							or fms.is_mission_readonly(_mission.id)
+		btn_add_map.disabled = fms.is_mission_readonly(_mission.id)
 
 		btn_remove_map.disabled = disabled
 		btn_move_up.disabled    = disabled
@@ -273,7 +265,7 @@ func _add_map_tree_item(filename: String, title := "", is_excluded := false,
 	#item.set_icon(0, data.ICON_FILE)
 	#item.set_icon_max_width(0, 16)
 	if is_excluded:
-		item.add_button(0, data.ICON_WARNING, 0, true,
+		item.add_button(0, data.ICON_WARNING, 0, false,
 			"Warning: this map is being excluded from the pk4."
 		)
 
@@ -287,8 +279,7 @@ func on_mission_reloaded(force_update:=false) -> void:
 	if _mission != fms.curr_mission and not force_update:
 		return
 
-	var valid_mission := not fms.is_mission_missing(_mission.id) \
-						 and not fms.is_mission_readonly(_mission.id)
+	var not_readonly := not fms.is_mission_readonly(_mission.id)
 
 	#le_title.text       = _mission.mdata.title
 	#le_author.text      = _mission.mdata.author
@@ -299,24 +290,20 @@ func on_mission_reloaded(force_update:=false) -> void:
 	#ce_readme.text      = _mission.mdata.readme
 	#ce_pkignore.text    = _mission.mdata.pkignore
 
-	ce_description.editable = valid_mission
-	ce_readme.editable = valid_mission
-	ce_pkignore.editable = valid_mission
-	le_title.editable = valid_mission
-	le_author.editable = valid_mission
-	le_version.editable = valid_mission
-	le_tdm_version.editable = valid_mission
+	ce_description.editable = not_readonly
+	ce_readme.editable = not_readonly
+	ce_pkignore.editable = not_readonly
+	le_title.editable = not_readonly
+	le_author.editable = not_readonly
+	le_version.editable = not_readonly
+	le_tdm_version.editable = not_readonly
 
-	ce_pkignore.syntax_highlighter = pk_syntax_highlighter if valid_mission else null
+	ce_pkignore.syntax_highlighter = pk_syntax_highlighter if not_readonly else null
 
-	if not valid_mission:
-		tr_included.clear()
-		tr_excluded.clear()
-		if not fms.is_mission_missing(_mission.id):
-			_build_map_list()
-			_update_buttons_states()
+	if not not_readonly:
+		_update_buttons_states()
 
-	if valid_mission:
+	if not_readonly:
 		ce_description.tag_saved_version()
 		ce_readme.tag_saved_version()
 		ce_pkignore.tag_saved_version()

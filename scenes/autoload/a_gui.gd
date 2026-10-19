@@ -134,12 +134,9 @@ func update_missions_list() -> void:
 		item.set_text(0, mis.id)
 		item.set_custom_color(0, Color.DIM_GRAY if fms.is_mission_readonly(mis.id) else Color.WHITE)
 
-		if fms.is_mission_missing(mis.id):
-			item.set_custom_color(0, data.ERROR_COLOR)
-
 		if mis.warnings.size() > 0 and not fms.is_mission_readonly(mis.id):
 			var warns := fms.get_mission_warnings_string(mis)
-			item.add_button(0, data.ICON_WARNING, 0, true, warns)
+			item.add_button(0, data.ICON_WARNING, 0, false, warns)
 
 	if fms.missions.size() > 0:
 		var curr_idx := fms.get_current_mission_index()
@@ -154,8 +151,7 @@ func missions_list_update_buttons() -> void:
 	btn_open_mission.disabled  = not data.is_tdm_path_set()
 	btn_close_mission.disabled = no_missions
 
-	if not no_missions and not fms.is_mission_missing(fms.curr_mission.id) \
-	and fms.curr_mission.file_tree != null:
+	if not no_missions and fms.curr_mission.file_tree != null:
 		btn_play_mission.disabled     = not data.is_tdm_path_set()
 		btn_run_dr.disabled           = not data.is_dr_path_set()
 
@@ -256,8 +252,9 @@ func init_workspaces() -> void:
 
 
 func update_workspaces() -> void:
-	for ws: MissionWorkspace in workspace_mgr.get_children():
-		ws.update_nodes()
+	# for ws: MissionWorkspace in workspace_mgr.get_children():
+	# 	ws.update_nodes()
+	pass
 
 
 func get_current_workspace() -> MissionWorkspace:

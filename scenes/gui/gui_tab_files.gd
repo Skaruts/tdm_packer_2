@@ -92,21 +92,16 @@ func on_mission_reloaded(_force_update := false) -> void:
 	logs.print("on_mission_reloaded")
 	# TODO: update the syntax highlighters if mission is readonly or not
 
-	var is_missing := fms.is_mission_missing(_mission.id)
-	var is_readonly := fms.is_mission_readonly(_mission.id)
-	var valid_mission := not is_missing and not is_readonly
-
 	for ed: TextFileEditor in editors.values():
-		if valid_mission:
+		if not fms.is_mission_readonly(_mission.id):
 			ed.tag_code_editor()
 		ed.update_button_states()
 		ed.update_colors()
 
 	tab_bar.tab_close_display_policy = data.config.tab_close_buttons_mode
 
-	if not is_missing:
-		_build_tree()
-		_reload_tabs(_mission.file_tree)
+	_build_tree()
+	_reload_tabs(_mission.file_tree)
 
 
 func update_tree_node_file_opened(node: FMTreeNode, opened: bool) -> void:
