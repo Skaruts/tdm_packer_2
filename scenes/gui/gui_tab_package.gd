@@ -86,7 +86,7 @@ func _ready() -> void:
 
 	tr_map_list.item_edited.connect(
 		func() -> void:
-			logs.print("item was edited")
+			# logs.print("item was edited")
 			var item := tr_map_list.get_edited()
 			if _mission.set_map_title(item.get_index(), item.get_text(1)):
 				fms.start_save_timer(false)
@@ -314,7 +314,7 @@ func on_mission_reloaded(force_update:=false) -> void:
 
 
 func reload_file(filename:String) -> void:
-	logs.print("reloading file ", filename)
+	# logs.print("reloading file ", filename)
 	match filename:
 		"modfile":
 			le_title.text       = _mission.mdata.title
@@ -325,7 +325,7 @@ func reload_file(filename:String) -> void:
 			ce_description.tag_saved_version()
 
 		"readme":
-			logs.print("updating readme")
+			# logs.print("updating readme")
 			ce_readme.text = _mission.mdata.readme
 			ce_readme.tag_saved_version()
 
@@ -334,7 +334,7 @@ func reload_file(filename:String) -> void:
 			ce_pkignore.tag_saved_version()
 
 		"map_sequence":
-			logs.print(_mission.mdata.map_files)
+			# logs.print(_mission.mdata.map_files)
 			_build_map_list()
 
 

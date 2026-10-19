@@ -46,7 +46,6 @@ func update_button_states() -> void:
 
 
 func update_colors() -> void:
-	logs.print("update_colors")
 	var ext := path.get_extension()
 	match ext:
 		"mtr"    : code_edit.syntax_highlighter = MaterialCodeHighlighter.new()

@@ -89,7 +89,6 @@ func set_mission(mission: Mission) -> void:
 
 
 func on_mission_reloaded(_force_update := false) -> void:
-	logs.print("on_mission_reloaded")
 	# TODO: update the syntax highlighters if mission is readonly or not
 
 	for ed: TextFileEditor in editors.values():
@@ -164,7 +163,6 @@ func _add_editor_if_needed(node: FMTreeNode) -> bool:
 
 
 func _update_editor(path: String, text: String) -> void:
-	logs.print("_update_editor")
 	editors[path].update_text(text)
 	editors[path].update_colors()
 
@@ -198,15 +196,12 @@ func _reload_tabs(parent: FMTreeNode) -> void:
 			editors[node.path].set_text(_mission.mdata.edited_files[node.path])
 			editors[node.path].update_colors()
 		elif not hash_comp:
-			logs.print("RELAODING FILE")
 			editors[node.path].update_text(_mission.mdata.edited_files[node.path])
 			editors[node.path].update_colors()
 		editors[node.path].code_edit.editable = not fms.is_mission_readonly(_mission.id)
 
 
 func _build_tree() -> void:
-	logs.print("RELOAD_TREE", _mission.id)
-
 	var sel_path: String
 	var sel_item := tr_files.get_selected()
 	if sel_item:
@@ -415,7 +410,7 @@ func _set_item_edited_files_button(item: TreeItem, is_dir: bool, opened: bool) -
 	var tooltip := TOOLTIP_DIR if is_dir else TOOLTIP_FILE
 	if opened:
 		if item.get_button_count(0) == 0:
-			item.add_button(0, data.ICON_DOT, 0, true, tooltip)
+			item.add_button(0, data.ICON_DOT, 0, false, tooltip)
 	else:
 		if item.get_button_count(0) > 0:
 			item.erase_button(0, 0)
@@ -534,8 +529,6 @@ func _on_tab_bar_gui_input(event: InputEvent) -> void:
 
 
 func _on_tc_editors_sort_children() -> void:
-	logs.print("sort_children")
-
 	for i in tc_editors.get_child_count():
 		var tab: TextFileEditor = tc_editors.get_child(i)
 		var node: FMTreeNode = tab.get_meta("node")

@@ -488,14 +488,14 @@ static func load_modfile(mis: Mission) -> void:
 			var prop := key.replace(':', '').to_lower()
 			mf.set(prop, content)
 
-	logs.print("---------------------------")
-	logs.print(mf.title)
-	logs.print(mf.map_titles)
-	logs.print(mf.description)
-	logs.print(mf.author)
-	logs.print(mf.version)
-	logs.print(mf.tdm_version)
-	logs.print("---------------------------")
+	# logs.print("---------------------------")
+	# logs.print(mf.title)
+	# logs.print(mf.map_titles)
+	# logs.print(mf.description)
+	# logs.print(mf.author)
+	# logs.print(mf.version)
+	# logs.print(mf.tdm_version)
+	# logs.print("---------------------------")
 
 	mis.mdata.title = mf.title
 	mis.mdata.map_titles = mf.map_titles
