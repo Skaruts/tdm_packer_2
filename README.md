@@ -1,16 +1,11 @@
 # TDM Packer 2
 A GUI tool for [Dark Mod](https://www.thedarkmod.com/) mappers, to help managing and packing fan missions. It can create the `pk4` file for you, automatically excluding any files and folders you specify in a `.pkignore` file, and allow you to easily fill out your mission's details, run DarkRadiant, edit files with syntax highlighting, and more.
 
-###### Note: for users running this from source: this project is uses Godot 4.4x. It may not work reliably in older or newer versions of Godot. (I'll keep using this version for the foreseable future.)
+###### Note: for users running this from source: this project uses Godot 4.4x. It may not work reliably in older or newer versions of Godot. (I'll keep using this version for the foreseable future.)
 
 ###### Note: As this is still a very early version with very limited testing, you should backup any missions you use this app with, and double-check the included/excluded files, as well as the resulting `pk4` contents.
 
 ###### Note: support for campaigns may be unreliable (it's completely untested). If your mission involves multiple maps, it may be better to not rely on this application for now.
-
-
-![tdmp_a04_1](https://github.com/user-attachments/assets/605f244d-877c-4e1b-a797-3ee8ca917699)
-
-![tdmp_a04_2](https://github.com/user-attachments/assets/a38eda99-a042-437b-b86e-e420138646ff)
 
 
 # Current Features
@@ -50,7 +45,7 @@ Once you have your mission ready to publish, you can press the `Pack` button in 
 All changes are saved automatically.
 
 
-### The `.pkignore` file
+## The `.pkignore` file
 
 In the `Package -> Pack` tab you'll find an editable text box for the `.pkignore` file. This file is created automatically in your mission's folder.
 
@@ -58,21 +53,10 @@ This is where you can specify what should be excluded from the `pk4` file. (By d
 
 This file works similarly to a `.gitignore` file, but more limited.
 
-
-```py
-# suports comments
-
-/sources     # folders must start or end with a '/'
-prefabs/
-
-# anything else is interpreted as a file filter
-
-.blend
-todo
-some_file.txt
-```
-
 The filtering is case-sensitive, and does not yet support using `*`. These filters are merely substrings that every directory/file path is tested against: if the path has any of these substrings in it, then it's excluded. It's safer to include dots for file extensions.
+
+<img width="1152" height="738" alt="pkignore" src="https://github.com/user-attachments/assets/99e5d628-4279-40da-8c41-4ad9cca85f88" />
+
 
 Some files and folders are automatically excluded:
 - any file with `bak` in it (backup files)
@@ -86,7 +70,7 @@ Some are automatically included:
 - `startingmap.txt` and `tdm_mapsequence.txt`
 - the `maps` folder
 
-### darkmod.txt
+## darkmod.txt
 
 Your can edit this file through the text fields in `Package` -> `Pack`.
 
@@ -106,7 +90,11 @@ Required TDM Version: ...
 ```
 
 
-### Token Replacement
+
+
+
+
+## Token Replacement
 
 There is support for a few preset tokens that you can include in your `readme.txt` file, as well as to automatically append the mission version to the `pk4` filename. When creating the `pk4`, TDM Packer will replace any of these tokens in your readme file with the respective information.
 
@@ -135,7 +123,7 @@ Words or abreviations for months (e.g., "Jan", "Feb"...) are currently not suppo
 
 
 
-### File Editing
+## File Editing
 
 You can edit mission files in the `Files` tab, with syntax highlighting.
 
