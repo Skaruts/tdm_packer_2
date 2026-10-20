@@ -118,7 +118,7 @@ The currently supported tokens are:
 | $min_version |  Gets replaced by the `Required TDM Version` in darkmod.txt   |
 | $date_time   |  Gets replaced with the current time and date at which the `pk4` is being created  |
 
-The `$version` token can be used as a suffix for the `pk4` name. Extra text or symbols can be added to it in `Settings` (you can leave the field blank if you don't want to use this feature at all).
+The `$version` token can be used as a suffix for the `pk4` name. Extra text or symbols can be added to it in `Settings` (you can leave the text box blank if you don't want to use this feature at all).
 
 The date/time format can be set in the Settings, as well. By default is uses `d/m/y t`, where `t` is the current time (hh:mm), and `d`, `m`, `y` are day, month and year. That format results in:
 ```
