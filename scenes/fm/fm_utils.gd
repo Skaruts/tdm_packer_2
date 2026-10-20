@@ -48,9 +48,9 @@ static func check_file_hash(mis: Mission, path: String) -> bool:
 	return Path.get_md5(path) == mis.file_hashes[path]
 
 
-static func load_edited_files(md: Dictionary, mis: Mission) -> Array[String]:
+static func load_edited_files(files: Array, mis: Mission) -> Array[String]:
 	var missing_files: Array[String]
-	for rel_path: String in md.edited_files:
+	for rel_path: String in files:
 		var filepath := Path.join(mis.paths.root, rel_path)
 		if not Path.file_exists(filepath):
 			missing_files.append(filepath)
@@ -59,8 +59,8 @@ static func load_edited_files(md: Dictionary, mis: Mission) -> Array[String]:
 	return missing_files
 
 
-static func save_edited_files(md: Dictionary, mis: Mission) -> void:
-	for rel_path: String in md.edited_files:
+static func save_edited_files(files: Array, mis: Mission) -> void:
+	for rel_path: String in files:
 		var filepath := Path.join(mis.paths.root, rel_path)
 		assert(filepath in mis.mdata.edited_files)
 		#if not check_file_hash(mis, filepath):

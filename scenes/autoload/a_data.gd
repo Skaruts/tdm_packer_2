@@ -180,7 +180,7 @@ func update_config(new_config:ConfigData) -> void:
 	if new_config.tdm_path != config.tdm_path:
 		fms.initialize()
 	else:
-		fms.update_mission_data()
+		fms.update_mission_datas()
 
 	gui.update_missions_list()
 
