@@ -53,13 +53,13 @@ func _build_missions_list() -> void:
 	logs.print("_build_missions_list")
 	# var num_invalid_missions := 0
 	var mission_paths := FMUtils.get_mission_folder_list()
-
 	tr_missions.clear()
 	tr_missions.columns = 2
 	_filtered_names.clear()
+
+	if mission_paths.size() == 0: return
+
 	var root := tr_missions.create_item()
-
-
 
 	for i: int in mission_paths.size():
 		var name := mission_paths[i].get_file()
