@@ -9,6 +9,13 @@ enum MissionWarning {
 
 var warning_strings: Array[String] = []
 
+const DEFAULT_MISSION_DATA := {
+	opened   = false,
+	readonly = true,
+	edited_files = [],
+}
+var mission_datas: ConfigFile
+
 
 # TODO: maybe 'fms_folder' shouldn't exist (multiple sources of truth)
 var fms_folder : String  # TODO:
@@ -22,6 +29,7 @@ var _save_delay := 1.0
 var _mission_to_save : Mission
 
 var missing_missions: Array[String]
+
 
 
 
@@ -123,22 +131,35 @@ func get_mission_warnings_string(mis: Mission) -> String:
 #		Loading
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 
-const DEFAULT_MISSION_DATA := {
-	opened   = false,
-	readonly = true,
-	edited_files = [],
-}
-var mission_datas: ConfigFile
+const DATA_VERSION := 2
+
 
 func init_mission_data() -> void:
 	mission_datas = ConfigFile.new()
 
-	# if not Path.file_exists(data.MISSIONS_FILE):
+
+
+
+	var err := mission_datas.load(data.MISSIONS_FILE)
+
 	# 	save_missions_data()
 
-	if not mission_datas.load(data.MISSIONS_FILE) == OK:
-		if mission_datas.save(data.MISSIONS_FILE) != OK:
+	if not err == OK:
+		if mission_datas.save(data.MISSIONS_FILE) == OK:
 			logs.error("Couldn't save missions file at '%s'" % data.MISSIONS_FILE)
+	elif not mission_datas.has_section("info"):
+			# convert to new version
+			var opened_missions := mission_datas.get_section_keys("missions")
+			var mission_ids := FMUtils.get_mission_id_list()
+			mission_datas.clear()
+			for id in mission_ids:
+				var md := DEFAULT_MISSION_DATA.duplicate()
+				if id in opened_missions:
+					md.opened = true
+				mission_datas.set_value("missions", id, md)
+
+	mission_datas.set_value("info", "version", DATA_VERSION)
+
 
 
 func save_missions_data() -> void:
