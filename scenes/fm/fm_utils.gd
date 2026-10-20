@@ -275,7 +275,10 @@ const INVALID_CAHARS_NO_SPACE : Array[String] = [
 ]
 
 static func get_mission_folder_list() -> Array[String]:
-	var mission_paths := Path.get_dirpaths(fms.fms_folder)
+	assert(data.config.tdm_path != "")
+	var fms_folder := Path.join(data.config.tdm_path.get_base_dir(), "fms")
+
+	var mission_paths := Path.get_dirpaths(fms_folder)
 
 	var exceptions: Array[String] = ["_missionshots"]
 	for i: int in range(mission_paths.size()-1, -1, -1):

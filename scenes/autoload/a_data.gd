@@ -177,7 +177,11 @@ func update_config(new_config:ConfigData) -> void:
 	_update_theme()
 
 	# some stuff needs to know the config changed
-	fms.update_mission_data()
+	if new_config.tdm_path != config.tdm_path:
+		fms.initialize()
+	else:
+		fms.update_mission_data()
+
 	gui.update_missions_list()
 
 	for i:int in fms.missions.size():

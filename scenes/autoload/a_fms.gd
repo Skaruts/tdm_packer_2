@@ -16,10 +16,6 @@ const DEFAULT_MISSION_DATA := {
 }
 var mission_datas: ConfigFile
 
-
-# TODO: maybe 'fms_folder' shouldn't exist (multiple sources of truth)
-var fms_folder : String  # TODO:
-
 var missions : Array[Mission]
 # var missing_missions: Array[String]
 var curr_mission : Mission
@@ -34,22 +30,23 @@ var missing_missions: Array[String]
 
 
 func initialize() -> void:
-	logs.task("Initializing fms singleton...")
+	# logs.task("Initializing fms singleton...")
 
-	if data.config.tdm_path:
-		fms_folder = Path.join(data.config.tdm_path.get_base_dir(), "fms")
+	mission_datas = ConfigFile.new()
 
-	init_mission_data()
-	update_mission_data()
+	if not Path.file_exists(data.config.tdm_path):
+		console.warning("No TDM path set, or TDM path is invalid: '%s'" % data.config.tdm_path)
+	else:
+		init_mission_data()
+		update_mission_data()
+		init_all_missions()
 
-	init_all_missions()
+		if missions.size():
+			# Don't call 'select_mission(0)' here. It's not needed, and it will
+			# call 'check_mission_filesystem()', which is undesirable at this point
+			curr_mission = missions[0]
 
-	if missions.size():
-		# Don't call 'select_mission(0)' here. It's not needed, and it will
-		# call 'check_mission_filesystem()', which is undesirable at this point
-		curr_mission = missions[0]
-
-	save_missions_data()
+		save_missions_data()
 
 
 func _ready() -> void:
@@ -135,23 +132,26 @@ const DATA_VERSION := 2
 
 
 func init_mission_data() -> void:
-	mission_datas = ConfigFile.new()
-
 	if not mission_datas.load(data.MISSIONS_FILE) == OK:
-		if mission_datas.save(data.MISSIONS_FILE) == OK:
+		mission_datas.set_value("info", "version", DATA_VERSION)
+		if not mission_datas.save(data.MISSIONS_FILE) == OK:
 			logs.error("Couldn't save missions file at '%s'" % data.MISSIONS_FILE)
-	elif not mission_datas.has_section("info"):
-			# convert to new version
-			var opened_missions := mission_datas.get_section_keys("missions")
-			var mission_ids := FMUtils.get_mission_id_list()
-			mission_datas.clear()
-			for id in mission_ids:
-				var md := DEFAULT_MISSION_DATA.duplicate()
-				if id in opened_missions:
-					md.opened = true
-				mission_datas.set_value("missions", id, md)
 
-	mission_datas.set_value("info", "version", DATA_VERSION)
+	elif not mission_datas.has_section("info"):
+		mission_datas.set_value("info", "version", DATA_VERSION)
+		# convert to new version
+		var opened_missions: Array
+		if mission_datas.has_section("missions"):
+			opened_missions = mission_datas.get_section_keys("missions")
+
+		var mission_ids := FMUtils.get_mission_id_list()
+		mission_datas.clear()
+		for id in mission_ids:
+			var md := DEFAULT_MISSION_DATA.duplicate()
+			if id in opened_missions:
+				md.opened = true
+			mission_datas.set_value("missions", id, md)
+
 
 
 
@@ -204,9 +204,7 @@ func init_all_missions() -> void:
 
 	var ids := mission_datas.get_section_keys("missions")
 
-	if not Path.file_exists(data.config.tdm_path):
-		console.warning("No TDM path set, or TDM path is invalid: '%s'" % data.config.tdm_path)
-	elif mission_datas.has_section("missions"):
+	if mission_datas.has_section("missions"):
 		logs.print("loading missions")
 		for id: String in ids:
 			var md: Dictionary = mission_datas.get_value("missions", id, null)
@@ -241,6 +239,9 @@ func soft_reload_mission(mis: Mission, force_update := false) -> void:
 
 
 func load_mission(id: String) -> Mission:
+	assert(data.config.tdm_path != "")
+	var fms_folder := Path.join(data.config.tdm_path.get_base_dir(), "fms")
+
 	var mission := Mission.new()
 	mission.id = id
 
@@ -557,6 +558,7 @@ func get_mission_with_id(id: String) -> Mission:
 
 
 func check_missions_on_focus_in() -> void:
+	if data.config.tdm_path == "": return
 	update_mission_data()
 
 	for id: String in missing_missions:
@@ -625,6 +627,9 @@ func check_missions_on_focus_in() -> void:
 
 
 func _get_relative_file_path(path: String, id: String) -> String:
+	assert(data.config.tdm_path != "")
+	var fms_folder := Path.join(data.config.tdm_path.get_base_dir(), "fms")
+
 	var fm_path := Path.join(fms_folder, id)
 	return path.replace(fm_path + '/', '')
 
