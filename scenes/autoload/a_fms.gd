@@ -137,14 +137,7 @@ const DATA_VERSION := 2
 func init_mission_data() -> void:
 	mission_datas = ConfigFile.new()
 
-
-
-
-	var err := mission_datas.load(data.MISSIONS_FILE)
-
-	# 	save_missions_data()
-
-	if not err == OK:
+	if not mission_datas.load(data.MISSIONS_FILE) == OK:
 		if mission_datas.save(data.MISSIONS_FILE) == OK:
 			logs.error("Couldn't save missions file at '%s'" % data.MISSIONS_FILE)
 	elif not mission_datas.has_section("info"):
