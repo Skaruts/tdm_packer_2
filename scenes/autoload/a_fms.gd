@@ -188,36 +188,38 @@ func update_mission_datas() -> void:
 		# if not mission_datas.has_section_key("missions", id):
 			# mission_datas.set_value("missions", id, DEFAULT_MISSION_DATA.duplicate())
 
-	if data.config.tdm_path != "":
-		var mission_ids := FMUtils.get_mission_id_list()
+	if data.config.tdm_path == "":
+		return
 
-		if mission_datas.has_section("editable"):
-			for id in mission_datas.get_section_keys("editable"):
-				if id in mission_ids: continue
-				mission_datas.erase_section_key("editable", id)
+	var mission_ids := FMUtils.get_mission_id_list()
 
-		if mission_datas.has_section("missions"):
-			# check deleted missions
-			for id in mission_datas.get_section_keys("missions"):
-				if id in mission_ids: continue
-				missing_missions.append(id)
-				mission_datas.erase_section_key("missions", id)
+	if mission_datas.has_section("editable"):
+		for id in mission_datas.get_section_keys("editable"):
+			if id in mission_ids: continue
+			mission_datas.erase_section_key("editable", id)
+
+	if mission_datas.has_section("missions"):
+		# check deleted missions
+		for id in mission_datas.get_section_keys("missions"):
+			if id in mission_ids: continue
+			missing_missions.append(id)
+			mission_datas.erase_section_key("missions", id)
 
 
-			# for id in mission_datas.get_section_keys("missions"):
-			# 	var md: Dictionary = mission_datas.get_value("missions", id, null)
-			# 	if not "edited_files" in md:
-			# 		md.edited_files = []
+		# for id in mission_datas.get_section_keys("missions"):
+		# 	var md: Dictionary = mission_datas.get_value("missions", id, null)
+		# 	if not "edited_files" in md:
+		# 		md.edited_files = []
 
-			save_mission_datas()
+		save_mission_datas()
 
-			if missing_missions.size() > 0:
-				var message := "Couldn't load the following missions:\n\n"
-				for id: String in missing_missions:
-					# var md: Dictionary = mission_datas.get_value("missions", id, null)
-					# if not md.missing: continue
-					message += id + '\n'
-				popups.show_message("Warning", message)
+		if missing_missions.size() > 0:
+			var message := "Couldn't load the following missions:\n\n"
+			for id: String in missing_missions:
+				# var md: Dictionary = mission_datas.get_value("missions", id, null)
+				# if not md.missing: continue
+				message += id + '\n'
+			popups.show_message("Warning", message)
 
 
 
@@ -645,11 +647,17 @@ func check_missions_on_focus_in() -> void:
 
 
 func _get_relative_file_path(path: String, id: String) -> String:
-	assert(data.config.tdm_path != "")
-	var fms_folder := Path.join(data.config.tdm_path.get_base_dir(), "fms")
+	var idx := path.find(id)
+	assert(idx != -1)
+	var rel_path := path.left(idx+id.length()+1)
+	return rel_path
 
-	var fm_path := Path.join(fms_folder, id)
-	return path.replace(fm_path + '/', '')
+
+
+
+
+
+
 
 
 func add_edited_file_to_mission(mis: Mission, path: String) -> void:
