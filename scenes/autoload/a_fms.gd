@@ -468,9 +468,9 @@ func _erase_mission(mis: Mission) -> void:
 	and mission_datas.has_section_key("missions", mis.id):
 		mission_datas.erase_section_key("missions", mis.id)
 
-	if mission_datas.has_section("editable")\
-	and mission_datas.has_section_key("editable", mis.id):
-		mission_datas.erase_section_key("editable", mis.id)
+	# if mission_datas.has_section("editable")\
+	# and mission_datas.has_section_key("editable", mis.id):
+	# 	mission_datas.erase_section_key("editable", mis.id)
 
 	# if mis.id in missing_missions:
 	# 	missing_missions.erase(mis.id)
