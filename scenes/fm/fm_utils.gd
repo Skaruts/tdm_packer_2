@@ -20,6 +20,7 @@ static var default_ignored_files := Set.new([
 	".log",
 	".dat",
 	".bak",
+	"_autosave.map",
 ])
 
 
