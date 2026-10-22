@@ -40,6 +40,14 @@ class MissionPaths: # this allows auto-completion and strict typing, unlike dict
 	var mapsequence : String
 
 
+class MapFile:
+	var name: String    # base filename without extension
+	var title: String
+	func _init(n: String, t := "") -> void:
+		name = n
+		title = t
+
+
 class MissionData extends RefCounted:
 	# modfile
 	var title        : String
@@ -47,11 +55,10 @@ class MissionData extends RefCounted:
 	var author       : String
 	var version      : String
 	var tdm_version  : String
-	var map_titles   : Array[String]
 	# other
 	var pkignore     : String
 	var readme       : String
-	var map_files    : Array[String]
+	var map_files    : Array[MapFile]
 	var edited_files : Dictionary[String, String] # file path, file content
 
 
@@ -96,24 +103,22 @@ func update_zipname() -> bool:
 #		Maps
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-func _swap_array_items(array:Array, idx1:int, idx2:int) -> void:
+func _swap_array_items(array: Array, idx1: int, idx2: int) -> void:
 	var item1 : Variant = array[idx1]
 	var item2 : Variant = array[idx2]
 	array[idx1] = item2
 	array[idx2] = item1
 
 
-func move_map(direction:String, idx:int, silent:=false) -> bool:
+func move_map(direction: String, idx: int, silent := false) -> bool:
 	var moved := false
 	if direction == "move_up":
 		if idx > 0:
 			_swap_array_items(mdata.map_files, idx, idx-1)
-			_swap_array_items(mdata.map_titles, idx, idx-1)
 			moved = true
 	elif direction == "move_down":
 		if idx < mdata.map_files.size()-1:
 			_swap_array_items(mdata.map_files,  idx, idx+1)
-			_swap_array_items(mdata.map_titles, idx, idx+1)
 			moved = true
 	if moved:
 		set_dirty_flag(true, DirtyFlags.MAPS, silent)
@@ -122,38 +127,44 @@ func move_map(direction:String, idx:int, silent:=false) -> bool:
 	return moved
 
 
-func add_map_file(string:String, silent:=false) -> bool:
-	if string in mdata.map_files: return false
-	mdata.map_files.append(string)
-	mdata.map_titles.append("")
+# basename without extension
+func add_map_file(file_basename: String, silent := false) -> bool:
+	if file_basename in mdata.map_files: return false
+	var mf := MapFile.new(file_basename)
+	mdata.map_files.append(mf)
 	set_dirty_flag(true, DirtyFlags.MAPS, silent)
-	logs.print(mdata.map_files)
+	logs.print(mf, mdata.map_files)
 	return true
 
 
-func remove_map_file(string:String, silent:=false) -> bool:
-	assert(string in mdata.map_files)
-	var idx := mdata.map_files.find(string)
-	mdata.map_files.erase(string)
-	mdata.map_titles.remove_at(idx)
+# basename without extension
+func remove_map_file(file_basename: String, silent := false) -> bool:
+	assert(file_basename in mdata.map_files)
+	var idx := mdata.map_files.find(file_basename)
+	var mf: MapFile
+	for mf_ in mdata.map_files:
+		if mf_.name != file_basename: continue
+		mf = mf_
+		break
+	assert(mf)
+	mdata.map_files.erase(mf)
 	set_dirty_flag(true, DirtyFlags.MAPS, silent)
 	set_dirty_flag(true, DirtyFlags.MODFILE, silent)
 	return true
 
 
-func set_map_title(idx:int, string:String, silent:=false) -> bool:
-	if mdata.map_titles[idx] == string: return false
-	mdata.map_titles[idx] = string
+func set_map_title(idx: int, string: String, silent := false) -> bool:
+	if mdata.map_files[idx].title == string: return false
+	mdata.map_files[idx].title = string
 	set_dirty_flag(true, DirtyFlags.MODFILE, silent)
 	return true
 
 
-#func remove_map_title(string:String) -> bool:
-	#assert(string in mdata.map_titles)
-	#mdata.map_titles.erase(string)
-	#return true
-
-
+func is_map_in_sequence(name_: String) -> bool:
+	for m in mdata.map_files:
+		if m.name == name_:
+			return true
+	return false
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 

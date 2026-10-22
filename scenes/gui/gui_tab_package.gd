@@ -232,14 +232,12 @@ func _build_map_list() -> void:
 	var disabled := fms.is_mission_readonly(_mission.id)
 
 	for i: int in _mission.mdata.map_files.size():
-		var filename := _mission.mdata.map_files[i]
-		if filename == "": continue
+		var mf := _mission.mdata.map_files[i]
+		if mf.name == "": continue
 		var is_excluded := _mission.ignored_files.contains(
-			Path.join(_mission.paths.maps, filename + ".map")
+			Path.join(_mission.paths.maps, mf.name + ".map")
 		)
-		var title := "" if _mission.mdata.map_titles.size() <= i \
-					 else _mission.mdata.map_titles[i]
-		_add_map_tree_item(filename, title, is_excluded, disabled)
+		_add_map_tree_item(mf.name, mf.title, is_excluded, disabled)
 
 	if idx > -1:
 		tr_map_list.set_selected( _maps_tree_root.get_child(idx), 0)
@@ -535,7 +533,7 @@ func _build_inc_tree(parent: FMTreeNode, gui_parent: TreeItem, disabled := false
 				tree_item = _create_tree_item(gui_parent, node, icon, disabled)
 			else:
 				var map_name := node.name.get_basename()
-				if map_name in _mission.mdata.map_files:
+				if _mission.is_map_in_sequence(map_name):
 					tree_item = _create_tree_item(gui_parent, node, icon, disabled)
 		else:
 			if node.path != maps_path:
@@ -558,13 +556,13 @@ func _build_exc_tree(parent: FMTreeNode, gui_parent: TreeItem, disabled := false
 		elif not node.ignored and parent.path != maps_path:
 			continue
 
-		var map_sequence := _mission.mdata.map_files
 		var icon := data.ICON_FOLDER if node.is_dir else data.ICON_FILE
 		var tree_item : TreeItem
 		if not (not node.is_dir and parent.path == maps_path):
 			tree_item = _create_tree_item(gui_parent, node, icon, disabled)
 		else:
-			if node.ignored or not node.name.get_basename() in map_sequence:
+			if node.ignored \
+			or not _mission.is_map_in_sequence(node.name.get_basename()):
 				tree_item = _create_tree_item(gui_parent, node, icon, disabled)
 
 		_build_exc_tree(node, tree_item, disabled)

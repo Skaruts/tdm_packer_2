@@ -104,10 +104,10 @@ func check_mission_warnings(mis: Mission) -> void:
 
 	# check if any of the maps in the map sequence are excluded from the pk4
 	for i: int in mis.mdata.map_files.size():
-		var filename := mis.mdata.map_files[i]
-		if filename == "": continue
+		var mf := mis.mdata.map_files[i]
+		if mf.name == "": continue
 		var is_excluded := mis.ignored_files.contains(
-				Path.join(mis.paths.maps, filename + ".map")
+				Path.join(mis.paths.maps, mf.name + ".map")
 			)
 
 		if is_excluded:
