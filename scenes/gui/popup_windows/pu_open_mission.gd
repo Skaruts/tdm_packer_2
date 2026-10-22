@@ -80,8 +80,9 @@ func _build_missions_list() -> void:
 			_add_tree_item(_filtered_names[idx2], 1, item)
 
 	var children := root.get_children()
-	_first_item = children[0]
-	_last_item = children[children.size()-1]
+	if children.size() > 0:
+		_first_item = children[0]
+		_last_item = children[children.size()-1]
 
 
 func _add_tree_item(id: String, col: int, item: TreeItem) -> void:
