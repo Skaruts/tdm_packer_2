@@ -227,6 +227,7 @@ func _build_map_list() -> void:
 	_maps_tree_root = tr_map_list.create_item()
 
 	if _mission.mdata.map_files.size() == 0:
+		tr_map_list.deselect_all()
 		return
 
 	var disabled := fms.is_mission_readonly(_mission.id)
@@ -240,6 +241,7 @@ func _build_map_list() -> void:
 		_add_map_tree_item(mf.name, mf.title, is_excluded, disabled)
 
 	if idx > -1:
+		idx = min(idx,  _maps_tree_root.get_child_count()-1)
 		tr_map_list.set_selected( _maps_tree_root.get_child(idx), 0)
 
 
