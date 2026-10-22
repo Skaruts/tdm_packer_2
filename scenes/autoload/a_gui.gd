@@ -26,9 +26,8 @@ func initialize() -> void:
 	var btn_pack_tab: Button = menu_bar.get_node("%btn_pack_tab")
 	var btn_files_tab: Button = menu_bar.get_node("%btn_files_tab")
 
-	btn_pack_tab.pressed.connect(gui.workspace_set_main_tab.bind(0))
-	btn_files_tab.pressed.connect(gui.workspace_set_main_tab.bind(1))
-
+	btn_pack_tab.pressed.connect(_on_main_tab_changed.bind(0))
+	btn_files_tab.pressed.connect(_on_main_tab_changed.bind(1))
 
 
 
@@ -232,6 +231,7 @@ const MissionWorkspaceScene: PackedScene = preload("res://scenes/gui/gui_mission
 
 var curr_pack_tab := 0
 var curr_files_tab := 0
+var curr_main_tab_idx := 0
 
 
 func _add_workspace_node(mission:Mission) -> MissionWorkspace:
@@ -243,6 +243,7 @@ func _add_workspace_node(mission:Mission) -> MissionWorkspace:
 	ws.tab_package.tab_changed.connect(_on_tab_package_tab_changed)
 	ws.tab_files.tab_changed.connect(_on_tab_files_tab_changed)
 	ws.set_mission(mission)
+	ws.switch_main_tab(curr_main_tab_idx)
 	return ws
 
 
@@ -336,3 +337,8 @@ func _on_tab_files_tab_changed(index: int) -> void:
 	curr_files_tab = index
 	for ws: MissionWorkspace in workspace_mgr.get_children():
 		ws.tab_files.current_tab = index
+
+
+func _on_main_tab_changed(idx: int) -> void:
+	curr_main_tab_idx = idx
+	gui.workspace_set_main_tab(idx)
