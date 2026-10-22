@@ -139,8 +139,6 @@ func add_map_file(file_basename: String, silent := false) -> bool:
 
 # basename without extension
 func remove_map_file(file_basename: String, silent := false) -> bool:
-	assert(file_basename in mdata.map_files)
-	var idx := mdata.map_files.find(file_basename)
 	var mf: MapFile
 	for mf_ in mdata.map_files:
 		if mf_.name != file_basename: continue
