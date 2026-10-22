@@ -37,7 +37,7 @@ func _build_list() -> void:
 	var mission := fms.curr_mission
 
 	var map_files := Path.get_filepaths_filtered(mission.paths.maps,
-		func(filename:String) -> bool:
+		func(filename: String) -> bool:
 			return filename.get_extension() == "map"
 	)
 
@@ -45,9 +45,9 @@ func _build_list() -> void:
 	#tr_maps.columns = 1
 
 	var _root := tr_maps.create_item()
-	var item:TreeItem
+	var item: TreeItem
 
-	for i:int in map_files.size():
+	for i: int in map_files.size():
 		var path := map_files[i]
 
 		var is_included := not mission.ignored_files.contains(path)
@@ -55,8 +55,8 @@ func _build_list() -> void:
 			continue
 
 		var map_filename := path.get_file()
-		var is_loaded   := map_filename.get_basename() in mission.mdata.map_files
-		var idx  := i % tr_maps.columns
+		var is_loaded  := mission.is_map_in_sequence(map_filename.get_basename())
+		var idx := i % tr_maps.columns
 
 		if idx == 0:
 			item = _root.create_child()

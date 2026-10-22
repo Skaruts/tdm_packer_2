@@ -129,7 +129,7 @@ func move_map(direction: String, idx: int, silent := false) -> bool:
 
 # basename without extension
 func add_map_file(file_basename: String, silent := false) -> bool:
-	if file_basename in mdata.map_files: return false
+	if is_map_in_sequence(file_basename): return false
 	var mf := MapFile.new(file_basename)
 	mdata.map_files.append(mf)
 	set_dirty_flag(true, DirtyFlags.MAPS, silent)

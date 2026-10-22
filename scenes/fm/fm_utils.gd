@@ -580,11 +580,11 @@ static func save_maps_file(mis: Mission) -> bool:
 		if Path.file_exists(mis.paths.mapsequence):
 			DirAccess.remove_absolute(mis.paths.mapsequence)
 
-		var mf: Mission.MapFile
+		var map_name: String
 		if mis.mdata.map_files.size():
-			mf = mis.mdata.map_files[0]
+			map_name = mis.mdata.map_files[0].name
 
-		_save_mission_file(mis, mf.name, mis.paths.startingmap,
+		_save_mission_file(mis, map_name, mis.paths.startingmap,
 						   data.STARTINGMAP_FILENAME, Mission.DirtyFlags.MAPS,
 						   true)
 		mis.remove_hash(mis.paths.mapsequence)
@@ -595,7 +595,7 @@ static func save_maps_file(mis: Mission) -> bool:
 
 		var string := ""
 		for i: int in mis.mdata.map_files.size():
-			string += "Mission %d: %s\n" % [i+1, mis.mdata.map_files[i]]
+			string += "Mission %d: %s\n" % [i+1, mis.mdata.map_files[i].name]
 		_save_mission_file(mis, string, mis.paths.mapsequence,
 						   data.MAPSEQUENCE_FILENAME, Mission.DirtyFlags.MAPS,
 						   true)
