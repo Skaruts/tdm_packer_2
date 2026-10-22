@@ -609,7 +609,25 @@ static func save_maps_file(mis: Mission) -> bool:
 static func load_map_sequence(mis: Mission) -> void:
 	mis.mdata.map_files.clear()
 
-	if Path.file_exists(mis.paths.startingmap):
+	if Path.file_exists(mis.paths.mapsequence):
+		var lines := Path.read_file_string(mis.paths.mapsequence)\
+					 .split('\n')
+
+		for line: String in lines:
+			# TODO: detect comments and ignore (may need a proper parser)
+			if line == "" or line.find('Mission ') == -1 \
+			or line.find(':') == -1:
+				continue
+
+			line = line.substr( line.find(':')+1 )
+			line = line.strip_edges(true, true)
+			var mf := Mission.MapFile.new(line)
+			mis.mdata.map_files.append(mf)
+
+		mis.remove_hash(mis.paths.startingmap)
+		mis.store_hash(mis.paths.mapsequence)
+
+	elif Path.file_exists(mis.paths.startingmap):
 		# TODO: maybe I should read this file by lines too, to prevent problems
 		# with invalid lines
 		var map_filename := Path.read_file_string(mis.paths.startingmap) \
@@ -619,25 +637,6 @@ static func load_map_sequence(mis: Mission) -> void:
 			mis.mdata.map_files.append(mf)
 			mis.remove_hash(mis.paths.mapsequence)
 			mis.store_hash(mis.paths.startingmap)
-
-	elif Path.file_exists(mis.paths.mapsequence):
-		if Path.file_exists(mis.paths.mapsequence):
-			var lines := Path.read_file_string(mis.paths.mapsequence)\
-						 .split('\n')
-
-			for line: String in lines:
-				# TODO: detect comments and ignore (may need a proper parser)
-				if line == "" or line.find('Mission ') == -1 \
-				or line.find(':') == -1:
-					continue
-
-				line = line.substr( line.find(':')+1 )
-				line = line.strip_edges(true, true)
-				var mf := Mission.MapFile.new(line)
-				mis.mdata.map_files.append(mf)
-
-			mis.remove_hash(mis.paths.startingmap)
-			mis.store_hash(mis.paths.mapsequence)
 
 	elif not fms.is_mission_readonly(mis.id):
 		Path.write_file(mis.paths.startingmap, "")
