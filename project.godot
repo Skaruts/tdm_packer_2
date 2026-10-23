@@ -41,6 +41,7 @@ gdscript/warnings/untyped_declaration=2
 gdscript/warnings/missing_tool=2
 gdscript/warnings/integer_division=2
 gdscript/warnings/narrowing_conversion=2
+gdscript/warnings/confusable_local_declaration=0
 gdscript/warnings/property_used_as_function=2
 gdscript/warnings/constant_used_as_function=2
 
