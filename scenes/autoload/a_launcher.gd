@@ -8,13 +8,11 @@ signal tdm_process_started
 signal tdm_process_ended
 
 
-# TODO: this could just be an array
-const tdm_log_file1 := "DarkMod.log"
-const tdm_log_file2 := "DarkMod.temp.log"
+const TEST_FOLDER_NAME := "__dp_test_mission__"
 
-# TODO: this could just be a single variable (only one TDM process is ever stored at a time)
-var pids: Dictionary    # this keeps track of a running TDM process (Process IDs)
 
+# keeps track of a running TDM process (Process IDs)
+var process_ids: Dictionary
 var timer: Timer
 
 
@@ -28,17 +26,17 @@ func _ready() -> void:
 
 
 func _on_timer_timeout() -> void:
-	if not pids.size(): return
-	for pid: int in pids:
+	if not process_ids.size(): return
+	for pid: int in process_ids:
 		if not OS.is_process_running(pid):
-			var f: Callable = pids[pid]
+			var f: Callable = process_ids[pid]
 			f.call()
-			pids.erase(pid)
-
+			process_ids.erase(pid)
 
 
 func is_game_running() -> bool:
-	return pids.size() > 0
+	return process_ids.size() > 0
+
 
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
@@ -66,15 +64,9 @@ func run_in_global_thread(f:Callable) -> Variant:
 	return t.wait_to_finish()
 
 
-
-
-
-
 func _run_app_thread(path:String, args:Array[String]) -> void:
 	var res := Path.execute(path, args)
 	call_deferred_thread_group("emit_signal", _execution_finished, res)
-
-
 
 
 func open_fm_packer_folder() -> void:
@@ -105,7 +97,6 @@ func run_tdm() -> void:
 	_run_game("Running TDM", data.config.tdm_path, fms.curr_mission.id, false, tdm_process_started, tdm_process_ended)
 
 
-
 func _delete_folder(root_path: String, delete_root: bool) -> void:
 	var files := Path.get_filepaths(root_path)
 	for fpath:String in files:
@@ -114,9 +105,7 @@ func _delete_folder(root_path: String, delete_root: bool) -> void:
 		DirAccess.remove_absolute(root_path)
 
 
-
-const TEST_FOLDER_NAME := "__dp_test_mission__"
-func run_tdm_mission_test() -> void:
+func run_pk4_isolated() -> void:
 	var mission := fms.curr_mission
 
 	# check if source pk4 file exists
@@ -178,7 +167,6 @@ func run_tdm_mission_test() -> void:
 	_run_game("Running TDM (isolated pk4)", data.config.tdm_path, TEST_FOLDER_NAME, true, tdm_process_started, tdm_process_ended)
 
 
-
 func _run_game(task_name: String, exec_filepath: String,
 			   mission_id: String, is_mission_testing: bool,
 			   start_signal: Signal, end_signal: Signal) -> void:
@@ -204,15 +192,15 @@ func _run_game(task_name: String, exec_filepath: String,
 		# Since Godot can't change the CWD, TDM will create logs inside the
 		# Packer's directory, and they need to be moved to TDM dir after it
 		# shuts down.
-		pids[pid] = func() -> void:
+		process_ids[pid] = func() -> void:
 			logs.task("Moving TDM logs to TDM directory")
 			Path.move_file(
-				Path.join(data.CWD, tdm_log_file1),
-				Path.join(game_dir, tdm_log_file1)
+				Path.join(data.CWD, "DarkMod.log"),
+				Path.join(game_dir, "DarkMod.log")
 			)
 			Path.move_file(
-				Path.join(data.CWD, tdm_log_file2),
-				Path.join(game_dir, tdm_log_file2)
+				Path.join(data.CWD, "DarkMod.temp.log"),
+				Path.join(game_dir, "DarkMod.temp.log")
 			)
 
 			console.info("TDM process ended")

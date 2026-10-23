@@ -737,4 +737,4 @@ func test_pack() -> void:
 
 	if is_save_timer_counting():
 		save_mission(curr_mission, true)
-	launcher.run_tdm_mission_test()
+	launcher.run_pk4_isolated()
