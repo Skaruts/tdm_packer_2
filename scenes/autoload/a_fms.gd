@@ -106,9 +106,9 @@ func check_mission_warnings(mis: Mission) -> void:
 	for i: int in mis.mdata.map_files.size():
 		var mf := mis.mdata.map_files[i]
 		if mf.name == "": continue
-		var is_excluded := mis.ignored_files.contains(
-				Path.join(mis.paths.maps, mf.name + ".map")
-			)
+		var is_excluded := mis.is_file_excluded(
+			Path.join(mis.paths.maps, mf.name + ".map")
+		)
 
 		if is_excluded:
 			mis.warnings[MissionWarning.MAP_IS_EXCLUDED] = warning_strings[MissionWarning.MAP_IS_EXCLUDED]

@@ -1,26 +1,22 @@
 class_name FMUtils
 extends Node
 
-
-static var default_ignored_directories := Set.new([
-	"/.git",
-	"/savegames"
-])
-
-static var default_ignored_files := Set.new([
+static var default_ignores := Set.new([
 	data.IGNORES_FILENAME,
+	".git",
+	"savegames",
 	".gitignore",
 	".gitattributes",
-	".pyc",
-	".py",
-	".pk4",
-	".zip",
-	".7z",
-	".rar",
-	".log",
-	".dat",
-	".bak",
-	"_autosave.map",
+	"*.pyc",
+	"*.py",
+	"*.pk4",
+	"*.zip",
+	"*.7z",
+	"*.rar",
+	"*.log",
+	"*.dat",
+	"*.bak",
+	"*_autosave.map",
 ])
 
 
@@ -34,9 +30,11 @@ static var alpha_sort_paths := func(a: String, b: String) -> bool:
 	return afile < bfile
 
 
-static func should_ignore(path: String, filters: Set) -> bool:
-	for string:String in filters.items():
-		if string in path:
+static func should_ignore(rel_path: String, filters: Set) -> bool:
+	for pattern: String in filters.items():
+		var did_match := rel_path.match(pattern)
+		if did_match:
+		# if pattern in rel_path:
 			return true
 	return false
 
@@ -161,13 +159,12 @@ static func _pack_files(output: Object, mission: Mission) -> ErrorReport:
 static func build_file_tree(mission: Mission) -> void:
 	# logs.task("Building file tree...")
 
-	mission.inc_dir_count       = 0
-	mission.inc_file_count      = 0
-	mission.exc_dir_count       = 0
-	mission.exc_file_count      = 0
-	mission.file_tree           = FMTreeNode.new(mission.paths.root, null, true)
-	mission.ignored_files       = default_ignored_files.duplicate()
-	mission.ignored_directories = default_ignored_directories.duplicate()
+	mission.inc_dir_count  = 0
+	mission.inc_file_count = 0
+	mission.exc_dir_count  = 0
+	mission.exc_file_count = 0
+	mission.file_tree      = FMTreeNode.new(mission.paths.root, null, true)
+	mission.ignored_paths        = default_ignores.duplicate()
 	mission.filepaths.clear()
 
 	init_ignores(mission)
@@ -197,15 +194,15 @@ static func init_ignores(mission: Mission) -> void:
 		if line == "":
 			continue
 
-		if '/' in line:
-			if   line.begins_with('/'):  line = line.substr(1)
-			elif line.ends_with('/'):    line = line.substr(0, line.length()-1)
+		# if '/' in line:
+		# 	if   line.begins_with('/'):  line = line.substr(1)
+		# 	elif line.ends_with('/'):    line = line.substr(0, line.length()-1)
 
-			if line.length() <= 1:
-				continue
-			mission.ignored_directories.add(line)
-		else:
-			mission.ignored_files.add(line)
+		# 	if line.length() <= 1:
+		# 		continue
+		# 	mission.ignored_directories.add(line)
+		# else:
+		mission.ignored_paths.add(line)
 
 
 static func _gather_files(mission: Mission, parent: FMTreeNode) -> void:
@@ -215,32 +212,29 @@ static func _gather_files(mission: Mission, parent: FMTreeNode) -> void:
 	if not dirpaths.size() and not filepaths.size():
 		if parent.path == mission.paths.maps: return
 		if not parent.ignored:
-			mission.ignored_files.add(parent.path)
+			mission.ignored_paths.add(parent.path)
 			parent.ignored = true
 		return
 
-	var ign_files := mission.ignored_files
-	var ign_dirs  := mission.ignored_directories
-
 	for fullpath: String in dirpaths:
-		var rel_path := fullpath.replace(mission.paths.root, '')
+		var rel_path := fullpath.replace(mission.paths.root + '/', '')
 		var dir_node := FMTreeNode.new(fullpath, parent, true)
-		dir_node.ignored = parent.ignored or should_ignore(rel_path, ign_dirs) \
+		dir_node.ignored = parent.ignored or should_ignore(rel_path, mission.ignored_paths) \
 						or (fullpath != mission.paths.maps
 							and fullpath.contains(mission.paths.maps))
 		if dir_node.ignored:
-			ign_dirs.add(fullpath)
+			mission.ignored_paths.add(fullpath)
 			mission.exc_dir_count += 1
 		else:
 			mission.inc_dir_count += 1
 		_gather_files(mission, dir_node)
 
 	for fullpath: String in filepaths:
-		var rel_path  := fullpath.replace(mission.paths.root, '')
+		var rel_path  := fullpath.replace(mission.paths.root + '/', '')
 		var file_node := FMTreeNode.new(fullpath, parent)
-		file_node.ignored = parent.ignored or should_ignore(rel_path, ign_files)
+		file_node.ignored = parent.ignored or should_ignore(rel_path, mission.ignored_paths)
 		if file_node.ignored:
-			ign_files.add(fullpath)
+			mission.ignored_paths.add(fullpath)
 			mission.exc_file_count += 1
 		else:
 			mission.filepaths.append(fullpath)
