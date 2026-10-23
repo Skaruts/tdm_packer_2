@@ -1,10 +1,6 @@
 extends BasePopup
 
 
-const _LOADED_COLOR := Color(0.42, 0.807, 1.0)
-const _ICON_COLOR   := Color(0.0, 1.0, 0.0)
-
-
 var _first_item    : TreeItem
 var _last_item     : TreeItem
 var _selected_maps : Dictionary
@@ -78,14 +74,14 @@ func _build_list() -> void:
 			icon       = data.ICON_DOT
 			icon_color = data.FADED_TEXT_COLOR
 		elif is_loaded:
-			color      = _LOADED_COLOR
+			color      = data.SELECTED_COLOR
 			icon       = data.ICON_CHECKMARK
-			icon_color = _LOADED_COLOR
+			icon_color = data.SELECTED_COLOR
 		else:
 			color      = data.TEXT_COLOR
 			item.set_selectable(idx, true)
 			icon       = data.ICON_DOT
-			icon_color = _ICON_COLOR
+			icon_color = data.VALID_COLOR
 
 		item.set_icon(idx, icon)
 		item.set_custom_color(idx, color)

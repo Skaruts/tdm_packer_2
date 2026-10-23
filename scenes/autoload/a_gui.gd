@@ -98,11 +98,15 @@ func init_missions_list() -> void:
 		func() -> void:
 			btn_play_mission.disabled = true
 			btn_test_pack.disabled = true
+			fms.curr_mission.playing = true
+			update_missions_list()
 	)
 	launcher.tdm_process_ended.connect(
 		func() -> void:
+			fms.curr_mission.playing = false
 			btn_play_mission.disabled = false
 			btn_test_pack.disabled = false
+			update_missions_list()
 	)
 
 	var menu: PopupMenu = pu_missions_menu
@@ -131,18 +135,33 @@ func init_missions_list() -> void:
 
 func update_missions_list() -> void:
 	tr_missions.clear()
+	tr_missions.columns = 2
+
+	tr_missions.set_column_expand(0, false)
+	tr_missions.set_column_expand(1, true)
+	tr_missions.set_column_clip_content(0, true)
+	tr_missions.set_column_custom_minimum_width(0, 24)
+
 	_missions_list_root = tr_missions.create_item()
 
 	for mis: Mission in fms.missions:
 		fms.check_mission_warnings(mis)
 
 		var item := _missions_list_root.create_child()
-		item.set_text(0, mis.id)
-		item.set_custom_color(0, Color.DIM_GRAY if fms.is_mission_readonly(mis.id) else Color.WHITE)
+		item.set_text(0, "")
+		item.set_text(1, mis.id)
+		if not fms.is_mission_readonly(mis.id):
+			item.set_custom_color(1, Color.WHITE if not mis.playing else data.SELECTED_COLOR)
+		else:
+			item.set_custom_color(1, Color.DIM_GRAY)
+
+		if mis.playing:
+			item.set_icon(0, data.ICON_PLAY)
+			item.set_icon_modulate(0, data.SELECTED_COLOR)
 
 		if mis.warnings.size() > 0 and not fms.is_mission_readonly(mis.id):
 			var warns := fms.get_mission_warnings_string(mis)
-			item.add_button(0, data.ICON_WARNING, 0, false, warns)
+			item.add_button(1, data.ICON_WARNING, 0, false, warns)
 
 	if fms.missions.size() > 0:
 		var curr_idx := fms.get_current_mission_index()

@@ -707,6 +707,7 @@ func play_mission() -> void:
 
 	if is_save_timer_counting():
 		save_mission(curr_mission, true)
+
 	launcher.run_tdm()
 
 
@@ -737,4 +738,5 @@ func test_pack() -> void:
 
 	if is_save_timer_counting():
 		save_mission(curr_mission, true)
+
 	launcher.run_pk4_isolated()

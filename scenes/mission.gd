@@ -1,6 +1,7 @@
 class_name Mission
 extends RefCounted
 
+var playing: bool
 
 var file_tree     : FMTreeNode
 var filepaths     : Array[String]

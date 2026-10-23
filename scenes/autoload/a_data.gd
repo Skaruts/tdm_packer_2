@@ -60,11 +60,12 @@ const DEFAULT_MODFILE =                          \
 		+ "Version:\n"                         \
 		+ "Required TDM Version:"
 
-const ERROR_COLOR       = Color(1.0, 0.49, 0.49)
-const WARNING_COLOR     = Color(1, 0.67500007152557, 0.22000002861023)
-const VALID_COLOR       = Color(0.43, 1, 0.43)
-const TEXT_COLOR        = Color(0.787, 0.786, 0.784)
-const FADED_TEXT_COLOR  = Color(0.5, 0.5, 0.5)
+const ERROR_COLOR       := Color(1.0, 0.49, 0.49)
+const WARNING_COLOR     := Color(1, 0.67500007152557, 0.22000002861023)
+const VALID_COLOR       := Color(0.43, 1, 0.43)
+const TEXT_COLOR        := Color(0.787, 0.786, 0.784)
+const FADED_TEXT_COLOR  := Color(0.5, 0.5, 0.5)
+const SELECTED_COLOR    := Color(0.42, 0.807, 1.0)
 #const FADED_TEXT_COLOR  = Color(0.722, 0.0, 0.415)  # pink-ish for debugging
 const EDITED_FILE_COLOR = Color(1, 0.851, 0.53)
 const TREE_ROOT_COLOR   = Color(1, 0.851, 0.53)
@@ -88,6 +89,7 @@ const ICON_DOT        : Texture2D = preload("res://assets/icons/dot_icon.png")
 const ICON_CHECKMARK  : Texture2D = preload("res://assets/icons/check_mark_icon.png")
 const ICON_WARNING    : Texture2D = preload("res://assets/icons/NodeWarning.svg")
 const ICON_LOCK       : Texture2D = preload("res://assets/icons/lock_icon.png")
+const ICON_PLAY       : Texture2D = preload("res://assets/icons/from_godot/Play.svg")
 
 #const WORKSPACE_PATH = "res://scenes/gui/gui_mission_workspace.tscn"
 #const UP_ARROW_16   := preload("res://assets/icons/up_arrow_16.png")

@@ -11,7 +11,7 @@ signal tdm_process_ended
 const TEST_FOLDER_NAME := "__dp_test_mission__"
 
 
-# keeps track of a running TDM process (Process IDs)
+# keeps track of a running TDM process
 var process_ids: Dictionary
 var timer: Timer
 
@@ -19,7 +19,7 @@ var timer: Timer
 
 func _ready() -> void:
 	timer = Timer.new()
-	timer.autostart = true
+	# timer.autostart = true
 	timer.wait_time = 3
 	add_child(timer)
 	timer.timeout.connect(_on_timer_timeout)
@@ -187,13 +187,16 @@ func _run_game(task_name: String, exec_filepath: String,
 	console.task(task_name)
 	var pid := OS.create_process(exec_filepath, [])
 	if pid >= 0:
+		timer.start()
 		start_signal.emit()
 
 		# Since Godot can't change the CWD, TDM will create logs inside the
 		# Packer's directory, and they need to be moved to TDM dir after it
 		# shuts down.
 		process_ids[pid] = func() -> void:
-			logs.task("Moving TDM logs to TDM directory")
+			timer.stop()
+
+			# logs.task("Moving TDM logs to TDM directory")
 			Path.move_file(
 				Path.join(data.CWD, "DarkMod.log"),
 				Path.join(game_dir, "DarkMod.log")
@@ -206,7 +209,7 @@ func _run_game(task_name: String, exec_filepath: String,
 			console.info("TDM process ended")
 
 			if is_mission_testing:
-				console.print("removing test folder")
+				# console.print("removing test folder")
 				var fms_folder := Path.join(data.config.tdm_path.get_base_dir(), "fms")
 				var test_path := Path.join(fms_folder, TEST_FOLDER_NAME)
 				_delete_folder(test_path, true)
