@@ -315,6 +315,7 @@ layout_mode = 2
 size_flags_vertical = 3
 column_titles_visible = true
 allow_reselect = true
+auto_tooltip = false
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="Pack/HSplitContainer"]
 layout_mode = 2
@@ -332,3 +333,4 @@ layout_mode = 2
 size_flags_vertical = 3
 column_titles_visible = true
 allow_reselect = true
+auto_tooltip = false
