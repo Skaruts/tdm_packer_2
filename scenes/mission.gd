@@ -12,11 +12,8 @@ var inc_dir_count  : int
 var exc_file_count : int
 var exc_dir_count  : int
 
-var ignored_directories : Set
-var ignored_files       : Set
-var warnings            : Dictionary[fms.MissionWarning, String]
-
-
+var ignored_paths  : Set
+var warnings : Dictionary[fms.MissionWarning, String]
 
 
 class MissionPaths: # this allows auto-completion and strict typing, unlike dictionaries
@@ -79,10 +76,6 @@ enum DirtyFlags {
 }
 var dirty := 0
 
-
-#func _init(_id:String) -> void:
-	#id = _id
-	#zipname = id + data.config.packname_suffix + ".pk4"
 
 
 func update_zipname() -> bool:
@@ -270,5 +263,6 @@ func update_tdm_version(text:String, file_dirty:=true, silent:=false) -> void:
 
 
 func is_file_excluded(path: String) -> bool:
-	var node: FMTreeNode = file_tree.get_child_at_path(path)
-	return node.is_ignored_file()
+	return path in ignored_paths
+	# var node: FMTreeNode = file_tree.get_child_at_path(path)
+	# return node.is_ignored_file()

@@ -235,7 +235,7 @@ func _build_map_list() -> void:
 	for i: int in _mission.mdata.map_files.size():
 		var mf := _mission.mdata.map_files[i]
 		if mf.name == "": continue
-		var is_excluded := _mission.ignored_files.contains(
+		var is_excluded := _mission.is_file_excluded(
 			Path.join(_mission.paths.maps, mf.name + ".map")
 		)
 		_add_map_tree_item(mf.name, mf.title, is_excluded, disabled)

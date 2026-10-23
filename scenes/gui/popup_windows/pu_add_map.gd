@@ -50,7 +50,7 @@ func _build_list() -> void:
 	for i: int in map_files.size():
 		var path := map_files[i]
 
-		var is_included := not mission.ignored_files.contains(path)
+		var is_included := not mission.is_file_excluded(path)
 		if cbt_hide_excluded.button_pressed and not is_included:
 			continue
 
