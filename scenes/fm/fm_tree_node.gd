@@ -91,7 +91,7 @@ func get_child_at_path(path_: String) -> Variant:
 	for c: FMTreeNode in children:
 		if c.path == path_:
 			return c
-		var node: FMTreeNode = c.get_child_named(path_)
+		var node: FMTreeNode = c.get_child_at_path(path_)
 		if node:
 			return node as FMTreeNode
 
