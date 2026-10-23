@@ -156,6 +156,7 @@ auto_brace_completion_enabled = true
 [node name="maps" type="VBoxContainer" parent="Info/VBoxContainer2/VSplitContainer"]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="HFlowContainer" type="HFlowContainer" parent="Info/VBoxContainer2/VSplitContainer/maps"]
@@ -184,35 +185,54 @@ disabled = true
 text = "Remove"
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="Info/VBoxContainer2/VSplitContainer/maps/HFlowContainer"]
+visible = false
 layout_mode = 2
 
 [node name="btn_move_up" type="Button" parent="Info/VBoxContainer2/VSplitContainer/maps/HFlowContainer/HBoxContainer2"]
-unique_name_in_owner = true
 layout_mode = 2
+tooltip_text = "Move map up."
 icon = ExtResource("2_5wxr6")
 flat = true
 
 [node name="btn_move_down" type="Button" parent="Info/VBoxContainer2/VSplitContainer/maps/HFlowContainer/HBoxContainer2"]
-unique_name_in_owner = true
 layout_mode = 2
+tooltip_text = "Move map down."
 icon = ExtResource("3_f6ykc")
 flat = true
 
-[node name="map_list" type="ItemList" parent="Info/VBoxContainer2/VSplitContainer/maps"]
-unique_name_in_owner = true
-visible = false
+[node name="HBoxContainer" type="HBoxContainer" parent="Info/VBoxContainer2/VSplitContainer/maps"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="tr_map_list" type="Tree" parent="Info/VBoxContainer2/VSplitContainer/maps"]
+[node name="tr_map_list" type="Tree" parent="Info/VBoxContainer2/VSplitContainer/maps/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 columns = 2
 column_titles_visible = true
 hide_folding = true
 hide_root = true
 auto_tooltip = false
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Info/VBoxContainer2/VSplitContainer/maps/HBoxContainer"]
+layout_mode = 2
+
+[node name="btn_move_up" type="Button" parent="Info/VBoxContainer2/VSplitContainer/maps/HBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Move map up."
+icon = ExtResource("2_5wxr6")
+flat = true
+icon_alignment = 1
+
+[node name="btn_move_down" type="Button" parent="Info/VBoxContainer2/VSplitContainer/maps/HBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Move map down."
+icon = ExtResource("3_f6ykc")
+flat = true
+icon_alignment = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Info"]
 layout_mode = 2
