@@ -34,10 +34,9 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-current_tab = 2
+current_tab = 0
 
 [node name="General" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
@@ -174,6 +173,11 @@ visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
+[node name="-- spacer --" type="Control" parent="PanelContainer/VBoxContainer/tc_tabs/Paths"]
+visible = false
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+
 [node name="tdm_path" type="VBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Paths"]
 layout_mode = 2
 
@@ -231,36 +235,12 @@ flat = true
 expand_icon = true
 
 [node name="HSeparator2" type="HSeparator" parent="PanelContainer/VBoxContainer/tc_tabs/Paths"]
+visible = false
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="tdm_copy_path" type="VBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Paths"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/tc_tabs/Paths/tdm_copy_path"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "TDM Test Instance Executable (Optional)"
-
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/tc_tabs/Paths/tdm_copy_path"]
-layout_mode = 2
-
-[node name="le_tdm_copy" type="LineEdit" parent="PanelContainer/VBoxContainer/tc_tabs/Paths/tdm_copy_path/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-tooltip_text = "The path to the Test Instance of TDM (a fresh copy of TDM that is used for testing pk4 files in isolation)."
-script = ExtResource("2_furee")
-
-[node name="btn_browse_tdm_copy" type="Button" parent="PanelContainer/VBoxContainer/tc_tabs/Paths/tdm_copy_path/HBoxContainer"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-icon = ExtResource("2_86vlf")
-flat = true
-expand_icon = true
-
 [node name="Text Editors" type="ScrollContainer" parent="PanelContainer/VBoxContainer/tc_tabs"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_tab_index = 2

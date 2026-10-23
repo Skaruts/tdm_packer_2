@@ -405,12 +405,11 @@ static func create_mission_file(mis: Mission, filename: String, default_content 
 	Path.write_file(mis.paths.get(filename), default_content)
 
 
-static func save_modfile(mis: Mission) -> void:
-	#_save_mission_file(mis, mis.mdata.modfile, mis.paths.modfile, core.MODFILE_FILENAME, Mission.DirtyFlags.MODFILE)
 
+static func generate_modfile_from_mission(mis: Mission, isolated_test := false) -> String:
 	var md := mis.mdata
 
-	var title       := "Title: %s\n" % md.title
+	var title       := "Title: %s%s\n" % [md.title, "" if not isolated_test else " (isolated)"]
 	var description := "Description: %s\n" % md.description
 	var author      := "Author: %s\n" % md.author
 	var version     := "Version: %s\n" % md.version
@@ -429,6 +428,14 @@ static func save_modfile(mis: Mission) -> void:
 				 + author      \
 				 + version     \
 				 + tdm_version
+
+	return modfile
+
+
+
+static func save_modfile(mis: Mission) -> void:
+	#_save_mission_file(mis, mis.mdata.modfile, mis.paths.modfile, core.MODFILE_FILENAME, Mission.DirtyFlags.MODFILE)
+	var modfile := generate_modfile_from_mission(mis)
 
 	Path.write_file(mis.paths.modfile, modfile)
 	console.print("Saved modfile")

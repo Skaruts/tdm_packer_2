@@ -3,10 +3,8 @@ extends BasePopup
 
 @onready var le_tdm              : LineEdit    = %le_tdm
 @onready var le_dr               : LineEdit    = %le_dr
-@onready var le_tdm_copy         : LineEdit    = %le_tdm_copy
 @onready var btn_browse_tdm      : Button      = %btn_browse_tdm
 @onready var btn_browse_dr       : Button      = %btn_browse_dr
-@onready var btn_browse_tdm_copy : Button      = %btn_browse_tdm_copy
 
 @onready var sb_gui_font_size    : SpinBox     = %sb_gui_font_size
 @onready var sb_code_font_size   : SpinBox     = %sb_code_font_size
@@ -53,13 +51,10 @@ func _on_ready() -> void:
 
 	le_tdm.text_changed.connect(_on_le_tdm_text_changed)
 	le_dr.text_changed.connect(_on_le_dr_text_changed)
-	le_tdm_copy.text_changed.connect(_on_le_tdm_copy_text_changed)
 	le_date_time_format.text_changed.connect(_on_le_date_time_format_text_changed)
 
 	btn_browse_tdm.pressed.connect(_on_btn_browse_tdm_pressed)
 	btn_browse_dr.pressed.connect(_on_btn_browse_dr_pressed)
-	btn_browse_tdm_copy.pressed.connect(_on_btn_browse_tdm_copy_pressed)
-
 
 
 	# NOTE: this removes the dummy buttons used to plan the UI
@@ -115,11 +110,9 @@ func _on_popup() -> void:
 
 	le_tdm.text        = temp_config.tdm_path
 	le_dr.text         = temp_config.dr_path
-	le_tdm_copy.text   = temp_config.tdm_copy_path
 
 	_validate_and_update_colors(le_tdm,      temp_config.tdm_path,      "tdm_path")
 	_validate_and_update_colors(le_dr,       temp_config.dr_path,       "dr_path")
-	_validate_and_update_colors(le_tdm_copy, temp_config.tdm_copy_path, "tdm_copy_path")
 
 	sb_gui_font_size.set_value_no_signal(temp_config.gui_font_size)
 	sb_code_font_size.set_value_no_signal(temp_config.code_font_size)
@@ -222,10 +215,6 @@ func _on_le_dr_text_changed(path:String) -> void:
 	_validate_and_update_colors(le_dr, path, "dr_path")
 
 
-func _on_le_tdm_copy_text_changed(path:String) -> void:
-	_validate_and_update_colors(le_tdm_copy, path, "tdm_copy_path")
-
-
 func _get_curr_dir(le:LineEdit, config_key:String) -> String:
 	var curr_path: String
 	if le.text != "" and Path.exists(le.text):
@@ -277,21 +266,6 @@ func _get_executable_filters() -> Array:
 		"macOS": return ["*.dmg, *.app; Executable Files"]
 		"Linux": return []
 	return []
-
-func _on_btn_browse_tdm_copy_pressed() -> void:
-	var filters := _get_executable_filters()
-
-	popups.open_single_file({
-			title = "Locate TDM copy executable",
-			current_dir = _get_curr_dir(le_tdm_copy, "tdm_copy_path"),
-			filters = filters,
-		},
-		func(path:String) -> void:
-			logs.print(path)
-			le_tdm_copy.text = path
-			_validate_and_update_colors(le_tdm_copy, path, "tdm_copy_path")
-	)
-
 
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=

@@ -94,10 +94,16 @@ enum ListMenuPopup {
 
 
 func init_missions_list() -> void:
-	launcher.tdm_process_started.connect(func() -> void: btn_play_mission.disabled = true)
-	launcher.tdm_process_ended.connect(func() -> void: btn_play_mission.disabled = false)
-	launcher.tdm_copy_process_started.connect(func() -> void: btn_test_pack.disabled = true)
-	launcher.tdm_copy_process_ended.connect(func() -> void: btn_test_pack.disabled = false)
+	launcher.tdm_process_started.connect(
+		func() -> void:
+			btn_play_mission.disabled = true
+			btn_test_pack.disabled = true
+	)
+	launcher.tdm_process_ended.connect(
+		func() -> void:
+			btn_play_mission.disabled = false
+			btn_test_pack.disabled = false
+	)
 
 	var menu: PopupMenu = pu_missions_menu
 	menu.add_item("Open Folder",      ListMenuPopup.OPEN_FOLDER)
@@ -111,15 +117,16 @@ func init_missions_list() -> void:
 	btn_open_mission.pressed.connect(_on_btn_open_mission_pressed)
 	btn_close_mission.pressed.connect(_on_btn_close_mission_pressed)
 
-	btn_play_mission.pressed.connect(_on_btn_play_mission_pressed)
-	btn_run_dr.pressed.connect(_on_btn_run_dr_pressed)
-	btn_pack_mission.pressed.connect(_on_btn_pack_mission_pressed)
-	btn_test_pack.pressed.connect(_on_btn_test_pack_pressed)
+	btn_play_mission.pressed.connect(fms.play_mission)
+	btn_run_dr.pressed.connect(fms.edit_mission)
+	btn_pack_mission.pressed.connect(popups.show_popup.bind(popups.pack_mission))
+	btn_test_pack.pressed.connect(fms.test_pack)
 
 	tr_missions.columns = 1
 	tr_missions.hide_root = true
 
 	update_missions_list()
+
 
 
 func update_missions_list() -> void:
@@ -151,14 +158,15 @@ func missions_list_update_buttons() -> void:
 	btn_close_mission.disabled = no_missions
 
 	if not no_missions and fms.curr_mission.file_tree != null:
-		btn_play_mission.disabled     = not data.is_tdm_path_set()
+		btn_play_mission.disabled     = not data.is_tdm_path_set() or launcher.is_game_running()
 		btn_run_dr.disabled           = not data.is_dr_path_set()
 
 		btn_pack_mission.disabled     = not data.is_tdm_path_set() \
 										 or fms.is_mission_readonly(fms.curr_mission.id)
-		btn_test_pack.disabled        = not data.is_tdm_copy_path_set() \
-										 or not fms.is_mission_packed(fms.curr_mission) \
-										 or fms.is_mission_readonly(fms.curr_mission.id)
+		btn_test_pack.disabled        = launcher.is_game_running() \
+										or not fms.is_mission_packed(fms.curr_mission) \
+										or fms.is_mission_readonly(fms.curr_mission.id)
+
 	else:
 		btn_play_mission.disabled     = true
 		btn_run_dr.disabled           = true
@@ -205,19 +213,6 @@ func _on_btn_close_mission_pressed() -> void:
 		fms.stop_timer_and_save()
 	fms.remove_mission(fms.curr_mission)
 
-
-func _on_btn_play_mission_pressed() -> void:
-	fms.play_mission()
-
-func _on_btn_run_dr_pressed() -> void:
-	fms.edit_mission()
-
-func _on_btn_pack_mission_pressed() -> void:
-	#fms.pack_mission()
-	popups.show_popup(popups.pack_mission)
-
-func _on_btn_test_pack_pressed() -> void:
-	fms.test_pack()
 
 
 

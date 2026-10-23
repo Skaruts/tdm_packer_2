@@ -12,7 +12,6 @@ const DEFAULT_CONFIG := {
 	paths = {
 		dr_path       = "",
 		tdm_path      = "",
-		tdm_copy_path = "",
 	},
 	gui = {
 		gui_font_size   = 14,
@@ -44,7 +43,6 @@ const DEFAULT_CONFIG := {
 		entref     = Color(0.39, 0.76, 0.35, 1),
 		constant   = Color(0.664, 0.52, 1, 1),
 		directive  = Color(1, 0.253, 0.24, 1),
-
 	},
 }
 
@@ -204,8 +202,6 @@ func update_config(new_config:ConfigData) -> void:
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 func is_tdm_path_set()      -> bool: return data.config.tdm_path      != ""
 func is_dr_path_set()       -> bool: return data.config.dr_path       != ""
-func is_tdm_copy_path_set() -> bool: return data.config.tdm_copy_path != ""
-
 
 
 func get_date_time_string() -> String:

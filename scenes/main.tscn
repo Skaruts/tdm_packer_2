@@ -135,9 +135,9 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-tooltip_text = "Launch Darkradiant for this mission. 
+tooltip_text = "Play the selected mission.
 
-The path to the Dark Mod executable must be set in Settings->Paths."
+Launches TDM for this mission. The path to TDM's executable must be set in Settings->Paths."
 disabled = true
 text = "Play"
 
@@ -145,9 +145,9 @@ text = "Play"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-tooltip_text = "Launch Darkradiant for this mission. 
+tooltip_text = "Launch Darkradiant for the selected mission.
 
-The path to the DarkRadiant executable must be set in Settings->Paths."
+The path to DarkRadiant's executable must be set in Settings->Paths."
 disabled = true
 text = "Edit"
 
@@ -172,9 +172,10 @@ text = "Pack"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-tooltip_text = "Launch TDM's test instance with this mission's pk4. 
+tooltip_text = "Test the selected mission's pk4 file in isolation.
 
-The mission must already be packed, and the path to the test instance of TDM must be set in Settings->Paths."
+Launches TDM with the pk4 in a temporary folder,
+so that it is isolated from all the mission's development files."
 disabled = true
 text = "Test"
 

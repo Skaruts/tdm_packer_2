@@ -128,6 +128,7 @@ func _pack_files() -> void:
 	await launcher.run_in_local_thread(FMUtils.pack_mission.bind(self, fms.curr_mission))
 	state = State.ENDED
 	update_buttons()
+	gui.missions_list_update_buttons()
 
 
 func _validate_files() -> bool:

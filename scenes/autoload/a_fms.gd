@@ -727,7 +727,7 @@ func edit_mission() -> void:
 
 func test_pack() -> void:
 	popups.show_confirmation({
-		text        = "Launch TDM test-version for\n    '%s'?" % curr_mission.mdata.title,
+		text        = "Launch TDM with isolated pk4 for\n    '%s'?" % curr_mission.mdata.title,
 		ok_text     = "Yes",
 		cancel_text = "No",
 	})
@@ -737,4 +737,4 @@ func test_pack() -> void:
 
 	if is_save_timer_counting():
 		save_mission(curr_mission, true)
-	launcher.run_tdm_copy()
+	launcher.run_tdm_mission_test()

@@ -21,7 +21,6 @@ var warnings            : Dictionary[fms.MissionWarning, String]
 
 class MissionPaths: # this allows auto-completion and strict typing, unlike dictionaries
 	var root        : String
-	var test_root   : String  # root dir of TDM copy for testing pk4s
 	var fm_test     : String
 
 	var maps        : String
@@ -171,8 +170,6 @@ func is_map_in_sequence(name_: String) -> bool:
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
 func set_paths(path:String) -> void:
 	paths.root      = path
-	if data.config.tdm_copy_path != "":
-		paths.test_root = Path.join(Path.join(data.config.tdm_copy_path.get_base_dir(), "fms"), id)
 
 	paths.maps      = Path.join(path, "maps")
 	paths.defs      = Path.join(path, "defs")
@@ -269,3 +266,9 @@ func update_version(text:String, file_dirty:=true, silent:=false) -> void:
 func update_tdm_version(text:String, file_dirty:=true, silent:=false) -> void:
 	mdata.tdm_version = text
 	set_dirty_flag(file_dirty, DirtyFlags.MODFILE, silent)
+
+
+
+func is_file_excluded(path: String) -> bool:
+	var node: FMTreeNode = file_tree.get_child_at_path(path)
+	return node.is_ignored_file()

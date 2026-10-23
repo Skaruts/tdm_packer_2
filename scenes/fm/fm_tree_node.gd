@@ -58,8 +58,13 @@ func has_included_files() -> bool:
 	return false
 
 
+func is_ignored_file() -> bool:
+	if is_dir: return false
+	return has_ignored_files()
+
+
 func has_ignored_files() -> bool:
-	if not is_dir or ignored: return true
+	if not is_dir and ignored: return true
 	for c: FMTreeNode in children:
 		if not c.is_dir:
 			if c.ignored:
@@ -69,16 +74,28 @@ func has_ignored_files() -> bool:
 	return false
 
 
-@warning_ignore("shadowed_variable")
-func get_child_named(name: String) -> Variant:
+func get_child_named(name_: String) -> Variant:
+	if name == name_: return self
 	for c: FMTreeNode in children:
-		if c.name == name:
+		if c.name == name_:
 			return c
-		var node: FMTreeNode = c.get_child_named(name)
-		if node: return node as FMTreeNode
+		var node: FMTreeNode = c.get_child_named(name_)
+		if node:
+			return node as FMTreeNode
 
 	return null
 
+
+func get_child_at_path(path_: String) -> Variant:
+	if path == path_: return self
+	for c: FMTreeNode in children:
+		if c.path == path_:
+			return c
+		var node: FMTreeNode = c.get_child_named(path_)
+		if node:
+			return node as FMTreeNode
+
+	return null
 
 func get_first_child() -> FMTreeNode:
 	if children.size() == 0: return null
