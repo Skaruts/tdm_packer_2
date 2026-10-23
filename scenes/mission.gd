@@ -16,6 +16,8 @@ var exc_dir_count  : int
 var ignored_paths  : Set
 var warnings : Dictionary[fms.MissionWarning, String]
 
+var old_includes: Array[String]
+var new_includes: Array[String]
 
 class MissionPaths: # this allows auto-completion and strict typing, unlike dictionaries
 	var root        : String
@@ -264,6 +266,6 @@ func update_tdm_version(text:String, file_dirty:=true, silent:=false) -> void:
 
 
 func is_file_excluded(path: String) -> bool:
-	return path in ignored_paths
-	# var node: FMTreeNode = file_tree.get_child_at_path(path)
-	# return node.is_ignored_file()
+	# return path in ignored_paths
+	var node: FMTreeNode = file_tree.get_child_at_path(path)
+	return node.is_ignored_file()

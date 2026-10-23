@@ -72,10 +72,12 @@ func _process(delta: float) -> void:
 	stop_timer_and_save()
 
 var _should_reload := false
-func start_save_timer(reload: bool) -> void:
+var _should_print_include_diffs := false
+func start_save_timer(reload: bool, print_include_diffs := false) -> void:
 	_save_timer = _save_delay
 	_mission_to_save = curr_mission
 	_should_reload = reload
+	_should_print_include_diffs = print_include_diffs
 	set_process(true)
 
 
@@ -86,7 +88,7 @@ func is_save_timer_counting() -> bool:
 func stop_timer_and_save() -> void:
 	set_process(false)
 	save_mission(_mission_to_save, _should_reload)
-
+	_should_print_include_diffs = false
 	_should_reload = false
 
 
@@ -172,7 +174,7 @@ func save_mission_datas() -> void:
 	for m in missions:
 		var files: Array
 		for path: String in m.mdata.edited_files:
-			var rel_path := _get_relative_file_path(path, m.id)
+			var rel_path := get_relative_file_path(path, m.id)
 			files.append(rel_path)
 		mission_datas.set_value("missions", m.id, files)
 
@@ -241,7 +243,7 @@ func _reload_mission(mis: Mission) -> void:
 
 
 func soft_reload_mission(mis: Mission, force_update := false) -> void:
-	FMUtils.build_file_tree(mis)
+	FMUtils.build_file_tree(mis, _should_print_include_diffs)
 	gui.on_mission_reloaded( get_mission_index(mis), force_update )
 
 
@@ -646,10 +648,10 @@ func check_missions_on_focus_in() -> void:
 
 
 
-func _get_relative_file_path(path: String, id: String) -> String:
+func get_relative_file_path(path: String, id: String) -> String:
 	var idx := path.find(id)
 	assert(idx != -1)
-	var rel_path := path.left(idx+id.length()+1)
+	var rel_path := path.replace(path.left(idx+id.length()+1), '')
 	return rel_path
 
 
@@ -663,7 +665,7 @@ func _get_relative_file_path(path: String, id: String) -> String:
 func add_edited_file_to_mission(mis: Mission, path: String) -> void:
 	mis.add_edited_file(path)
 	var files: Array = mission_datas.get_value("missions", mis.id, [])
-	var rel_path := _get_relative_file_path(path, mis.id)
+	var rel_path := get_relative_file_path(path, mis.id)
 	if not rel_path in files:
 		files.append(rel_path)
 		# TODO: check if this is necessary
@@ -675,7 +677,7 @@ func remove_edited_file_from_mission(mis: Mission, path: String) -> void:
 	fms.force_save_mission()
 	mis.remove_edited_file(path)
 	var files: Array = mission_datas.get_value("missions", mis.id, [])
-	var rel_path := _get_relative_file_path(path, mis.id)
+	var rel_path := get_relative_file_path(path, mis.id)
 	files.erase(rel_path)
 	# TODO: check if this is necessary
 	# mission_datas.set_value("missions", mis.id, files)

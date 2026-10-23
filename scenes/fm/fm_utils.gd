@@ -156,21 +156,22 @@ static func _pack_files(output: Object, mission: Mission) -> ErrorReport:
 #		File Tree
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=
-static func build_file_tree(mission: Mission) -> void:
+static func build_file_tree(mission: Mission, print_diffs := false) -> void:
 	# logs.task("Building file tree...")
+
+	mission.old_includes = mission.new_includes.duplicate()
+	mission.new_includes.clear()
 
 	mission.inc_dir_count  = 0
 	mission.inc_file_count = 0
 	mission.exc_dir_count  = 0
 	mission.exc_file_count = 0
 	mission.file_tree      = FMTreeNode.new(mission.paths.root, null, true)
-	mission.ignored_paths        = default_ignores.duplicate()
+	mission.ignored_paths  = default_ignores.duplicate()
 	mission.filepaths.clear()
 
 	init_ignores(mission)
-	_gather_files(mission, mission.file_tree)
-
-
+	_gather_files(mission, mission.file_tree, mission.new_includes)
 
 	for i: int in range(mission.filepaths.size()-1, -1, -1):
 		var filepath := mission.filepaths[i]
@@ -180,8 +181,32 @@ static func build_file_tree(mission: Mission) -> void:
 			mission.filepaths.remove_at(i)
 			mission.inc_file_count -= 1
 			mission.exc_file_count += 1
+			mission.new_includes.erase(filepath)
 
 	# logs.task("Finished building file tree")
+
+	if print_diffs:
+		# console.print("-----------------------------")
+		var incs: Array[String] = []
+		var excs: Array[String] = []
+
+		for p in mission.new_includes:
+			if not p in mission.old_includes: incs.append(p)
+
+		for p in mission.old_includes:
+			if not p in mission.new_includes: excs.append(p)
+
+		if incs.size() > 0:
+			console.info("%s new includes:" % incs.size())
+			for p in incs:
+				console.print("\t" + fms.get_relative_file_path(p, mission.id))
+
+		if excs.size() > 0:
+			console.info("%s new excludes:" % excs.size())
+			for p in excs:
+				console.print("\t" + fms.get_relative_file_path(p, mission.id))
+		console.print("-----------------------------")
+
 
 
 static func init_ignores(mission: Mission) -> void:
@@ -205,7 +230,7 @@ static func init_ignores(mission: Mission) -> void:
 		mission.ignored_paths.add(line)
 
 
-static func _gather_files(mission: Mission, parent: FMTreeNode) -> void:
+static func _gather_files(mission: Mission, parent: FMTreeNode, new_includes: Array[String]) -> void:
 	var dirpaths  : Array[String] = Path.get_dirpaths(parent.path)
 	var filepaths : Array[String] = Path.get_filepaths(parent.path)
 
@@ -227,7 +252,8 @@ static func _gather_files(mission: Mission, parent: FMTreeNode) -> void:
 			mission.exc_dir_count += 1
 		else:
 			mission.inc_dir_count += 1
-		_gather_files(mission, dir_node)
+			new_includes.append(fullpath)
+		_gather_files(mission, dir_node, new_includes)
 
 	for fullpath: String in filepaths:
 		var rel_path  := fullpath.replace(mission.paths.root + '/', '')
@@ -239,6 +265,7 @@ static func _gather_files(mission: Mission, parent: FMTreeNode) -> void:
 		else:
 			mission.filepaths.append(fullpath)
 			mission.inc_file_count += 1
+			new_includes.append(fullpath)
 
 
 # TODO: this should be in the tree class, maybe

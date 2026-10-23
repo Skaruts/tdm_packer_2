@@ -363,7 +363,7 @@ func _on_code_editor_text_changed(editor: CodeEdit) -> void:
 		ce_pkignore:
 			var dirty:bool = ce_pkignore.get_version() != ce_pkignore.get_saved_version()
 			_mission.update_pkignore(ce_pkignore.text, dirty)
-			fms.start_save_timer(true)
+			fms.start_save_timer(true, true)
 
 
 
