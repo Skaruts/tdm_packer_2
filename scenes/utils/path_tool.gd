@@ -1,6 +1,6 @@
 class_name Path extends Object
 
-# version 12
+# version 14
 
 # just trying to unify the default API because it's a bit confusing
 # and inconsistent, imo.
@@ -125,6 +125,7 @@ static func get_lines(path:String) -> Array[String]:
 	return lines
 
 
+# TODO: should this return bool?
 static func write_file(path:String, content:String) -> void:
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	if not file:
