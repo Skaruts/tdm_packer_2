@@ -58,15 +58,14 @@ In the `Package -> Pack` tab you'll find an editable text box for the `.pkignore
 
 This is where you can specify what should be excluded from the `pk4` file. (By default TDM Packer will pack everything in your mission's folder.)
 
-This file works similarly to a `.gitignore` file, but more limited.
+This file works similarly to a `.gitignore` file.
 
-The filtering is case-sensitive, and does not yet support using `*`. These filters are merely substrings that every directory/file path is tested against: if the path has any of these substrings in it, then it's excluded. It's safer to include dots for file extensions.
+The filtering is case-sensitive, and supports using `*` and `?`, where `*` matches zero or more arbitrary characters and `?` matches any single character except a period (`.`).
 
 <img width="922" height="590" alt="pkignore" src="https://github.com/user-attachments/assets/d17c3969-5952-4823-83bd-780e8b940582" />
 
-
 Some files and folders are automatically excluded:
-- file extensions `.log`, `.dat`, `.py`, `.pyc`, `.pk4`, `.zip`, `.7z`, `.rar`, `.gitignore`, `.gitattributes`
+- file extensions `*.log`, `*.dat`, `*.py`, `*.pyc`, `*.pk4`, `*.zip`, `*.7z`, `*.rar`, `.gitignore`, `.gitattributes`, `*.bak`, `*_autosave.map`
 - the `.git` and `savegames` directories.
 - the `.pkignore` itself
 
@@ -75,6 +74,7 @@ Some are automatically included:
 - `readme.txt`
 - `startingmap.txt` and `tdm_mapsequence.txt`
 - the `maps` folder
+
 
 ## darkmod.txt
 
