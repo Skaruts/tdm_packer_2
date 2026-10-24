@@ -16,7 +16,9 @@ static var default_ignores := Set.new([
 	"*.log",
 	"*.dat",
 	"*.bak",
-	"*_autosave.map",
+
+	"*_autosave.*",   # NOTE: these were already being ignored without being here,
+	"maps/snapshots*" # but they are here just in case.
 ])
 
 
@@ -177,6 +179,7 @@ static func build_file_tree(mission: Mission, print_diffs := false) -> void:
 		var filepath := mission.filepaths[i]
 		if not filepath.contains(mission.paths.maps): continue
 		var basename := filepath.get_file().get_basename()
+		# NOTE: this automatically leaves out autosaves
 		if not mission.is_map_in_sequence(basename):
 			mission.filepaths.remove_at(i)
 			mission.inc_file_count -= 1
@@ -219,14 +222,6 @@ static func init_ignores(mission: Mission) -> void:
 		if line == "":
 			continue
 
-		# if '/' in line:
-		# 	if   line.begins_with('/'):  line = line.substr(1)
-		# 	elif line.ends_with('/'):    line = line.substr(0, line.length()-1)
-
-		# 	if line.length() <= 1:
-		# 		continue
-		# 	mission.ignored_directories.add(line)
-		# else:
 		mission.ignored_paths.add(line)
 
 
@@ -235,7 +230,9 @@ static func _gather_files(mission: Mission, parent: FMTreeNode, new_includes: Ar
 	var filepaths : Array[String] = Path.get_filepaths(parent.path)
 
 	if not dirpaths.size() and not filepaths.size():
+		# NOTE: this automatically leaves out any folder inside 'maps'
 		if parent.path == mission.paths.maps: return
+
 		if not parent.ignored:
 			mission.ignored_paths.add(parent.path)
 			parent.ignored = true
@@ -244,15 +241,20 @@ static func _gather_files(mission: Mission, parent: FMTreeNode, new_includes: Ar
 	for fullpath: String in dirpaths:
 		var rel_path := fullpath.replace(mission.paths.root + '/', '')
 		var dir_node := FMTreeNode.new(fullpath, parent, true)
-		dir_node.ignored = parent.ignored or should_ignore(rel_path, mission.ignored_paths) \
+
+		# NOTE: this automatically leaves out any folder inside 'maps'
+		dir_node.ignored = parent.ignored \
+						or should_ignore(rel_path, mission.ignored_paths) \
 						or (fullpath != mission.paths.maps
 							and fullpath.contains(mission.paths.maps))
+
 		if dir_node.ignored:
 			mission.ignored_paths.add(fullpath)
 			mission.exc_dir_count += 1
 		else:
 			mission.inc_dir_count += 1
 			new_includes.append(fullpath)
+
 		_gather_files(mission, dir_node, new_includes)
 
 	for fullpath: String in filepaths:
