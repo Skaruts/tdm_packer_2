@@ -87,6 +87,7 @@ size_flags_vertical = 3
 [node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer/console_split"]
 layout_mode = 2
 size_flags_vertical = 3
+split_offset = 230
 
 [node name="missions_list" type="TabContainer" parent="VBoxContainer/console_split/HSplitContainer"]
 unique_name_in_owner = true
