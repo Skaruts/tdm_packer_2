@@ -20,7 +20,7 @@ A GUI tool for [Dark Mod](https://www.thedarkmod.com/) mappers, to help managing
 - can launch a second TDM installation for testing your newly packed `pk4` files in isolation
 - can edit files with syntax highlighting (`.xd`, `.gui`, .mtr, .script, etc).
 
-###### * A note about portability: Godot inherently creates a folder in your OS's user data folder (%appdata% on Windows), but it's not used by TDM Packer.)
+###### * A note about portability: Godot inherently creates a folder in your OS's user data folder (%appdata% on Windows), but it's not used by TDM Packer, and you can safely delete it if needed.)
 
 
 # Setting Up
@@ -66,14 +66,14 @@ The filtering is case-sensitive, and supports using `*` and `?`, where `*` match
 
 Some files and folders are automatically excluded:
 - file extensions `*.log`, `*.dat`, `*.py`, `*.pyc`, `*.pk4`, `*.zip`, `*.7z`, `*.rar`, `.gitignore`, `.gitattributes`, `*.bak`, `*_autosave.map`
-- the `.git` and `savegames` directories.
+- the `.git` and `savegames` directories, and any directory inside `maps`.
 - the `.pkignore` itself
 
 Some are automatically included:
 - `darkmod.txt`
 - `readme.txt`
 - `startingmap.txt` and `tdm_mapsequence.txt`
-- the `maps` folder
+- the `maps` directory
 
 
 ## darkmod.txt
@@ -139,10 +139,7 @@ You can edit mission files in the `Files` tab, with syntax highlighting.
 <img width="922" height="590" alt="files" src="https://github.com/user-attachments/assets/8365a90f-eeb6-4d0f-a381-fa245a1a7f5a" />
 
 
-
-
-
-
+You can use the standard key shortcuts for copying and pasting, and you can also create multiple cursors with `Ctrl+Alt+Up/Down` or `Alt+LMB`. Press Escape to revert back to a single cursor.
 
 
 
