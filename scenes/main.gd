@@ -25,11 +25,13 @@ func _ready() -> void:
 	# splash parameters are the ones used in 'project settings/display/window'
 	var w := get_window()
 	w.borderless = false
-	#w.transparent = false
 	w.unresizable = false
-	# w.size = Vector2i(1152, 738)
-	w.size = Vector2i(1280, 800)
-	# w.size = Vector2i(1440, 900)
+	#w.transparent = false
+
+	#set_window_size(Vector2i(1280, 800))
+	#set_window_size(Vector2i(1440, 900))
+	set_window_size(Vector2i(1152, 738))  # <-- Godot's default window size
+
 	w.move_to_center()
 
 	data.initialize()
@@ -41,6 +43,15 @@ func _ready() -> void:
 	# (still looks bad often, though)
 	await get_tree().process_frame
 	w.move_to_center()
+
+
+# Hopefully this make the window size correct according to Windows's scale
+func set_window_size(target_base_size: Vector2i) -> void:
+	var os_scale := DisplayServer.screen_get_dpi() / 96.0
+	var scaled_window_size := Vector2i(target_base_size * os_scale)
+
+	get_window().size = scaled_window_size
+	get_window().content_scale_size = target_base_size
 
 
 func _on_console_toggled() -> void:
@@ -68,9 +79,12 @@ func _notification(what: int) -> void:
 			#num_subwindows = get_all_subwindows(get_viewport()).size()
 
 
-
 func get_all_subwindows(window: Window) -> Array[Window]:
 	var windows: Array[Window] = window.get_embedded_subwindows()
 	for w in windows:
 		windows += get_all_subwindows(w)
 	return windows
+
+
+func _on_spin_box_value_changed(value: float) -> void:
+	print("value changed", value)
