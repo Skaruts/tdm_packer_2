@@ -1,4 +1,6 @@
 # TDM Packer 2
+
+
 A GUI tool for [Dark Mod](https://www.thedarkmod.com/) mappers, to help managing and packing fan missions. It can create the `pk4` file for you, automatically excluding any files and folders you specify in a `.pkignore` file, and allow you to easily fill out your mission's details, run DarkRadiant, edit files with syntax highlighting, and more.
 
 ###### Note: for users running this from source: this project uses Godot 4.4x. It may not work reliably in older or newer versions of Godot. (I'll keep using this version for the foreseable future.)
@@ -17,7 +19,7 @@ A GUI tool for [Dark Mod](https://www.thedarkmod.com/) mappers, to help managing
 - automatically creates a `startingmap.txt` or `tdm_mapsequence.txt`, according to how many maps you specify in the map sequence
 - can run DarkRadiant for the selected mission
 - can launch TDM for the selected mission
-- can launch a second TDM installation for testing your newly packed `pk4` files in isolation
+- can launch TDM with the pk4 in isolation, for proper testing
 - can edit files with syntax highlighting (`.xd`, `.gui`, .mtr, .script, etc).
 
 ###### * A note about portability: Godot inherently creates a folder in your OS's user data folder (%appdata% on Windows), but it's not used by TDM Packer, and you can safely delete it if needed.)
@@ -25,7 +27,7 @@ A GUI tool for [Dark Mod](https://www.thedarkmod.com/) mappers, to help managing
 
 # Setting Up
 
-First you need to set the paths to TDM and DarkRadiant. You can set all the paths in the settings panel, which you can find in the top-left menu icon -> `Settings` -> `Paths`.
+First you need to set the paths to TDM and DarkRadiant in the settings panel, which you can find in the top-left menu icon -> `Settings` -> `Paths`.
 
 <img width="560" height="379" alt="paths" src="https://github.com/user-attachments/assets/dd6f0935-b34f-474a-93bb-9a674057e919" />
 
@@ -34,17 +36,19 @@ First you need to set the paths to TDM and DarkRadiant. You can set all the path
 
 - DarkRadiant's path is only required if you wish to launch DarkRadiant for the selected missions (by pressing the `Edit` button in the `Missions` panel).
 
-- The *"TDM Test Instance"* path is only required if you wish to launch a separate, fresh installation of TDM to test-run your newly packed missions in isolation (by pressing the `Test` button in the `Missions` panel).
 
 Then you can add missions to your list by pressing `Open` in the `Missions` panel. All missions are read-only by default, so if you wish to manage/edit a mission, click the dot icon next to it. It turns into a green checkmark, meaning the mission can be edited. You can change this at any time.
+
 
 <img width="519" height="418" alt="open_mission" src="https://github.com/user-attachments/assets/887eeae5-eb59-4424-ac8f-387d4c46e885" />
 
 
 You can then edit/manage the mission as you please, and once you have your mission ready to publish, you can press the `Pack` button in the `Missions` panel to create the `pk4` file.
 
+
 <img width="554" height="379" alt="packing" src="https://github.com/user-attachments/assets/20d0f84b-9ec1-4608-bff1-ae1c35b7d2fc" />
 
+###### Note: making a mission editable will cause TDM Packer to create some files if they don't already exist (darkmod.txt, readme.txt, startingmap.txt). This may cause isues with FMs created by other people. For example, an empty startingmap.txt will make TDM throw errors, as it won't know which map to launch.
 
 
 # Using TDM Packer
