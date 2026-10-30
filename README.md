@@ -29,8 +29,7 @@ A GUI tool for [Dark Mod](https://www.thedarkmod.com/) mappers, to help managing
 
 First you need to set the paths to TDM and DarkRadiant in the settings panel, which you can find in the top-left menu icon -> `Settings` -> `Paths`.
 
-<img width="560" height="379" alt="paths" src="https://github.com/user-attachments/assets/dd6f0935-b34f-474a-93bb-9a674057e919" />
-
+<img width="559" height="379" alt="paths_0 5 1 alpha" src="https://github.com/user-attachments/assets/fb854311-a5c6-4108-af61-b1fde3ae1cde" />
 
 - The TDM path is required for TDM Packer to find the `fms` folder, where all the missions are, and in case you wish to run TDM for the selected missions.
 
@@ -66,7 +65,9 @@ This file works similarly to a `.gitignore` file.
 
 The filtering is case-sensitive, and supports using `*` and `?`, where `*` matches zero or more arbitrary characters and `?` matches any single character except a period (`.`).
 
-<img width="922" height="590" alt="pkignore" src="https://github.com/user-attachments/assets/d17c3969-5952-4823-83bd-780e8b940582" />
+
+<img width="1152" height="738" alt="pkignore" src="https://github.com/user-attachments/assets/55b22b50-1f55-4c31-8c39-edc7eb6e03ad" />
+
 
 Some files and folders are automatically excluded:
 - file extensions `*.log`, `*.dat`, `*.py`, `*.pyc`, `*.pk4`, `*.zip`, `*.7z`, `*.rar`, `.gitignore`, `.gitattributes`, `*.bak`, `*_autosave.map`
